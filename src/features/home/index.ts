@@ -1,0 +1,8 @@
+export { default as About } from './components/About'
+export { default as Blog } from './components/Blog'
+export { default as Contact } from './components/Contact'
+export { default as Experience } from './components/Experience'
+export { default as Hero } from './components/Hero'
+export { default as LogoClouds } from './components/LogoClouds'
+export { default as Projects } from './components/Projects'
+export { default as Skills } from './components/Skills'
