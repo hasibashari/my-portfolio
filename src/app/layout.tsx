@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Claude Editorial Design - Home",
+  title: "Hasib Ashari",
   description: "A warm-canvas editorial interface inspired by Claude's design system.",
 };
 
