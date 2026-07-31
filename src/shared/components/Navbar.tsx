@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   AppBar,
   Box,
@@ -15,20 +15,22 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { Menu, X, ArrowRight, Mail } from 'lucide-react'
-import ClaudeSpikeLogo from './ClaudeSpikeLogo'
+import { Menu, X, Mail } from 'lucide-react'
+import Logo from './Logo'
 import { cn } from '../utils/cn'
-
-const navigation = [
-  { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Blog', href: '#blog' },
-]
+import { nav } from '../constants/nav'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <>
@@ -36,17 +38,21 @@ export default function Navbar() {
         position="sticky"
         elevation={0}
         sx={{
-          bgcolor: '#faf9f5',
-          borderBottom: '1px solid #e6dfd8',
+          top: 0,
+          bgcolor: isScrolled ? 'rgba(250, 249, 245, 0.85)' : '#faf9f5',
+          backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+          borderBottom: isScrolled ? '1px solid rgba(230, 223, 216, 0.8)' : '1px solid transparent',
+          boxShadow: isScrolled ? '0 4px 30px -10px rgba(0,0,0,0.1)' : 'none',
           color: '#141413',
           zIndex: (theme) => theme.zIndex.drawer + 1,
+          transition: 'all 0.3s ease-in-out',
         }}
       >
         <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2.5, sm: 4, lg: 6 } }}>
           <Toolbar disableGutters sx={{ height: 64, justifyContent: 'space-between' }}>
             {/* Left: Brand Logo & Portfolio Name */}
             <Box component="a" href="#" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none' }}>
-              <ClaudeSpikeLogo size={22} color="#141413" />
+              <Logo size={22} color="#141413" />
               <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography
                   variant="h6"
@@ -61,15 +67,12 @@ export default function Navbar() {
                 >
                   Hasib Ashari
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#6c6a64', fontSize: '0.75rem', fontWeight: 500 }}>
-                  Software Engineer
-                </Typography>
               </Box>
             </Box>
 
             {/* Desktop Navigation Links */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3.5 }}>
-              {navigation.map((item) => (
+              {nav.map((item) => (
                 <Typography
                   key={item.name}
                   component="a"
@@ -148,13 +151,10 @@ export default function Navbar() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <ClaudeSpikeLogo size={20} color="#141413" />
+            <Logo size={20} color="#141413" />
             <Box>
               <Typography variant="h6" className="font-serif-display" sx={{ fontWeight: 600, color: '#141413', fontSize: '1.0625rem' }}>
                 Hasib Ashari
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#6c6a64', fontSize: '0.75rem' }}>
-                Software Engineer
               </Typography>
             </Box>
           </Box>
@@ -164,7 +164,7 @@ export default function Navbar() {
         </Box>
 
         <List sx={{ pt: 1, borderBottom: '1px solid #e6dfd8' }}>
-          {navigation.map((item) => (
+          {nav.map((item) => (
             <ListItem key={item.name} disablePadding sx={{ mb: 1 }}>
               <ListItemButton
                 component="a"

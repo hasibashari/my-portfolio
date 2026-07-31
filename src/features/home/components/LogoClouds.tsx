@@ -2,49 +2,7 @@
 
 import { Box, Container, Typography, Tooltip } from '@mui/material'
 import { cn } from '../../../shared/utils/cn'
-
-const techLogos = [
-  {
-    name: 'React.js',
-    logoUrl: 'https://cdn.simpleicons.org/react/61DAFB',
-    tag: 'React.js • Frontend Library',
-  },
-  {
-    name: 'Next.js 15',
-    logoUrl: 'https://cdn.simpleicons.org/nextdotjs/000000',
-    tag: 'Next.js 15 • Full-Stack Framework',
-  },
-  {
-    name: 'TypeScript',
-    logoUrl: 'https://cdn.simpleicons.org/typescript/3178C6',
-    tag: 'TypeScript • Type Safety',
-  },
-  {
-    name: 'Tailwind CSS',
-    logoUrl: 'https://cdn.simpleicons.org/tailwindcss/06B6D4',
-    tag: 'Tailwind CSS • Styling System',
-  },
-  {
-    name: 'Material UI',
-    logoUrl: 'https://cdn.simpleicons.org/mui/007FFF',
-    tag: 'Material UI • Component Library',
-  },
-  {
-    name: 'Node.js',
-    logoUrl: 'https://cdn.simpleicons.org/nodedotjs/5FA04E',
-    tag: 'Node.js • Backend Runtime',
-  },
-  {
-    name: 'Express.js',
-    logoUrl: 'https://cdn.simpleicons.org/express/000000',
-    tag: 'Express.js • API Framework',
-  },
-  {
-    name: 'PostgreSQL',
-    logoUrl: 'https://cdn.simpleicons.org/postgresql/4169E1',
-    tag: 'PostgreSQL • Database Engine',
-  },
-]
+import { logo } from '../../../shared/constants/logo'
 
 export default function LogoClouds() {
   return (
@@ -85,7 +43,7 @@ export default function LogoClouds() {
             gap: { xs: 4, sm: 6, md: 7, lg: 8 },
           }}
         >
-          {techLogos.map((item) => (
+          {logo.map((item) => (
             <Tooltip key={item.name} title={item.tag} arrow placement="top">
               <Box
                 sx={{
@@ -95,7 +53,7 @@ export default function LogoClouds() {
                   cursor: 'pointer',
                   p: 1,
                   opacity: 0.75,
-                  filter: 'grayscale(20%)',
+                  filter: 'grayscale(100%)',
                   transition: 'all 0.25s ease-in-out',
                   '&:hover': {
                     opacity: 1,

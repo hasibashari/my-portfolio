@@ -3,47 +3,7 @@
 import { Box, Container, Typography } from '@mui/material'
 import { CheckCircle2 } from 'lucide-react'
 import { cn } from '../../../shared/utils/cn'
-
-const experiences = [
-  {
-    role: 'Senior Frontend Engineer',
-    company: 'TechCorp Inc.',
-    period: '2022 - Present',
-    location: 'Remote',
-    description:
-      'Leading frontend development for enterprise web applications using Next.js, React, and TypeScript. Reduced initial page load times by 45% and established modular design system architecture.',
-    highlights: [
-      'Architected micro-frontend component library using Material UI and Tailwind CSS.',
-      'Mentored junior engineers and led code reviews across 5 product squads.',
-      'Spearheaded web vitals optimization achieving 98+ Lighthouse scores.',
-    ],
-  },
-  {
-    role: 'Full Stack Developer',
-    company: 'Innovate Labs',
-    period: '2020 - 2022',
-    location: 'Hybrid',
-    description:
-      'Engineered scalable RESTful APIs with Node.js/Express and integrated reactive frontend dashboards using React and Redux.',
-    highlights: [
-      'Built real-time analytics streaming engine serving 50k daily active users.',
-      'Designed PostgreSQL database schema migrations and optimized query latency by 30%.',
-      'Automated CI/CD deployment pipelines using GitHub Actions and AWS EC2.',
-    ],
-  },
-  {
-    role: 'Software Engineer',
-    company: 'Digital Creative Agency',
-    period: '2018 - 2020',
-    location: 'On-site',
-    description:
-      'Developed custom client web applications, e-commerce platforms, and interactive brand landing pages.',
-    highlights: [
-      'Delivered 20+ responsive client websites on tight deadlines with high customer satisfaction.',
-      'Integrated Stripe & PayPal payment gateways and headless CMS platforms.',
-    ],
-  },
-]
+import { experiences } from '../../../shared/constants/experiences'
 
 export default function Experience() {
   return (
@@ -76,22 +36,50 @@ export default function Experience() {
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '900px', mx: 'auto' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '900px', mx: 'auto', position: 'relative' }}>
+          {/* Vertical Timeline Line */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '24px',
+              bottom: '24px',
+              left: { xs: '15px', sm: '23px' },
+              width: '2px',
+              bgcolor: '#e6dfd8',
+              zIndex: 0,
+            }}
+          />
           {experiences.map((exp) => (
-            <Box
-              key={exp.role + exp.company}
-              sx={{
-                bgcolor: '#faf9f5',
-                borderRadius: '12px',
-                border: '1px solid #e6dfd8',
-                p: { xs: 3.5, sm: 4.5 },
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  borderColor: '#cc785c',
-                  boxShadow: '0 8px 24px -8px rgba(20, 20, 19, 0.08)',
-                },
-              }}
-            >
+            <Box key={exp.role + exp.company} sx={{ position: 'relative', zIndex: 1 }}>
+              {/* Timeline Dot */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '28px',
+                  left: { xs: '10px', sm: '18px' },
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  bgcolor: '#cc785c',
+                  border: '2px solid #f5f0e8',
+                  zIndex: 2,
+                }}
+              />
+              
+              <Box
+                sx={{
+                  ml: { xs: '40px', sm: '56px' },
+                  bgcolor: '#faf9f5',
+                  borderRadius: '12px',
+                  border: '1px solid #e6dfd8',
+                  p: { xs: 3.5, sm: 4.5 },
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    borderColor: '#cc785c',
+                    boxShadow: '0 8px 24px -8px rgba(20, 20, 19, 0.08)',
+                  },
+                }}
+              >
               <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1, mb: 2 }}>
                 <Box>
                   <Typography
@@ -142,6 +130,7 @@ export default function Experience() {
                   </Box>
                 ))}
               </Box>
+            </Box>
             </Box>
           ))}
         </Box>

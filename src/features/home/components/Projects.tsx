@@ -2,88 +2,14 @@
 
 import { useState } from 'react'
 import { Box, Container, Typography, Button, Chip } from '@mui/material'
-import { Code2, ExternalLink, Copy, Check } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import { cn } from '../../../shared/utils/cn'
-
-const projects = [
-  {
-    id: 'ecommerce',
-    title: 'E-Commerce Platform & Checkout Suite',
-    badge: 'FULL-STACK APP',
-    badgeColor: '#cc785c',
-    description:
-      'A high-conversion e-commerce platform built with Next.js 15, Stripe payment integration, server-side search filtering, and responsive MUI/Tailwind UI.',
-    techStack: ['Next.js 15', 'TypeScript', 'Stripe API', 'Tailwind CSS', 'PostgreSQL'],
-    demoUrl: 'https://example.com/ecommerce-demo',
-    codeSnippet: `// Next.js App Router Checkout Session Endpoint
-import { Stripe } from "stripe";
-import { NextResponse } from "next/server";
-
-export async function POST(req: Request) {
-  const { cartItems, userId } = await req.parseJson();
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    line_items: cartItems.map(item => ({ price: item.priceId, quantity: item.qty })),
-    mode: "payment",
-    success_url: \`\${process.env.SITE_URL}/order/success\`,
-  });
-  return NextResponse.json({ id: session.id });
-}`,
-  },
-  {
-    id: 'analytics',
-    title: 'Realtime Analytics & Performance Dashboard',
-    badge: 'DASHBOARD & DATA',
-    badgeColor: '#e8a55a',
-    description:
-      'An enterprise metrics dashboard monitoring real-time server telemetry, user engagement graphs, and web vitals metrics with responsive charts.',
-    techStack: ['React 19', 'Material UI', 'Recharts', 'Express.js', 'WebSocket'],
-    demoUrl: 'https://example.com/analytics-demo',
-    codeSnippet: `// Realtime Telemetry Hook with Auto-Reconnect
-export function useTelemetryStream(endpoint: string) {
-  const [metrics, setMetrics] = useState<MetricData[]>([]);
-  useEffect(() => {
-    const ws = new WebSocket(endpoint);
-    ws.onmessage = (evt) => {
-      const data = JSON.parse(evt.data);
-      setMetrics(prev => [...prev.slice(-50), data]);
-    };
-    return () => ws.close();
-  }, [endpoint]);
-  return metrics;
-}`,
-  },
-  {
-    id: 'ai-studio',
-    title: 'AI Task Automation & Prompt Studio',
-    badge: 'AI & PRODUCTIVITY',
-    badgeColor: '#5db8a6',
-    description:
-      'An agentic workflow platform allowing teams to compose, test, and execute multi-prompt AI workflows with streaming responses.',
-    techStack: ['TypeScript', 'Claude SDK', 'Next.js', 'Zustand', 'Tailwind CSS'],
-    demoUrl: 'https://example.com/ai-studio-demo',
-    codeSnippet: `// Agentic Tool Execution Pipeline
-const response = await anthropic.messages.create({
-  model: "claude-3-5-sonnet",
-  max_tokens: 1024,
-  system: "You are an autonomous code refactoring engine.",
-  tools: [fileReadTool, codeEditTool],
-  messages: [{ role: "user", content: "Optimize React component rendering" }]
-});`,
-  },
-]
+import { projects } from '../../../shared/constants/projects'
 
 export default function Projects() {
   const [activeTab, setActiveTab] = useState(0)
-  const [copied, setCopied] = useState(false)
 
   const current = projects[activeTab]
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(current.codeSnippet)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
 
   return (
     <Box id="projects" className={cn('bg-[#faf9f5] py-24 border-t border-[#e6dfd8]')} sx={{ bgcolor: '#faf9f5', py: { xs: 10, md: 14 }, borderTop: '1px solid #e6dfd8' }}>
@@ -145,16 +71,19 @@ export default function Projects() {
         {/* Dark Navy Product Showcase Card */}
         <Box
           sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
             bgcolor: '#181715',
             borderRadius: '16px',
-            p: { xs: 3, sm: 5 },
             color: '#faf9f5',
             boxShadow: '0 25px 50px -12px rgba(20, 20, 19, 0.35)',
             border: '1px solid rgba(250, 249, 245, 0.1)',
+            overflow: 'hidden',
           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 2, mb: 3, pb: 3, borderBottom: '1px solid rgba(250, 249, 245, 0.1)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          {/* Left Text Column */}
+          <Box sx={{ flex: 1, p: { xs: 3, sm: 5 }, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mb: 3 }}>
               <Chip
                 label={current.badge}
                 sx={{
@@ -171,7 +100,28 @@ export default function Projects() {
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Typography variant="body1" sx={{ color: '#a09d96', mb: 4, fontSize: '1rem', lineHeight: 1.6 }}>
+              {current.description}
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 'auto' }}>
+              {current.techStack.map((tech) => (
+                <Chip
+                  key={tech}
+                  label={tech}
+                  size="small"
+                  sx={{
+                    bgcolor: 'rgba(250, 249, 245, 0.08)',
+                    color: '#faf9f5',
+                    fontSize: '0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(250, 249, 245, 0.12)',
+                  }}
+                />
+              ))}
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap', mt: 5 }}>
               <Button
                 component="a"
                 href={current.demoUrl}
@@ -193,70 +143,73 @@ export default function Projects() {
               >
                 Live Demo
               </Button>
-
-              <Button
-                onClick={handleCopy}
-                variant="outlined"
-                size="small"
-                startIcon={copied ? <Check size={14} color="#5db872" /> : <Copy size={14} />}
-                sx={{
-                  bgcolor: '#252320',
-                  color: '#faf9f5',
-                  borderColor: 'rgba(250, 249, 245, 0.15)',
-                  textTransform: 'none',
-                  fontSize: '0.8125rem',
-                  borderRadius: '6px',
-                  '&:hover': { bgcolor: '#1f1e1b', borderColor: '#cc785c' },
-                }}
-              >
-                {copied ? 'Snippet Copied' : 'Copy Code'}
-              </Button>
             </Box>
           </Box>
 
-          <Typography variant="body1" sx={{ color: '#a09d96', mb: 3, fontSize: '1rem', lineHeight: 1.6 }}>
-            {current.description}
-          </Typography>
-
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 4 }}>
-            {current.techStack.map((tech) => (
-              <Chip
-                key={tech}
-                label={tech}
-                size="small"
-                sx={{
-                  bgcolor: 'rgba(250, 249, 245, 0.08)',
-                  color: '#faf9f5',
-                  fontSize: '0.75rem',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(250, 249, 245, 0.12)',
-                }}
-              />
-            ))}
+          {/* Right Image Column */}
+          <Box sx={{ flex: 1, minHeight: { xs: '250px', sm: '350px', lg: 'auto' }, position: 'relative', overflow: 'hidden' }}>
+            <Box
+              component="img"
+              src={current.imageUrl}
+              alt={current.title}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transition: 'transform 0.5s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                },
+              }}
+            />
+            {/* Overlay gradient to blend edge */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: {
+                  xs: 'linear-gradient(to bottom, #181715 0%, transparent 20%)',
+                  lg: 'linear-gradient(to right, #181715 0%, transparent 20%)'
+                },
+                pointerEvents: 'none'
+              }}
+            />
           </Box>
+        </Box>
 
-          <Box
+        {/* Centered Read More / View All Projects Button */}
+        <Box sx={{ mt: 8, textAlign: 'center' }}>
+          <Button
+            component="a"
+            href="/projects"
+            variant="outlined"
+            endIcon={<ArrowRight size={18} />}
             sx={{
-              bgcolor: '#1f1e1b',
-              borderRadius: '12px',
-              p: { xs: 2.5, sm: 3.5 },
-              border: '1px solid rgba(250, 249, 245, 0.08)',
-              overflowX: 'auto',
+              color: '#141413',
+              borderColor: '#e6dfd8',
+              bgcolor: '#faf9f5',
+              px: 4,
+              py: 1.5,
+              borderRadius: '8px',
+              fontWeight: 500,
+              fontSize: '0.9375rem',
+              textTransform: 'none',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                bgcolor: '#efe9de',
+                borderColor: '#cc785c',
+                color: '#cc785c',
+              },
             }}
           >
-            <Box
-              component="pre"
-              sx={{
-                fontFamily: 'var(--font-mono), monospace',
-                fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-                lineHeight: 1.65,
-                color: '#faf9f5',
-                m: 0,
-              }}
-            >
-              <code>{current.codeSnippet}</code>
-            </Box>
-          </Box>
+            View All Projects
+          </Button>
         </Box>
       </Container>
     </Box>

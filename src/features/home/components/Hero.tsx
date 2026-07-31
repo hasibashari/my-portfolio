@@ -6,34 +6,30 @@ import {
   Button,
   Container,
   Typography,
-  IconButton,
 } from '@mui/material'
-import { ArrowRight, Sparkles, Copy, Check, Code2 } from 'lucide-react'
-import Navbar from '../../../shared/components/Navbar'
+import { ArrowRight, Sparkles, Code2 } from 'lucide-react'
+import Terminal from '../../../shared/components/Terminal'
 import { cn } from '../../../shared/utils/cn'
 
 export default function Hero() {
-  const [copied, setCopied] = useState(false)
 
   const configSnippet = `// hasib.config.ts
 export const engineer = {
   name: "Hasib Ashari",
   title: "Software Engineer",
-  focus: ["Frontend Architecture", "Full-Stack Web Systems"],
-  craft: "Clean Code, Web Vitals Performance & Editorial UI/UX",
-  status: "Available for High-Impact Roles & Projects",
-};`
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(configSnippet)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  focus: [
+    "Frontend Architecture", "Full-Stack Web Systems"
+  ],
+  craft: [
+    "Clean Code", "Web Vitals Performance", 
+    "Editorial UI/UX"
+  ],
+  status: "Available",
+};
+`
 
   return (
     <Box id="hero" sx={{ bgcolor: '#faf9f5', color: '#141413', position: 'relative', overflow: 'hidden' }}>
-      <Navbar />
-
       <Container maxWidth="xl" sx={{ px: { xs: 3, sm: 4, lg: 6 }, pt: { xs: 8, md: 12 }, pb: { xs: 10, md: 16 } }}>
         <Box
           sx={{
@@ -144,105 +140,54 @@ export const engineer = {
             </Box>
           </Box>
 
-          {/* Right Column: Interactive Engineer Showcase Card */}
-          <Box
-            sx={{
-              bgcolor: '#181715',
-              borderRadius: '16px',
-              p: { xs: 3.5, sm: 4.5 },
-              color: '#faf9f5',
-              boxShadow: '0 20px 40px -15px rgba(20, 20, 19, 0.25)',
-              border: '1px solid rgba(250, 249, 245, 0.1)',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, pb: 2, borderBottom: '1px solid rgba(250, 249, 245, 0.1)' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#5db8a6', flexShrink: 0 }} />
-                <Typography variant="subtitle2" sx={{ color: '#faf9f5', fontWeight: 600, fontSize: '0.9375rem' }}>
-                  Hasib Ashari • Software Engineer
-                </Typography>
-              </Box>
-              <IconButton size="small" onClick={handleCopy} aria-label="Copy snippet" sx={{ color: '#a09d96', p: 0.5 }}>
-                {copied ? <Check size={16} color="#5db872" style={{ flexShrink: 0 }} /> : <Copy size={16} style={{ flexShrink: 0 }} />}
-              </IconButton>
-            </Box>
-
-            {/* Stat Grid */}
+          {/* Right Column: Standalone Terminal Window */}
+          <Terminal filename="hasib.config.ts" codeSnippet={configSnippet}>
+            {/* Stat Grid (Styled as a dashboard inside terminal) */}
             <Box
               sx={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
                 gap: 2,
-                mb: 3.5,
-                p: 2,
-                bgcolor: '#1f1e1b',
-                borderRadius: '10px',
-                border: '1px solid rgba(250, 249, 245, 0.08)',
+                py: 2,
+                borderTop: '1px dashed rgba(250, 249, 245, 0.12)',
+                borderBottom: '1px dashed rgba(250, 249, 245, 0.12)',
               }}
             >
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h5" className="font-serif-display" sx={{ color: '#cc785c', fontWeight: 600, fontSize: '1.5rem' }}>
+                <Typography variant="h5" className="font-serif-display" sx={{ color: '#cc785c', fontWeight: 600, fontSize: '1.25rem' }}>
                   5+
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.75rem' }}>
-                  Years Experience
+                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
+                  Years Exp
                 </Typography>
               </Box>
-              <Box sx={{ textAlign: 'center', borderLeft: '1px solid rgba(250, 249, 245, 0.1)', borderRight: '1px solid rgba(250, 249, 245, 0.1)' }}>
-                <Typography variant="h5" className="font-serif-display" sx={{ color: '#e8a55a', fontWeight: 600, fontSize: '1.5rem' }}>
+              <Box sx={{ textAlign: 'center', borderLeft: '1px dashed rgba(250, 249, 245, 0.12)', borderRight: '1px dashed rgba(250, 249, 245, 0.12)' }}>
+                <Typography variant="h5" className="font-serif-display" sx={{ color: '#e8a55a', fontWeight: 600, fontSize: '1.25rem' }}>
                   30+
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.75rem' }}>
-                  Web Apps Built
+                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
+                  Web Apps
                 </Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h5" className="font-serif-display" sx={{ color: '#5db8a6', fontWeight: 600, fontSize: '1.5rem' }}>
+                <Typography variant="h5" className="font-serif-display" sx={{ color: '#5db8a6', fontWeight: 600, fontSize: '1.25rem' }}>
                   99%
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.75rem' }}>
-                  Web Vitals Score
+                <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
+                  Core Vitals
                 </Typography>
               </Box>
             </Box>
 
-            {/* Code Snippet Window */}
-            <Box
-              component="pre"
-              sx={{
-                fontFamily: 'var(--font-mono), monospace',
-                fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-                lineHeight: 1.65,
-                color: '#faf9f5',
-                bgcolor: '#1f1e1b',
-                p: 2.5,
-                borderRadius: '10px',
-                border: '1px solid rgba(250, 249, 245, 0.08)',
-                overflowX: 'auto',
-                m: 0,
-              }}
-            >
-              <code>{configSnippet}</code>
-            </Box>
-
-            <Box
-              sx={{
-                mt: 3,
-                pt: 2,
-                borderTop: '1px dashed rgba(250, 249, 245, 0.12)',
-                display: 'flex',
-                alignItems: 'center',
-                justify: 'space-between',
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant="caption" sx={{ color: '#5db8a6', display: 'flex', alignItems: 'center', gap: 1, fontFamily: 'var(--font-mono)' }}>
-                <Code2 size={14} style={{ flexShrink: 0 }} /> Full-Stack & Frontend Specialist
+                <Code2 size={14} style={{ flexShrink: 0 }} /> Frontend Specialist
               </Typography>
               <Typography variant="caption" sx={{ color: '#a09d96', fontFamily: 'var(--font-mono)' }}>
                 TypeScript 5.0
               </Typography>
             </Box>
-          </Box>
+          </Terminal>
         </Box>
       </Container>
     </Box>

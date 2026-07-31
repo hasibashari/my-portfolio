@@ -1,18 +1,10 @@
 'use client'
 
 import { Box, Container, Typography, Link, Divider } from '@mui/material'
-import { Globe, Share2, FileText, MessageSquare, Mail } from 'lucide-react'
-import ClaudeSpikeLogo from './ClaudeSpikeLogo'
+import { Globe, Share2, FileText, Mail } from 'lucide-react'
+import Logo from './Logo'
 import { cn } from '../utils/cn'
-
-const sitemap = [
-  { name: 'About Me', href: '#about' },
-  { name: 'Technical Skills', href: '#skills' },
-  { name: 'Work Experience', href: '#experience' },
-  { name: 'Featured Projects', href: '#projects' },
-  { name: 'Articles & Journal', href: '#blog' },
-  { name: 'Contact & Inquiries', href: '#contact' },
-]
+import { footer } from '../constants/footer'
 
 export default function Footer() {
   return (
@@ -25,7 +17,7 @@ export default function Footer() {
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 4, mb: 6 }}>
           {/* Brand Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <ClaudeSpikeLogo size={24} color="#faf9f5" />
+            <Logo size={24} color="#faf9f5" />
             <Box>
               <Typography
                 variant="h6"
@@ -42,7 +34,7 @@ export default function Footer() {
 
           {/* Quick Nav Links */}
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-            {sitemap.map((item) => (
+            {footer.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}

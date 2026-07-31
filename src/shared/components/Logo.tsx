@@ -1,16 +1,16 @@
 'use client'
 
-interface ClaudeSpikeLogoProps {
+interface LogoProps {
   size?: number
   color?: string
   className?: string
 }
 
-export default function ClaudeSpikeLogo({
+export default function Logo({
   size = 22,
   color = 'currentColor',
   className = '',
-}: ClaudeSpikeLogoProps) {
+}: LogoProps) {
   return (
     <svg
       width={size}
