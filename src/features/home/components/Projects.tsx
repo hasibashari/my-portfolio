@@ -38,7 +38,7 @@ export default function Projects() {
             Featured Engineering Projects.
           </Typography>
           <Typography variant="body1" sx={{ fontSize: '1.125rem', color: '#3d3d3a', lineHeight: 1.6 }}>
-            Explore selected web applications, API services, and user interfaces I've built.
+            Explore selected web applications, API services, and user interfaces I&apos;ve built.
           </Typography>
         </Box>
 

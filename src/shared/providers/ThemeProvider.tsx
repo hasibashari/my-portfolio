@@ -21,11 +21,13 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    const savedMode = localStorage.getItem('themeMode') as 'light' | 'dark'
-    if (savedMode) {
-      setMode(savedMode)
-    }
+    setTimeout(() => {
+      setMounted(true)
+      const savedMode = localStorage.getItem('themeMode') as 'light' | 'dark'
+      if (savedMode) {
+        setMode(savedMode)
+      }
+    }, 0)
   }, [])
 
   const colorMode = useMemo(

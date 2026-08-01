@@ -77,11 +77,11 @@ export default function Contact() {
                 mb: 2.5,
               }}
             >
-              Let's work together.
+              Let&apos;s work together.
             </Typography>
 
             <Typography variant="body1" sx={{ fontSize: '1.125rem', color: 'rgba(255, 255, 255, 0.9)', lineHeight: 1.6, maxWidth: '500px', mb: 4 }}>
-              Whether you have a new web application project, technical consulting inquiry, or a software engineering role, I'd love to connect.
+              Whether you have a new web application project, technical consulting inquiry, or a software engineering role, I&apos;d love to connect.
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -125,7 +125,7 @@ export default function Contact() {
                   Send a Message
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#6c6a64', mb: 3 }}>
-                  Fill out the form below and I'll respond within 24 hours.
+                  Fill out the form below and I&apos;ll respond within 24 hours.
                 </Typography>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
