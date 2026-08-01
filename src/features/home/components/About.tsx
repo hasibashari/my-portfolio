@@ -7,21 +7,21 @@ import { cn } from '../../../shared/utils/cn'
 const principles = [
   {
     icon: Code2,
-    title: 'Clean Architecture & Maintainability',
+    title: 'Clean Architecture & Scalability',
     description:
-      'Writing modular, well-typed TypeScript code with strict component boundaries, predictable state flow, and extensible software patterns.',
+      'Building robust microservices and modular APIs with Express and NestJS, ensuring maintainability and high availability under load.',
   },
   {
     icon: Gauge,
-    title: 'Performance & Web Vitals First',
+    title: 'Cloud & Infrastructure First',
     description:
-      'Optimizing SSR/SSG rendering pipelines, lazy asset loading, bundle size splitting, and achieving sub-second LCP speed.',
+      'Designing fault-tolerant cloud environments using Docker containerization and deploying resilient systems on AWS and GCP.',
   },
   {
     icon: Palette,
-    title: 'Thoughtful Editorial UI/UX Craft',
+    title: 'AI Integration & Data Pipelines',
     description:
-      'Designing intuitive interfaces with rich typography, fluid micro-interactions, responsive layouts, and WCAG accessibility standards.',
+      'Engineering secure and low-latency backend architectures prepared for AI processing, LLM integrations, and complex data streams.',
   },
 ]
 
@@ -60,7 +60,7 @@ export default function About() {
             Engineering digital experiences with precision & care.
           </Typography>
           <Typography variant="body1" sx={{ fontSize: '1.125rem', color: '#3d3d3a', lineHeight: 1.6 }}>
-            With a deep passion for frontend architecture and full-stack software development, I create web applications that balance technical complexity with effortless usability.
+            With a deep passion for system design and cloud architecture, I create scalable backend systems that balance technical complexity with seamless integration for modern AI applications.
           </Typography>
         </Box>
 

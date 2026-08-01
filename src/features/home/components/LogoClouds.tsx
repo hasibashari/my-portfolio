@@ -30,7 +30,7 @@ export default function LogoClouds() {
             mb: 4.5,
           }}
         >
-          CORE TECHNOLOGY STACK & TOOLING
+          TECHNOLOGIES I TRUST & USE
         </Typography>
 
         {/* Ultra-Clean Borderless Centered Logo Band */}

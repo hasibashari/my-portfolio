@@ -104,6 +104,7 @@ export default function Navbar() {
                 disableElevation
                 className={cn('bg-[#cc785c] hover:bg-[#a9583e] text-white font-medium px-4 py-2 rounded-md transition-all shadow-none')}
                 sx={{
+                  display: 'none',
                   bgcolor: '#cc785c',
                   color: '#ffffff',
                   borderRadius: '8px',
@@ -119,12 +120,12 @@ export default function Navbar() {
 
               {/* Mobile menu toggle */}
               <IconButton
-                aria-label="open drawer"
+                aria-label="toggle drawer"
                 edge="end"
-                onClick={() => setMobileMenuOpen(true)}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 sx={{ display: { xs: 'flex', md: 'none' }, color: '#141413' }}
               >
-                <Menu size={22} />
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </IconButton>
             </Box>
           </Toolbar>

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Box,
   Button,
@@ -13,19 +12,14 @@ import { cn } from '../../../shared/utils/cn'
 
 export default function Hero() {
 
-  const configSnippet = `// hasib.config.ts
-export const engineer = {
-  name: "Hasib Ashari",
-  title: "Software Engineer",
-  focus: [
-    "Frontend Architecture", "Full-Stack Web Systems"
-  ],
-  craft: [
-    "Clean Code", "Web Vitals Performance", 
-    "Editorial UI/UX"
-  ],
-  status: "Available",
-};
+  const configSnippet = `// profile.config.ts
+const engineer = {
+ mindset: "Scalability First",
+ principles: [
+   "High Availability", "Secure APIs", "AI Driven"
+ ],
+ currently: "Scaling AWS & GenAI"
+}
 `
 
   return (
@@ -60,7 +54,7 @@ export const engineer = {
               >
                 <Sparkles size={14} color="#cc785c" style={{ flexShrink: 0 }} />
                 <Typography variant="caption" sx={{ color: '#141413', fontWeight: 500, lineHeight: 1 }}>
-                  Open for Frontend & Full-Stack Roles
+                  Open for Backend & Cloud Engineering Roles
                 </Typography>
               </Box>
             </Box>
@@ -78,7 +72,7 @@ export const engineer = {
                 mb: 3,
               }}
             >
-              Hi, I'm Hasib Ashari. Building high-performance web products.
+              Hi, I'm Hasib Ashari. Building highly scalable cloud systems.
             </Typography>
 
             {/* Body Description */}
@@ -91,7 +85,7 @@ export const engineer = {
                 mb: 4.5,
               }}
             >
-              Software Engineer specializing in modern frontend architectures, React/Next.js ecosystems, and intuitive user experiences built with high engineering craft.
+              Backend & Cloud Engineer specializing in scalable architectures, cloud infrastructure (AWS/GCP), and building robust API layers for AI-driven applications.
             </Typography>
 
             {/* CTA Action Buttons */}
@@ -155,36 +149,36 @@ export const engineer = {
             >
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h5" className="font-serif-display" sx={{ color: '#cc785c', fontWeight: 600, fontSize: '1.25rem' }}>
-                  5+
+                  2+
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
-                  Years Exp
+                  Years Coding
                 </Typography>
               </Box>
               <Box sx={{ textAlign: 'center', borderLeft: '1px dashed rgba(250, 249, 245, 0.12)', borderRight: '1px dashed rgba(250, 249, 245, 0.12)' }}>
                 <Typography variant="h5" className="font-serif-display" sx={{ color: '#e8a55a', fontWeight: 600, fontSize: '1.25rem' }}>
-                  30+
+                  10+
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
-                  Web Apps
+                  Projects Built
                 </Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h5" className="font-serif-display" sx={{ color: '#5db8a6', fontWeight: 600, fontSize: '1.25rem' }}>
-                  99%
+                  99.9%
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
-                  Core Vitals
+                  Uptime SLA
                 </Typography>
               </Box>
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant="caption" sx={{ color: '#5db8a6', display: 'flex', alignItems: 'center', gap: 1, fontFamily: 'var(--font-mono)' }}>
-                <Code2 size={14} style={{ flexShrink: 0 }} /> Frontend Specialist
+                <Code2 size={14} style={{ flexShrink: 0 }} /> Backend AI Specialist
               </Typography>
               <Typography variant="caption" sx={{ color: '#a09d96', fontFamily: 'var(--font-mono)' }}>
-                TypeScript 5.0
+                Docker & TypeScript
               </Typography>
             </Box>
           </Terminal>

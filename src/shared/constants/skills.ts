@@ -1,28 +1,28 @@
-import { Layout, Server, Wrench } from 'lucide-react'
+import { Server, Cloud, Database } from 'lucide-react'
 
 export const skills = [
   {
-    name: 'Frontend Mastery',
+    name: 'Backend & AI Integrations',
     badge: 'EXPERT',
     badgeColor: '#cc785c',
-    description: 'Building modern, accessible, and responsive user interfaces with type safety and optimal rendering performance.',
-    skills: ['React.js 19', 'Next.js 15 (App Router)', 'TypeScript', 'Tailwind CSS', 'Material UI (MUI)', 'Zustand / Redux Toolkit'],
-    icon: Layout,
+    description: 'Building robust microservices and integrating LLM APIs into modern scalable applications.',
+    skills: ['Node.js & Express.js', 'NestJS Architecture', 'Spring Boot (Familiar)', 'OpenAI & Claude APIs', 'REST & GraphQL APIs', 'Redis Caching'],
+    icon: Server,
   },
   {
-    name: 'UI & Styling Ecosystem',
+    name: 'Cloud Infrastructure & DevOps',
     badge: 'ADVANCED',
     badgeColor: '#e8a55a',
-    description: 'Designing scalable component libraries, accessible WCAG themes, and fluid micro-animations.',
-    skills: ['Design Systems Architecture', 'CSS-in-JS & Emotion', 'Framer Motion & Transitions', 'Responsive Grid & Flex Layouts', 'Custom MUI Theme Customization'],
-    icon: Wrench,
+    description: 'Designing fault-tolerant cloud environments and automated deployment pipelines.',
+    skills: ['AWS (EC2, S3, RDS)', 'Google Cloud Platform (GCP)', 'Docker Containerization', 'CI/CD Pipelines', 'Nginx & Load Balancing'],
+    icon: Cloud,
   },
   {
-    name: 'Backend & Data APIs',
+    name: 'Database & System Architecture',
     badge: 'PROFICIENT',
     badgeColor: '#5db8a6',
-    description: 'Designing robust server architecture, REST/GraphQL APIs, and database schemas for seamless data flow.',
-    skills: ['Node.js & Express', 'PostgreSQL & SQL', 'RESTful API Architecture', 'Prisma ORM', 'GraphQL & Apollo', 'Redis Caching'],
-    icon: Server,
+    description: 'Designing scalable database schemas and optimizing query performance for data-intensive systems.',
+    skills: ['PostgreSQL & Relational DBs', 'Prisma ORM & TypeORM', 'Microservices Architecture', 'Secure API Design', 'Performance Tuning'],
+    icon: Database,
   },
 ]

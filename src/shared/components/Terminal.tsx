@@ -60,6 +60,13 @@ export default function Terminal({ filename = 'terminal', codeSnippet, children,
 
       {/* Terminal Body */}
       <Box sx={{ p: { xs: 3, sm: 4 }, bgcolor: '#1f1e1b', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {/* Optional Children */}
+        {children && (
+          <Box sx={{ mb: codeSnippet ? 4 : 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {children}
+          </Box>
+        )}
+
         {/* Code Snippet */}
         <Box
           component="pre"
@@ -69,20 +76,13 @@ export default function Terminal({ filename = 'terminal', codeSnippet, children,
             lineHeight: 1.65,
             color: '#faf9f5',
             m: 0,
-            mb: children ? 4 : 0,
+            mt: children ? 'auto' : 0,
             overflowX: 'auto',
             whiteSpace: 'pre',
           }}
         >
           <code>{codeSnippet}</code>
         </Box>
-
-        {/* Optional Children */}
-        {children && (
-          <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {children}
-          </Box>
-        )}
       </Box>
     </Box>
   )

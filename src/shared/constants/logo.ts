@@ -1,33 +1,18 @@
 export const logo = [
   {
-    name: 'React.js',
-    logoUrl: 'https://cdn.simpleicons.org/react/61DAFB',
-    tag: 'React.js • Frontend Library',
+    name: 'Docker',
+    logoUrl: 'https://cdn.simpleicons.org/docker/2496ED',
+    tag: 'Docker • Containerization',
   },
   {
-    name: 'Next.js 15',
-    logoUrl: 'https://cdn.simpleicons.org/nextdotjs/000000',
-    tag: 'Next.js 15 • Full-Stack Framework',
+    name: 'Amazon AWS',
+    logoUrl: 'https://shorturl.at/nlJVA',
+    tag: 'AWS • Cloud Infrastructure',
   },
   {
-    name: 'TypeScript',
-    logoUrl: 'https://cdn.simpleicons.org/typescript/3178C6',
-    tag: 'TypeScript • Type Safety',
-  },
-  {
-    name: 'Tailwind CSS',
-    logoUrl: 'https://cdn.simpleicons.org/tailwindcss/06B6D4',
-    tag: 'Tailwind CSS • Styling System',
-  },
-  {
-    name: 'Material UI',
-    logoUrl: 'https://cdn.simpleicons.org/mui/007FFF',
-    tag: 'Material UI • Component Library',
-  },
-  {
-    name: 'Node.js',
-    logoUrl: 'https://cdn.simpleicons.org/nodedotjs/5FA04E',
-    tag: 'Node.js • Backend Runtime',
+    name: 'Google Cloud',
+    logoUrl: 'https://cdn.simpleicons.org/googlecloud/4285F4',
+    tag: 'GCP • Cloud Infrastructure',
   },
   {
     name: 'Express.js',
@@ -35,8 +20,23 @@ export const logo = [
     tag: 'Express.js • API Framework',
   },
   {
+    name: 'NestJS',
+    logoUrl: 'https://cdn.simpleicons.org/nestjs/E0234E',
+    tag: 'NestJS • Enterprise API',
+  },
+  {
+    name: 'Spring Boot',
+    logoUrl: 'https://cdn.simpleicons.org/springboot/6DB33F',
+    tag: 'Spring Boot • Java Framework',
+  },
+  {
     name: 'PostgreSQL',
     logoUrl: 'https://cdn.simpleicons.org/postgresql/4169E1',
-    tag: 'PostgreSQL • Database Engine',
+    tag: 'PostgreSQL • Relational DB',
+  },
+  {
+    name: 'TypeScript',
+    logoUrl: 'https://cdn.simpleicons.org/typescript/3178C6',
+    tag: 'TypeScript • Type Safety',
   },
 ]

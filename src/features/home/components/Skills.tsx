@@ -15,7 +15,7 @@ export default function Skills() {
             className="font-serif-display"
             sx={{ color: '#cc785c', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
           >
-            TECHNICAL STACK
+            CAPABILITIES & EXPERTISE
           </Typography>
           <Typography
             variant="h2"
