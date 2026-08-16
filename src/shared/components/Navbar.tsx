@@ -18,7 +18,7 @@ import {
 import { Menu, X, Mail } from 'lucide-react'
 import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import Logo from './Logo'
-import { cn } from '../utils/cn'
+import ScrollProgress from './ScrollProgress'
 import { nav } from '../constants/nav'
 
 export default function Navbar() {
@@ -63,20 +63,21 @@ export default function Navbar() {
 
   return (
     <>
+      <ScrollProgress />
       <AppBar
         position="sticky"
         elevation={0}
         sx={{
           top: 0,
-          bgcolor: isScrolled ? 'rgba(250, 249, 245, 0.85)' : '#faf9f5',
+          bgcolor: isScrolled ? 'rgba(250, 249, 245, 0.85)' : 'var(--color-canvas)',
           backdropFilter: isScrolled ? 'blur(12px)' : 'none',
           borderBottom: isScrolled ? '1px solid rgba(230, 223, 216, 0.8)' : '1px solid transparent',
           boxShadow: isScrolled ? '0 4px 30px -10px rgba(0,0,0,0.1)' : 'none',
-          color: '#141413',
+          color: 'var(--color-ink)',
           transition: 'all 0.3s ease-in-out',
         }}
       >
-        <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2.5, sm: 4, lg: 6 } }}>
+        <Container maxWidth="lg" disableGutters sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <Toolbar disableGutters sx={{ height: 64, justifyContent: 'space-between' }}>
             {/* Left: Brand Logo & Portfolio Name */}
             <Box component="a" href="#" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none' }}>
@@ -90,7 +91,7 @@ export default function Navbar() {
                     fontSize: '1.1875rem',
                     lineHeight: 1.1,
                     letterSpacing: '-0.02em',
-                    color: '#141413',
+                    color: 'var(--color-ink)',
                   }}
                 >
                   Hasib Ashari
@@ -107,14 +108,15 @@ export default function Navbar() {
                     key={item.name}
                     component="a"
                     href={item.href}
-                    className={cn('text-sm font-medium transition-colors text-decoration-none')}
                     sx={{
                       textDecoration: 'none',
                       fontSize: '0.875rem',
+                      fontWeight: 500,
                       position: 'relative',
-                      color: isActive ? '#141413' : '#3d3d3a',
+                      color: isActive ? 'var(--color-ink)' : 'var(--color-body)',
+                      transition: 'color 0.2s ease-in-out',
                       '&:hover': {
-                        color: '#141413',
+                        color: 'var(--color-ink)',
                       },
                       '&::after': {
                         content: '""',
@@ -124,7 +126,7 @@ export default function Navbar() {
                         bottom: '-4px',
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        backgroundColor: '#cc785c',
+                        backgroundColor: 'var(--color-primary)',
                         transition: 'width 0.3s ease-in-out',
                       },
                       '&:hover::after': {
@@ -145,17 +147,17 @@ export default function Navbar() {
                 href="#contact"
                 variant="contained"
                 disableElevation
-                className={cn('bg-[#cc785c] hover:bg-[#a9583e] text-white font-medium px-4 py-2 rounded-md transition-all shadow-none')}
                 sx={{
                   display: { xs: 'none', md: 'inline-flex' },
-                  bgcolor: '#cc785c',
-                  color: '#ffffff',
+                  bgcolor: 'var(--color-primary)',
+                  color: 'var(--color-on-primary)',
                   borderRadius: '8px',
                   textTransform: 'none',
                   fontWeight: 500,
                   px: 2.5,
                   py: 1,
-                  '&:hover': { bgcolor: '#a9583e' },
+                  boxShadow: 'none',
+                  '&:hover': { bgcolor: 'var(--color-primary-active)' },
                 }}
               >
                 Hire Me
@@ -166,7 +168,7 @@ export default function Navbar() {
                 aria-label="toggle drawer"
                 edge="end"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                sx={{ display: { xs: 'flex', md: 'none' }, color: '#141413' }}
+                sx={{ display: { xs: 'flex', md: 'none' }, color: 'var(--color-ink)' }}
               >
                 {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </IconButton>
@@ -186,7 +188,7 @@ export default function Navbar() {
             sx: {
               width: '100%',
               maxWidth: 320,
-              bgcolor: '#faf9f5',
+              bgcolor: 'var(--color-canvas)',
               p: 3,
               backgroundImage: 'none',
               display: 'flex',
@@ -203,24 +205,24 @@ export default function Navbar() {
             disableElevation
             onClick={() => setMobileMenuOpen(false)}
             sx={{
-              bgcolor: '#cc785c',
-              color: '#ffffff',
+              bgcolor: 'var(--color-primary)',
+              color: 'var(--color-on-primary)',
               borderRadius: '8px',
               textTransform: 'none',
               px: 3,
               py: 1,
               fontWeight: 500,
-              '&:hover': { bgcolor: '#a9583e' },
+              '&:hover': { bgcolor: 'var(--color-primary-active)' },
             }}
           >
             Hire Me <Mail size={16} style={{ marginLeft: 8 }} />
           </Button>
-          <IconButton onClick={() => setMobileMenuOpen(false)} sx={{ color: '#141413' }}>
+          <IconButton onClick={() => setMobileMenuOpen(false)} sx={{ color: 'var(--color-ink)' }}>
             <X size={24} />
           </IconButton>
         </Box>
 
-        <List sx={{ pt: 1, borderBottom: '1px solid #e6dfd8' }}>
+        <List sx={{ pt: 1, borderBottom: '1px solid var(--color-hairline)' }}>
           {nav.map((item) => {
             const isActive = activeSection === item.href.substring(1)
             return (
@@ -231,13 +233,13 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   sx={{
                     borderRadius: 1,
-                    bgcolor: isActive ? '#efe9de' : 'transparent',
-                    '&:hover': { bgcolor: '#efe9de' }
+                    bgcolor: isActive ? 'var(--color-surface-card)' : 'transparent',
+                    '&:hover': { bgcolor: 'var(--color-surface-card)' }
                   }}
                 >
                   <ListItemText
                     primary={item.name}
-                    slotProps={{ primary: { sx: { fontWeight: 500, color: isActive ? '#cc785c' : '#141413' } } }}
+                    slotProps={{ primary: { sx: { fontWeight: 500, color: isActive ? 'var(--color-primary)' : 'var(--color-ink)' } } }}
                   />
                 </ListItemButton>
               </ListItem>
@@ -247,17 +249,17 @@ export default function Navbar() {
 
         {/* Drawer Footer / Socials */}
         <Box sx={{ mt: 'auto', pt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Typography variant="caption" sx={{ color: '#a09d96', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+          <Typography variant="caption" sx={{ color: 'var(--color-muted-soft)', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
             Let&apos;s Connect
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <IconButton component="a" href="https://github.com" target="_blank" sx={{ color: '#3d3d3a', bgcolor: '#efe9de', borderRadius: '8px', '&:hover': { bgcolor: '#e6dfd8', color: '#141413' } }}>
+            <IconButton component="a" href="https://github.com" target="_blank" sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
               <FaGithub size={20} />
             </IconButton>
-            <IconButton component="a" href="https://linkedin.com" target="_blank" sx={{ color: '#3d3d3a', bgcolor: '#efe9de', borderRadius: '8px', '&:hover': { bgcolor: '#e6dfd8', color: '#141413' } }}>
+            <IconButton component="a" href="https://linkedin.com" target="_blank" sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
               <FaLinkedin size={20} />
             </IconButton>
-            <IconButton component="a" href="#contact" onClick={() => setMobileMenuOpen(false)} sx={{ color: '#3d3d3a', bgcolor: '#efe9de', borderRadius: '8px', '&:hover': { bgcolor: '#e6dfd8', color: '#141413' } }}>
+            <IconButton component="a" href="#contact" onClick={() => setMobileMenuOpen(false)} sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
               <Mail size={20} />
             </IconButton>
           </Box>

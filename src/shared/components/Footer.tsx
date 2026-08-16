@@ -1,79 +1,236 @@
 'use client'
 
 import { Box, Container, Typography, Link, Divider } from '@mui/material'
-import { Globe, Share2, FileText, Mail } from 'lucide-react'
+import { ArrowUp, ArrowUpRight, Mail, Globe } from 'lucide-react'
+import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import Logo from './Logo'
-import { cn } from '../utils/cn'
-import { footer } from '../constants/footer'
+import { footerColumns } from '../constants/footer'
 
 export default function Footer() {
   return (
     <Box
       component="footer"
-      className={cn('bg-[#181715] text-[#a09d96] py-16')}
-      sx={{ bgcolor: '#181715', color: '#a09d96', pt: 8, pb: 6 }}
+      sx={{
+        bgcolor: 'var(--color-surface-dark)',
+        color: 'var(--color-on-dark-soft)',
+        pt: { xs: 8, md: 10 },
+        pb: { xs: 5, md: 6 },
+      }}
     >
-      <Container maxWidth="xl" sx={{ px: { xs: 3, sm: 4, lg: 6 } }}>
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 4, mb: 6 }}>
-          {/* Brand Header */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Logo size={24} color="#faf9f5" />
-            <Box>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+        {/* 4-Column Responsive Grid */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: '1.4fr 1fr 1fr 1fr' },
+            gap: { xs: 5, sm: 6, md: 4 },
+            mb: { xs: 6, md: 8 },
+          }}
+        >
+          {/* Column 1: Brand / Bio / Status */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Logo size={24} color="#faf9f5" />
               <Typography
                 variant="h6"
                 className="font-serif-display"
-                sx={{ fontWeight: 600, color: '#faf9f5', fontSize: '1.25rem', letterSpacing: '-0.02em' }}
+                sx={{ fontWeight: 600, color: 'var(--color-on-dark)', fontSize: '1.25rem', letterSpacing: '-0.02em' }}
               >
                 Hasib Ashari
               </Typography>
-              <Typography variant="caption" sx={{ color: '#a09d96', fontSize: '0.8125rem' }}>
-                Software Engineer • Crafting Thoughtful Digital Products
+            </Box>
+
+            <Typography variant="body2" sx={{ color: 'var(--color-on-dark-soft)', fontSize: '0.875rem', lineHeight: 1.6, maxWidth: '320px' }}>
+              Backend & Cloud Engineer specializing in scalable architectures, cloud infrastructure (AWS/GCP), and building robust API layers.
+            </Typography>
+
+            {/* Status Indicator */}
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 1.5,
+                py: 0.6,
+                borderRadius: '9999px',
+                bgcolor: 'rgba(250, 249, 245, 0.05)',
+                border: '1px solid rgba(250, 249, 245, 0.1)',
+                width: 'fit-content',
+              }}
+            >
+              <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: 'var(--color-success)' }} />
+              <Typography variant="caption" sx={{ color: 'var(--color-on-dark-soft)', fontSize: '0.75rem', fontWeight: 500 }}>
+                Available for new opportunities
               </Typography>
             </Box>
           </Box>
 
-          {/* Quick Nav Links */}
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-            {footer.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                underline="none"
-                sx={{ color: '#a09d96', fontSize: '0.875rem', '&:hover': { color: '#faf9f5' }, transition: 'color 0.2s' }}
-              >
-                {item.name}
-              </Link>
-            ))}
+          {/* Column 2: Navigation */}
+          <Box>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'var(--color-on-dark)',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                display: 'block',
+                mb: 2.5,
+              }}
+            >
+              Navigation
+            </Typography>
+            <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 1.75 }}>
+              {footerColumns.navigation.map((item) => (
+                <Box component="li" key={item.name}>
+                  <Link
+                    href={item.href}
+                    underline="none"
+                    sx={{
+                      color: 'var(--color-on-dark-soft)',
+                      fontSize: '0.875rem',
+                      transition: 'color 0.2s ease-in-out',
+                      '&:hover': { color: 'var(--color-on-dark)' },
+                    }}
+                  >
+                    {item.name}
+                  </Link>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Column 3: Resources & Writing */}
+          <Box>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'var(--color-on-dark)',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                display: 'block',
+                mb: 2.5,
+              }}
+            >
+              Resources
+            </Typography>
+            <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 1.75 }}>
+              {footerColumns.resources.map((item) => (
+                <Box component="li" key={item.name}>
+                  <Link
+                    href={item.href}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noopener noreferrer' : undefined}
+                    underline="none"
+                    sx={{
+                      color: 'var(--color-on-dark-soft)',
+                      fontSize: '0.875rem',
+                      transition: 'color 0.2s ease-in-out',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      '&:hover': { color: 'var(--color-on-dark)' },
+                    }}
+                  >
+                    {item.name}
+                    {item.external && <ArrowUpRight size={13} style={{ opacity: 0.7 }} />}
+                  </Link>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Column 4: Connect & Work */}
+          <Box>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'var(--color-on-dark)',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                display: 'block',
+                mb: 2.5,
+              }}
+            >
+              Connect & Work
+            </Typography>
+            <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 1.75 }}>
+              {footerColumns.contact.map((item) => (
+                <Box component="li" key={item.name}>
+                  <Link
+                    href={item.href}
+                    underline="none"
+                    sx={{
+                      color: 'var(--color-on-dark-soft)',
+                      fontSize: '0.875rem',
+                      transition: 'color 0.2s ease-in-out',
+                      '&:hover': { color: 'var(--color-on-dark)' },
+                    }}
+                  >
+                    {item.name}
+                  </Link>
+                </Box>
+              ))}
+            </Box>
           </Box>
         </Box>
 
-        <Divider sx={{ borderColor: 'rgba(250, 249, 245, 0.1)', mb: 4 }} />
+        {/* Divider */}
+        <Divider sx={{ borderColor: 'rgba(250, 249, 245, 0.08)', mb: 4 }} />
 
+        {/* Bottom Bar: Copyright, Social Media & Back to Top */}
         <Box
           sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: { xs: 'column-reverse', sm: 'row' },
             justifyContent: 'space-between',
             alignItems: { xs: 'flex-start', sm: 'center' },
-            gap: 2,
+            gap: 2.5,
           }}
         >
-          <Typography variant="body2" sx={{ color: '#8e8b82', fontSize: '0.8125rem' }}>
+          {/* Copyright */}
+          <Typography variant="body2" sx={{ color: 'var(--color-muted-soft)', fontSize: '0.8125rem' }}>
             &copy; {new Date().getFullYear()} Hasib Ashari. Built with Claude Editorial Design System.
           </Typography>
 
-          <Box sx={{ display: 'flex', gap: 2.5, alignItems: 'center' }}>
-            <Link href="mailto:hasib.ashari@example.com" sx={{ color: '#a09d96', '&:hover': { color: '#faf9f5' } }} aria-label="Email">
-              <Mail size={18} />
-            </Link>
-            <Link href="https://github.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#a09d96', '&:hover': { color: '#faf9f5' } }} aria-label="Global Portfolio">
-              <Globe size={18} />
-            </Link>
-            <Link href="#contact" sx={{ color: '#a09d96', '&:hover': { color: '#faf9f5' } }} aria-label="Share">
-              <Share2 size={18} />
-            </Link>
-            <Link href="#blog" sx={{ color: '#a09d96', '&:hover': { color: '#faf9f5' } }} aria-label="Articles">
-              <FileText size={18} />
+          {/* Social Media Links & Back to Top */}
+          <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Link href="mailto:hasib.ashari@example.com" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="Email">
+                <Mail size={17} />
+              </Link>
+              <Link href="https://github.com" target="_blank" rel="noopener noreferrer" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="GitHub">
+                <FaGithub size={17} />
+              </Link>
+              <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="LinkedIn">
+                <FaLinkedin size={17} />
+              </Link>
+              <Link href="#hero" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="Global Portfolio">
+                <Globe size={17} />
+              </Link>
+            </Box>
+
+            <Box sx={{ width: '1px', height: '14px', bgcolor: 'rgba(250, 249, 245, 0.15)', display: { xs: 'none', sm: 'block' } }} />
+
+            <Link
+              href="#hero"
+              underline="none"
+              sx={{
+                color: 'var(--color-on-dark-soft)',
+                fontSize: '0.8125rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                transition: 'color 0.2s ease-in-out',
+                '&:hover': { color: 'var(--color-on-dark)' },
+              }}
+            >
+              Back to top <ArrowUp size={13} />
             </Link>
           </Box>
         </Box>
