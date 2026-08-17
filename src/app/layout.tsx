@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${cormorantSerif.variable} ${interSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#faf9f5] text-[#141413]">
+      <body className="min-h-full flex flex-col font-sans bg-(--color-canvas) text-(--color-ink)">
         <ThemeProvider>
           {children}
         </ThemeProvider>

@@ -17,14 +17,32 @@ import {
 } from '@mui/material'
 import { Menu, X, Mail } from 'lucide-react'
 import { FaGithub, FaLinkedin } from 'react-icons/fa'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import Logo from './Logo'
-import ScrollProgress from './ScrollProgress'
 import { nav } from '../constants/nav'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const pathname = usePathname()
+
+  const isHomePage = pathname === '/'
+  const isProjectsPage = pathname === '/projects' || pathname.startsWith('/projects')
+  const isBlogPage = pathname === '/blog' || pathname.startsWith('/blog')
+  const getHref = (href: string) => (isHomePage ? href : `/${href}`)
+
+  const isItemActive = (href: string) => {
+    const sectionId = href.startsWith('#') ? href.substring(1) : href
+    if (sectionId === 'projects' && isProjectsPage) {
+      return true
+    }
+    if (sectionId === 'blog' && isBlogPage) {
+      return true
+    }
+    return isHomePage && activeSection === sectionId
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +53,8 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
+    if (!isHomePage) return
+
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -59,11 +79,10 @@ export default function Navbar() {
     })
 
     return () => observer.disconnect()
-  }, [])
+  }, [isHomePage])
 
   return (
     <>
-      <ScrollProgress />
       <AppBar
         position="sticky"
         elevation={0}
@@ -80,7 +99,7 @@ export default function Navbar() {
         <Container maxWidth="lg" disableGutters sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <Toolbar disableGutters sx={{ height: 64, justifyContent: 'space-between' }}>
             {/* Left: Brand Logo & Portfolio Name */}
-            <Box component="a" href="#" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none' }}>
+            <Box component={Link} href="/" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none' }}>
               <Logo size={22} color="#141413" />
               <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography
@@ -102,12 +121,12 @@ export default function Navbar() {
             {/* Desktop Navigation Links */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3.5 }}>
               {nav.map((item) => {
-                const isActive = activeSection === item.href.substring(1)
+                const isActive = isItemActive(item.href)
                 return (
                   <Typography
                     key={item.name}
                     component="a"
-                    href={item.href}
+                    href={getHref(item.href)}
                     sx={{
                       textDecoration: 'none',
                       fontSize: '0.875rem',
@@ -144,7 +163,7 @@ export default function Navbar() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Button
                 component="a"
-                href="#contact"
+                href={getHref('#contact')}
                 variant="contained"
                 disableElevation
                 sx={{
@@ -200,7 +219,7 @@ export default function Navbar() {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
           <Button
             component="a"
-            href="#contact"
+            href={getHref('#contact')}
             variant="contained"
             disableElevation
             onClick={() => setMobileMenuOpen(false)}
@@ -224,12 +243,12 @@ export default function Navbar() {
 
         <List sx={{ pt: 1, borderBottom: '1px solid var(--color-hairline)' }}>
           {nav.map((item) => {
-            const isActive = activeSection === item.href.substring(1)
+            const isActive = isItemActive(item.href)
             return (
               <ListItem key={item.name} disablePadding sx={{ mb: 1 }}>
                 <ListItemButton
                   component="a"
-                  href={item.href}
+                  href={getHref(item.href)}
                   onClick={() => setMobileMenuOpen(false)}
                   sx={{
                     borderRadius: 1,
@@ -259,7 +278,7 @@ export default function Navbar() {
             <IconButton component="a" href="https://linkedin.com" target="_blank" sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
               <FaLinkedin size={20} />
             </IconButton>
-            <IconButton component="a" href="#contact" onClick={() => setMobileMenuOpen(false)} sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
+            <IconButton component="a" href={getHref('#contact')} onClick={() => setMobileMenuOpen(false)} sx={{ color: 'var(--color-body)', bgcolor: 'var(--color-surface-card)', borderRadius: '8px', '&:hover': { bgcolor: 'var(--color-hairline)', color: 'var(--color-ink)' } }}>
               <Mail size={20} />
             </IconButton>
           </Box>

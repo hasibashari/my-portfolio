@@ -173,7 +173,7 @@ export default function ArchitectureCanvas() {
           ctx.fillStyle = `rgba(204, 120, 92, ${0.25 + intensity * 0.75})`
         } else {
           // Idle state: subtle muted hairline dot
-          ctx.fillStyle = 'rgba(20, 20, 19, 0.12)'
+          ctx.fillStyle = 'rgba(20, 20, 19, 0.055)'
         }
         ctx.fill()
       }
@@ -211,7 +211,7 @@ export default function ArchitectureCanvas() {
           const dot = dots[i]
           ctx.beginPath()
           ctx.arc(dot.x, dot.y, BASE_DOT_RADIUS, 0, Math.PI * 2)
-          ctx.fillStyle = 'rgba(20, 20, 19, 0.12)'
+          ctx.fillStyle = 'rgba(20, 20, 19, 0.055)'
           ctx.fill()
         }
         isRunning = false

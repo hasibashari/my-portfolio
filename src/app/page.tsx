@@ -1,29 +1,14 @@
-import {
-  About,
-  Blog,
-  Contact,
-  Experience,
-  Hero,
-  LogoClouds,
-  Projects,
-  Skills,
-} from '../features/home'
-import Footer from '../shared/components/Footer'
+import { HomeView } from '../features/home'
 import Navbar from '../shared/components/Navbar'
+import Footer from '../shared/components/Footer'
 
 export default function Home() {
   return (
-    <main style={{ backgroundColor: '#111827', minHeight: '100vh' }}>
+    <main style={{ backgroundColor: 'var(--color-canvas)', minHeight: '100vh' }}>
       <Navbar />
-      <Hero />
-      <LogoClouds />
-      <About />
-      <Skills />
-      <Experience />
-      <Projects />
-      <Blog />
-      <Contact />
+      <HomeView />
       <Footer />
     </main>
   )
 }
+

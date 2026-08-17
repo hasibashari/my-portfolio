@@ -13,7 +13,7 @@ export default function Blog() {
     <Box
       id="blog"
       sx={{
-        bgcolor: 'var(--color-canvas)',
+        bgcolor: 'var(--color-surface-soft)',
         py: { xs: 8, sm: 10, md: 12 },
         borderTop: '1px solid var(--color-hairline)',
       }}
@@ -55,7 +55,7 @@ export default function Blog() {
             <Card
               elevation={0}
               sx={{
-                bgcolor: 'var(--color-surface-card)',
+                bgcolor: 'var(--color-canvas)',
                 borderRadius: '12px',
                 border: '1px solid var(--color-hairline)',
                 p: { xs: 2.5, sm: 3.5, md: 4.5 },
@@ -117,7 +117,7 @@ export default function Blog() {
 
                 <Button
                   component="a"
-                  href="#"
+                  href={`/blog/${featuredPost.slug}`}
                   variant="text"
                   endIcon={<ArrowRight size={16} />}
                   sx={{ color: 'var(--color-primary)', fontWeight: 600, textTransform: 'none', '&:hover': { bgcolor: 'transparent', color: 'var(--color-primary-active)' } }}
@@ -189,7 +189,7 @@ export default function Blog() {
                     </Typography>
                     <Button
                       component="a"
-                      href="#"
+                      href={`/blog/${post.slug}`}
                       variant="text"
                       size="small"
                       endIcon={<ArrowRight size={14} />}

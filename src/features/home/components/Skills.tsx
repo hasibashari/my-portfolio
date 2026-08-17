@@ -59,7 +59,7 @@ export default function Skills() {
               <ScrollReveal key={category.name} variant="zoom-in" delay={idx * 0.12} style={{ height: '100%' }}>
                 <Box
                   sx={{
-                    bgcolor: 'var(--color-canvas)',
+                    bgcolor: 'var(--color-surface-card)',
                     borderRadius: '12px',
                     border: '1px solid var(--color-hairline)',
                     p: { xs: 2.5, sm: 3.5, md: 4 },
@@ -82,7 +82,7 @@ export default function Skills() {
                           width: 44,
                           height: 44,
                           borderRadius: '10px',
-                          bgcolor: 'var(--color-surface-card)',
+                          bgcolor: 'var(--color-canvas)',
                           border: '1px solid var(--color-hairline)',
                           display: 'grid',
                           placeItems: 'center',
@@ -94,7 +94,7 @@ export default function Skills() {
                       <Chip
                         label={category.badge}
                         sx={{
-                          bgcolor: 'var(--color-surface-card)',
+                          bgcolor: 'var(--color-canvas)',
                           color: 'var(--color-ink)',
                           fontWeight: 600,
                           fontSize: '0.75rem',
