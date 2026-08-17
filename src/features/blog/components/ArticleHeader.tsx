@@ -1,8 +1,8 @@
 'use client'
 
-import { Box, Chip, Typography, Button } from '@mui/material'
-import { ArrowLeft, Calendar, Clock } from 'lucide-react'
-import Link from 'next/link'
+import { Box, Chip, Typography } from '@mui/material'
+import { Calendar, Clock } from 'lucide-react'
+import BackLink from '../../../shared/components/BackLink'
 import { BlogPost } from '../../../shared/constants/blog'
 
 interface ArticleHeaderProps {
@@ -13,29 +13,13 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
   return (
     <Box sx={{ mb: { xs: 5, md: 7 } }}>
       {/* Back Button */}
-      <Button
-        component={Link}
+      <BackLink
         href="/blog"
-        startIcon={<ArrowLeft size={16} />}
-        sx={{
-          color: 'var(--color-muted)',
-          textTransform: 'none',
-          fontWeight: 500,
-          fontSize: '0.875rem',
-          mb: { xs: 3, md: 4 },
-          px: 1.5,
-          py: 0.5,
-          borderRadius: '6px',
-          bgcolor: 'var(--color-surface-soft)',
-          border: '1px solid var(--color-hairline)',
-          '&:hover': {
-            bgcolor: 'var(--color-hairline)',
-            color: 'var(--color-ink)',
-          },
-        }}
-      >
-        Back to Articles
-      </Button>
+        label="Back to Articles"
+        variant="button"
+        withReveal={false}
+        sx={{ mb: { xs: 3, md: 4 } }}
+      />
 
       {/* Meta Chips */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 2.5 }}>

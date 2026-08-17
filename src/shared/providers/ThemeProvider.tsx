@@ -1,7 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, useMemo, useEffect, ReactNode } from 'react'
-import { ThemeProvider as MUIThemeProvider, CssBaseline } from '@mui/material'
+import { createContext, useContext, useState, useMemo, ReactNode, useSyncExternalStore } from 'react'
+import { ThemeProvider as MUIThemeProvider } from '@mui/material'
 import { lightTheme, darkTheme } from '../lib/theme'
 
 type ThemeContextType = {
@@ -16,29 +16,39 @@ export const ThemeContext = createContext<ThemeContextType>({
 
 export const useThemeContext = () => useContext(ThemeContext)
 
-export default function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<'light' | 'dark'>('dark')
-  const [mounted, setMounted] = useState(false)
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
 
-  useEffect(() => {
-    setTimeout(() => {
-      setMounted(true)
-      const savedMode = localStorage.getItem('themeMode') as 'light' | 'dark'
-      if (savedMode) {
-        setMode(savedMode)
-      }
-    }, 0)
-  }, [])
+function getClientSnapshot(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'dark'
+  const saved = localStorage.getItem('themeMode')
+  return saved === 'light' ? 'light' : 'dark'
+}
+
+function getServerSnapshot(): 'light' | 'dark' {
+  return 'dark'
+}
+
+export default function ThemeProvider({ children }: { children: ReactNode }) {
+  const storeMode = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot)
+  const [localMode, setLocalMode] = useState<'light' | 'dark' | null>(null)
+
+  const mode = localMode ?? storeMode
 
   const colorMode = useMemo(
     () => ({
       mode,
       toggleColorMode: () => {
-        setMode((prevMode) => {
-          const newMode = prevMode === 'light' ? 'dark' : 'light'
+        const newMode = mode === 'light' ? 'dark' : 'light'
+        setLocalMode(newMode)
+        try {
           localStorage.setItem('themeMode', newMode)
-          return newMode
-        })
+          window.dispatchEvent(new Event('storage'))
+        } catch {
+          // localStorage disabled/restricted
+        }
       },
     }),
     [mode],
@@ -46,15 +56,9 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
 
   const theme = useMemo(() => (mode === 'light' ? lightTheme : darkTheme), [mode])
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return null
-  }
-
   return (
     <ThemeContext.Provider value={colorMode}>
       <MUIThemeProvider theme={theme}>
-        <CssBaseline />
         {children}
       </MUIThemeProvider>
     </ThemeContext.Provider>

@@ -28,16 +28,19 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      scroll="body"
+      scroll="paper"
       slotProps={{
         paper: {
           sx: {
             bgcolor: 'var(--color-surface-dark)',
             color: 'var(--color-on-dark)',
-            borderRadius: '20px',
+            borderRadius: { xs: '16px', sm: '20px' },
             border: '1px solid rgba(230, 223, 216, 0.18)',
             boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.65)',
             overflow: 'hidden',
+            maxHeight: { xs: '92vh', sm: '88vh' },
+            display: 'flex',
+            flexDirection: 'column',
             m: { xs: 2, sm: 3 },
           },
         },
@@ -53,8 +56,9 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
       <Box
         sx={{
           position: 'relative',
-          height: { xs: 180, sm: 240 },
+          height: { xs: 170, sm: 230 },
           width: '100%',
+          flexShrink: 0,
           overflow: 'hidden',
           bgcolor: 'var(--color-surface-dark-soft)',
         }}
@@ -87,6 +91,7 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
             position: 'absolute',
             top: 14,
             right: 14,
+            zIndex: 10,
             bgcolor: 'rgba(24, 23, 21, 0.6)',
             color: 'var(--color-on-dark)',
             backdropFilter: 'blur(8px)',
@@ -124,8 +129,28 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
         </Box>
       </Box>
 
-      {/* Main Content Area */}
-      <DialogContent sx={{ p: { xs: 2.5, sm: 4 }, color: 'var(--color-on-dark)' }}>
+      {/* Main Scrollable Content Area */}
+      <DialogContent
+        sx={{
+          p: { xs: 2.5, sm: 4 },
+          color: 'var(--color-on-dark)',
+          overflowY: 'auto',
+          flexGrow: 1,
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            bgcolor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            bgcolor: 'rgba(250, 249, 245, 0.2)',
+            borderRadius: '4px',
+            '&:hover': {
+              bgcolor: 'rgba(250, 249, 245, 0.35)',
+            },
+          },
+        }}
+      >
         {/* Title */}
         <Typography
           variant="h3"
@@ -148,8 +173,8 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
             sx={{
               color: 'var(--color-on-dark-soft)',
               fontSize: { xs: '0.9375rem', sm: '1rem' },
-              lineHeight: 1.7,
-              mb: 1.5,
+              lineHeight: 1.75,
+              whiteSpace: 'pre-line',
             }}
           >
             {project.longDescription || project.description}
@@ -157,7 +182,7 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
         </Box>
 
         {/* Tech Stack Breakdown */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 1 }}>
           <Typography
             variant="caption"
             sx={{
@@ -188,88 +213,76 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
             ))}
           </Box>
         </Box>
+      </DialogContent>
 
-        {/* Footer Actions */}
-        <Box
+      {/* Sticky Bottom Actions Footer */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          flexWrap: 'wrap',
+          gap: 1.5,
+          p: { xs: 2, sm: 2.5 },
+          px: { xs: 2.5, sm: 4 },
+          bgcolor: 'var(--color-surface-dark)',
+          borderTop: '1px solid rgba(250, 249, 245, 0.1)',
+          flexShrink: 0,
+        }}
+      >
+        <Button
+          component="a"
+          href={project.demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="contained"
+          disableElevation
+          endIcon={<ExternalLink size={15} />}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: 2,
-            pt: 3,
-            borderTop: '1px solid rgba(250, 249, 245, 0.1)',
+            bgcolor: 'var(--color-primary)',
+            color: 'var(--color-on-primary)',
+            textTransform: 'none',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            borderRadius: '8px',
+            px: 2.5,
+            py: 0.9,
+            '&:hover': {
+              bgcolor: 'var(--color-primary-active)',
+            },
           }}
         >
-          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-            <Button
-              component="a"
-              href={project.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="contained"
-              disableElevation
-              endIcon={<ExternalLink size={15} />}
-              sx={{
-                bgcolor: 'var(--color-primary)',
-                color: 'var(--color-on-primary)',
-                textTransform: 'none',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                borderRadius: '8px',
-                px: 2.5,
-                py: 0.9,
-                '&:hover': {
-                  bgcolor: 'var(--color-primary-active)',
-                },
-              }}
-            >
-              Launch Live Demo
-            </Button>
+          Launch Live Demo
+        </Button>
 
-            {project.githubUrl && (
-              <Button
-                component="a"
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outlined"
-                startIcon={<FaGithub size={15} />}
-                sx={{
-                  color: 'var(--color-on-dark)',
-                  borderColor: 'rgba(250, 249, 245, 0.25)',
-                  bgcolor: 'rgba(250, 249, 245, 0.04)',
-                  textTransform: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  borderRadius: '8px',
-                  px: 2.5,
-                  py: 0.9,
-                  '&:hover': {
-                    bgcolor: 'rgba(250, 249, 245, 0.1)',
-                    borderColor: 'rgba(250, 249, 245, 0.4)',
-                  },
-                }}
-              >
-                View Repository
-              </Button>
-            )}
-          </Box>
-
+        {project.githubUrl && (
           <Button
-            onClick={onClose}
-            variant="text"
+            component="a"
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outlined"
+            startIcon={<FaGithub size={15} />}
             sx={{
-              color: 'var(--color-on-dark-soft)',
+              color: 'var(--color-on-dark)',
+              borderColor: 'rgba(250, 249, 245, 0.25)',
+              bgcolor: 'rgba(250, 249, 245, 0.04)',
               textTransform: 'none',
               fontSize: '0.875rem',
-              '&:hover': { color: 'var(--color-on-dark)', bgcolor: 'transparent' },
+              fontWeight: 500,
+              borderRadius: '8px',
+              px: 2.5,
+              py: 0.9,
+              '&:hover': {
+                bgcolor: 'rgba(250, 249, 245, 0.1)',
+                borderColor: 'rgba(250, 249, 245, 0.4)',
+              },
             }}
           >
-            Close
+            View Repository
           </Button>
-        </Box>
-      </DialogContent>
+        )}
+      </Box>
     </Dialog>
   )
 }

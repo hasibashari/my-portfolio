@@ -2,19 +2,25 @@
 
 import { Box, Container, Typography } from '@mui/material'
 import ScrollReveal from '../../../shared/components/ScrollReveal'
+import BackLink from '../../../shared/components/BackLink'
 
 export default function BlogHero() {
   return (
     <Box
       sx={{
-        pt: { xs: 8, sm: 10, md: 12 },
+        pt: { xs: 4, sm: 6, md: 8 },
         pb: { xs: 5, sm: 6, md: 8 },
         borderBottom: '1px solid var(--color-hairline)',
         bgcolor: 'var(--color-surface-soft)',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-        <ScrollReveal variant="blur-reveal">
+        {/* Back to Home Link */}
+        <BackLink href="/#blog" label="Back to Overview" />
+
+        <ScrollReveal variant="blur-reveal" delay={0.05}>
           <Box sx={{ maxWidth: '800px', mx: 'auto', textAlign: 'center' }}>
             <Typography
               variant="overline"

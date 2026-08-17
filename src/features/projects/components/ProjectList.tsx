@@ -8,6 +8,7 @@ import ProjectsHero from './ProjectsHero'
 import ProjectsFilter from './ProjectsFilter'
 import ProjectCard from './ProjectCard'
 import ProjectModal from './ProjectModal'
+import Pagination from '../../../shared/components/Pagination'
 import {
   projects,
   ProjectItem,
@@ -15,9 +16,17 @@ import {
   PROJECT_CATEGORIES,
 } from '../../../shared/constants/projects'
 
+const ITEMS_PER_PAGE = 6
+
 export default function ProjectList() {
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('All')
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const handleCategoryChange = (category: ProjectCategory) => {
+    setSelectedCategory(category)
+    setCurrentPage(1)
+  }
 
   // Compute total counts per category
   const categoryCounts = useMemo(() => {
@@ -44,6 +53,13 @@ export default function ProjectList() {
     return projects.filter((project) => project.category === selectedCategory)
   }, [selectedCategory])
 
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)
+  const paginatedProjects = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredProjects, currentPage])
+
   return (
     <Box sx={{ minHeight: '80vh', pb: { xs: 10, md: 14 }, bgcolor: 'var(--color-canvas)' }}>
       {/* Editorial Hero Header */}
@@ -52,11 +68,11 @@ export default function ProjectList() {
       {/* Modular Category Filter Component */}
       <ProjectsFilter
         selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
+        onCategoryChange={handleCategoryChange}
         categoryCounts={categoryCounts}
       />
 
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 3, sm: 4 } }}>
+      <Container id="projects-content-list" maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 3, sm: 4 } }}>
         {/* Results Counter */}
         <Box
           sx={{
@@ -73,12 +89,16 @@ export default function ProjectList() {
             </Box>{' '}
             {filteredProjects.length === 1 ? 'project' : 'projects'}
             {selectedCategory !== 'All' && ` in "${selectedCategory}"`}
+            {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
           </Typography>
 
           {selectedCategory !== 'All' && (
             <Button
               size="small"
-              onClick={() => setSelectedCategory('All')}
+              onClick={() => {
+                setSelectedCategory('All')
+                setCurrentPage(1)
+              }}
               sx={{
                 color: 'var(--color-primary)',
                 textTransform: 'none',
@@ -94,7 +114,7 @@ export default function ProjectList() {
         </Box>
 
         {/* Symmetrical 3-Column Project Grid */}
-        {filteredProjects.length > 0 ? (
+        {paginatedProjects.length > 0 ? (
           <Box
             sx={{
               display: 'grid',
@@ -108,7 +128,7 @@ export default function ProjectList() {
             }}
           >
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project) => (
+              {paginatedProjects.map((project) => (
                 <ProjectCard
                   key={project.id}
                   project={project}
@@ -152,7 +172,10 @@ export default function ProjectList() {
               </Typography>
               <Button
                 variant="outlined"
-                onClick={() => setSelectedCategory('All')}
+                onClick={() => {
+                  setSelectedCategory('All')
+                  setCurrentPage(1)
+                }}
                 sx={{
                   color: 'var(--color-ink)',
                   borderColor: 'var(--color-hairline)',
@@ -172,6 +195,14 @@ export default function ProjectList() {
             </Box>
           </motion.div>
         )}
+
+        {/* Global Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          scrollTargetId="projects-content-list"
+        />
       </Container>
 
       {/* Project Details Modal */}

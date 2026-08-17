@@ -34,9 +34,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${cormorantSerif.variable} ${interSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-(--color-canvas) text-(--color-ink)">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col font-sans bg-(--color-canvas) text-(--color-ink)"
+      >
         <ThemeProvider>
           {children}
         </ThemeProvider>

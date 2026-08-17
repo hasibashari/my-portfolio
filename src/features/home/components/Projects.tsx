@@ -106,7 +106,7 @@ export default function Projects() {
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
+                  gridTemplateColumns: { xs: '1fr', md: '1.15fr 0.85fr', lg: '1.2fr 0.8fr' },
                   bgcolor: 'var(--color-surface-dark)',
                   borderRadius: '16px',
                   color: 'var(--color-on-dark)',
@@ -123,14 +123,14 @@ export default function Projects() {
                 {/* Left Text Column */}
                 <Box
                   sx={{
-                    p: { xs: 2.5, sm: 3.5, md: 4 },
+                    p: { xs: 2.5, sm: 3, md: 3.5, lg: 4 },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     zIndex: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 1.75 }}>
                     <Chip
                       label={current.badge}
                       sx={{
@@ -142,7 +142,7 @@ export default function Projects() {
                         borderRadius: '9999px',
                       }}
                     />
-                    <Typography variant="h5" className="font-serif-display" sx={{ color: 'var(--color-on-dark)', fontSize: '1.375rem', fontWeight: 500 }}>
+                    <Typography variant="h5" className="font-serif-display" sx={{ color: 'var(--color-on-dark)', fontSize: { xs: '1.25rem', sm: '1.375rem' }, fontWeight: 500 }}>
                       {current.title}
                     </Typography>
                   </Box>
@@ -234,9 +234,8 @@ export default function Projects() {
                   sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    minHeight: { xs: 220, sm: 260, lg: '100%' },
+                    height: { xs: 200, sm: 240, md: '100%' },
                     width: '100%',
-                    height: '100%',
                   }}
                 >
                   <Box
@@ -244,9 +243,8 @@ export default function Projects() {
                     src={current.imageUrl}
                     alt={current.title}
                     sx={{
-                      position: { xs: 'static', lg: 'absolute' },
-                      top: 0,
-                      left: 0,
+                      position: 'absolute',
+                      inset: 0,
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
@@ -264,7 +262,7 @@ export default function Projects() {
                       inset: 0,
                       background: {
                         xs: 'linear-gradient(to bottom, #181715 0%, transparent 25%)',
-                        lg: 'linear-gradient(to right, #181715 0%, transparent 25%)',
+                        md: 'linear-gradient(to right, #181715 0%, transparent 25%)',
                       },
                       pointerEvents: 'none',
                     }}

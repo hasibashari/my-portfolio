@@ -7,15 +7,29 @@ import { BookOpen } from 'lucide-react'
 import BlogHero from './BlogHero'
 import BlogFilter from './BlogFilter'
 import BlogCard from './BlogCard'
+import Pagination from '../../../shared/components/Pagination'
 import {
   blog,
   BlogCategory,
   BLOG_CATEGORIES,
 } from '../../../shared/constants/blog'
 
+const ITEMS_PER_PAGE = 4
+
 export default function BlogList() {
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory>('All')
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const handleCategoryChange = (category: BlogCategory) => {
+    setSelectedCategory(category)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    setCurrentPage(1)
+  }
 
   // Calculate counts per category
   const categoryCounts = useMemo(() => {
@@ -51,6 +65,13 @@ export default function BlogList() {
     })
   }, [selectedCategory, searchQuery])
 
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)
+  const paginatedPosts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredPosts.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredPosts, currentPage])
+
   return (
     <Box sx={{ minHeight: '85vh', pb: { xs: 10, md: 14 }, bgcolor: 'var(--color-canvas)' }}>
       {/* Editorial Hero Banner */}
@@ -59,13 +80,13 @@ export default function BlogList() {
       {/* Category Filter & Search Bar */}
       <BlogFilter
         selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
+        onCategoryChange={handleCategoryChange}
         categoryCounts={categoryCounts}
         searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearchChange={handleSearchChange}
       />
 
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, sm: 5 } }}>
+      <Container id="blog-content-list" maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, sm: 5 } }}>
         {/* Results Counter & Active Filter feedback */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
           <Typography
@@ -79,6 +100,7 @@ export default function BlogList() {
             {filteredPosts.length === 1 ? 'article' : 'articles'}
             {selectedCategory !== 'All' && ` in ${selectedCategory}`}
             {searchQuery && ` matching "${searchQuery}"`}
+            {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
           </Typography>
 
           {(selectedCategory !== 'All' || searchQuery !== '') && (
@@ -88,6 +110,7 @@ export default function BlogList() {
               onClick={() => {
                 setSelectedCategory('All')
                 setSearchQuery('')
+                setCurrentPage(1)
               }}
               sx={{
                 color: 'var(--color-primary)',
@@ -105,7 +128,7 @@ export default function BlogList() {
 
         {/* Articles Grid */}
         <AnimatePresence mode="popLayout">
-          {filteredPosts.length > 0 ? (
+          {paginatedPosts.length > 0 ? (
             <Box
               component={motion.div}
               layout
@@ -115,7 +138,7 @@ export default function BlogList() {
                 gap: { xs: 3, md: 4 },
               }}
             >
-              {filteredPosts.map((post, idx) => (
+              {paginatedPosts.map((post, idx) => (
                 <motion.div
                   key={post.id}
                   layout
@@ -125,7 +148,7 @@ export default function BlogList() {
                   transition={{ duration: 0.25, delay: idx * 0.05 }}
                   style={{ height: '100%' }}
                 >
-                  <BlogCard post={post} featured={idx === 0 && selectedCategory === 'All' && !searchQuery} />
+                  <BlogCard post={post} featured={currentPage === 1 && idx === 0 && selectedCategory === 'All' && !searchQuery} />
                 </motion.div>
               ))}
             </Box>
@@ -157,6 +180,7 @@ export default function BlogList() {
                   onClick={() => {
                     setSelectedCategory('All')
                     setSearchQuery('')
+                    setCurrentPage(1)
                   }}
                   sx={{
                     textTransform: 'none',
@@ -174,6 +198,14 @@ export default function BlogList() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Global Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          scrollTargetId="blog-content-list"
+        />
       </Container>
     </Box>
   )

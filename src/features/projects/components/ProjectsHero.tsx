@@ -1,9 +1,9 @@
 'use client'
 
 import { Box, Container, Typography } from '@mui/material'
-import { Sparkles, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { Sparkles } from 'lucide-react'
 import ScrollReveal from '../../../shared/components/ScrollReveal'
+import BackLink from '../../../shared/components/BackLink'
 
 export default function ProjectsHero() {
   return (
@@ -19,26 +19,7 @@ export default function ProjectsHero() {
     >
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* Back to Home Link */}
-        <ScrollReveal variant="fade-up">
-          <Box sx={{ mb: { xs: 3, md: 4 } }}>
-            <Link
-              href="/"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--color-muted)',
-                textDecoration: 'none',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                transition: 'color 0.2s ease',
-              }}
-            >
-              <ArrowLeft size={16} />
-              <span>Back to Overview</span>
-            </Link>
-          </Box>
-        </ScrollReveal>
+        <BackLink href="/#projects" label="Back to Overview" />
 
         {/* Hero Title & Subtitle */}
         <ScrollReveal variant="blur-reveal" delay={0.05}>

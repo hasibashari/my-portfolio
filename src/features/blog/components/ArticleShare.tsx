@@ -24,8 +24,20 @@ export default function ArticleShare({ post }: ArticleShareProps) {
     }
   }
 
-  const shareText = encodeURIComponent(`Read "${post.title}" by Hasib Ashari`)
-  const shareUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : ''
+  const handleShareTwitter = () => {
+    if (typeof window !== 'undefined') {
+      const shareUrl = encodeURIComponent(window.location.href)
+      const shareText = encodeURIComponent(`Read "${post.title}" by Hasib Ashari`)
+      window.open(`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  const handleShareLinkedIn = () => {
+    if (typeof window !== 'undefined') {
+      const shareUrl = encodeURIComponent(window.location.href)
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, '_blank', 'noopener,noreferrer')
+    }
+  }
 
   return (
     <Box
@@ -75,10 +87,7 @@ export default function ArticleShare({ post }: ArticleShareProps) {
 
         {/* X (Twitter) */}
         <Button
-          component="a"
-          href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={handleShareTwitter}
           variant="outlined"
           size="small"
           startIcon={<FaXTwitter size={13} />}
@@ -100,10 +109,7 @@ export default function ArticleShare({ post }: ArticleShareProps) {
 
         {/* LinkedIn */}
         <Button
-          component="a"
-          href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={handleShareLinkedIn}
           variant="outlined"
           size="small"
           startIcon={<FaLinkedin size={14} />}
