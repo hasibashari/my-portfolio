@@ -142,40 +142,35 @@ export async function updateArticle(
   id: number,
   updates: Partial<BlogPost>,
 ): Promise<BlogPost | null> {
-  const existing = await getArticleById(id)
-  if (!existing) return null
-
-  const merged: BlogPost = { ...existing, ...updates, id: existing.id }
-
+  await initDb()
   const pool = getPool()
+
+  // Build a dynamic SET clause from only the fields provided in `updates`.
+  // This avoids a preceding SELECT and saves a full round-trip to the DB.
+  const setClauses: string[] = []
+  const values: unknown[] = []
+  let p = 1
+
+  if (updates.slug       !== undefined) { setClauses.push(`slug           = $${p++}`); values.push(updates.slug) }
+  if (updates.title      !== undefined) { setClauses.push(`title          = $${p++}`); values.push(updates.title) }
+  if (updates.date       !== undefined) { setClauses.push(`date           = $${p++}`); values.push(updates.date) }
+  if (updates.category   !== undefined) { setClauses.push(`category       = $${p++}`); values.push(updates.category) }
+  if (updates.isCoralBadge !== undefined) { setClauses.push(`"isCoralBadge" = $${p++}`); values.push(updates.isCoralBadge) }
+  if (updates.readingTime !== undefined) { setClauses.push(`"readingTime"  = $${p++}`); values.push(updates.readingTime) }
+  if (updates.description !== undefined) { setClauses.push(`description    = $${p++}`); values.push(updates.description) }
+  if (updates.tags        !== undefined) { setClauses.push(`tags           = $${p++}`); values.push(JSON.stringify(updates.tags)) }
+  if (updates.author      !== undefined) { setClauses.push(`author         = $${p++}`); values.push(JSON.stringify(updates.author)) }
+  if (updates.sections    !== undefined) { setClauses.push(`sections       = $${p++}`); values.push(JSON.stringify(updates.sections)) }
+
+  // Nothing to update — just return the existing record
+  if (setClauses.length === 0) return getArticleById(id)
+
+  setClauses.push(`"updatedAt" = NOW()`)
+  values.push(id) // final bind param for WHERE clause
+
   const { rows } = await pool.query<ArticleRow>(
-    `UPDATE articles SET
-       slug           = $1,
-       title          = $2,
-       date           = $3,
-       category       = $4,
-       "isCoralBadge" = $5,
-       "readingTime"  = $6,
-       description    = $7,
-       tags           = $8,
-       author         = $9,
-       sections       = $10,
-       "updatedAt"    = NOW()
-     WHERE id = $11
-     RETURNING *`,
-    [
-      merged.slug,
-      merged.title,
-      merged.date,
-      merged.category,
-      merged.isCoralBadge ?? false,
-      merged.readingTime,
-      merged.description,
-      JSON.stringify(merged.tags ?? []),
-      JSON.stringify(merged.author ?? { name: 'Hasib Ashari', role: 'Software Engineer' }),
-      JSON.stringify(merged.sections ?? []),
-      id,
-    ],
+    `UPDATE articles SET ${setClauses.join(', ')} WHERE id = $${p} RETURNING *`,
+    values,
   )
 
   if (!rows[0]) return null

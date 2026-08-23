@@ -34,11 +34,23 @@ export function getPool(): Pool {
 // Schema initialisation + seed — call once per process startup.
 // --------------------------------------------------------------------------
 
-let initialised = false
+// Promise-based singleton: multiple concurrent requests all await the same
+// promise instead of each racing through the full schema + seed logic.
+// Reset to null on failure so the next request can retry.
+let initPromise: Promise<void> | null = null
 
-export async function initDb(): Promise<void> {
-  if (initialised) return
+export function initDb(): Promise<void> {
+  if (!initPromise) {
+    initPromise = _runInit().catch((err) => {
+      // Allow retry on next request if initialisation failed
+      initPromise = null
+      return Promise.reject(err)
+    })
+  }
+  return initPromise
+}
 
+async function _runInit(): Promise<void> {
   const pool = getPool()
   const client = await pool.connect()
 
@@ -139,7 +151,6 @@ export async function initDb(): Promise<void> {
     }
 
     await client.query('COMMIT')
-    initialised = true
   } catch (err) {
     await client.query('ROLLBACK')
     throw err

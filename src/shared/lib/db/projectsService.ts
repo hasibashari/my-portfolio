@@ -97,46 +97,36 @@ export async function updateProject(
   id: string,
   updates: Partial<ProjectItem>,
 ): Promise<ProjectItem | null> {
-  const existing = await getProjectById(id)
-  if (!existing) return null
-
-  const merged: ProjectItem = {
-    ...existing,
-    ...updates,
-    id: existing.id, // Immutable ID
-  }
-
+  await initDb()
   const pool = getPool()
+
+  // Build a dynamic SET clause from only the fields provided in `updates`.
+  // This avoids a preceding SELECT and saves a full round-trip to the DB.
+  const setClauses: string[] = []
+  const values: unknown[] = []
+  let p = 1
+
+  if (updates.title           !== undefined) { setClauses.push(`title             = $${p++}`); values.push(updates.title) }
+  if (updates.badge           !== undefined) { setClauses.push(`badge             = $${p++}`); values.push(updates.badge) }
+  if (updates.category        !== undefined) { setClauses.push(`category          = $${p++}`); values.push(updates.category) }
+  if (updates.badgeColor      !== undefined) { setClauses.push(`"badgeColor"      = $${p++}`); values.push(updates.badgeColor) }
+  if (updates.description     !== undefined) { setClauses.push(`description       = $${p++}`); values.push(updates.description) }
+  if (updates.longDescription !== undefined) { setClauses.push(`"longDescription" = $${p++}`); values.push(updates.longDescription ?? null) }
+  if (updates.techStack       !== undefined) { setClauses.push(`"techStack"       = $${p++}`); values.push(JSON.stringify(updates.techStack)) }
+  if (updates.demoUrl         !== undefined) { setClauses.push(`"demoUrl"         = $${p++}`); values.push(updates.demoUrl) }
+  if (updates.githubUrl       !== undefined) { setClauses.push(`"githubUrl"       = $${p++}`); values.push(updates.githubUrl ?? null) }
+  if (updates.imageUrl        !== undefined) { setClauses.push(`"imageUrl"        = $${p++}`); values.push(updates.imageUrl) }
+  if (updates.featured        !== undefined) { setClauses.push(`featured          = $${p++}`); values.push(updates.featured) }
+
+  // Nothing to update — just return the existing record
+  if (setClauses.length === 0) return getProjectById(id)
+
+  setClauses.push(`"updatedAt" = NOW()`)
+  values.push(id) // final bind param for WHERE clause
+
   const { rows } = await pool.query<ProjectRow>(
-    `UPDATE projects SET
-       title            = $1,
-       badge            = $2,
-       category         = $3,
-       "badgeColor"     = $4,
-       description      = $5,
-       "longDescription" = $6,
-       "techStack"      = $7,
-       "demoUrl"        = $8,
-       "githubUrl"      = $9,
-       "imageUrl"       = $10,
-       featured         = $11,
-       "updatedAt"      = NOW()
-     WHERE id = $12
-     RETURNING *`,
-    [
-      merged.title,
-      merged.badge,
-      merged.category,
-      merged.badgeColor,
-      merged.description,
-      merged.longDescription ?? null,
-      JSON.stringify(merged.techStack ?? []),
-      merged.demoUrl,
-      merged.githubUrl ?? null,
-      merged.imageUrl,
-      merged.featured ?? false,
-      id,
-    ],
+    `UPDATE projects SET ${setClauses.join(', ')} WHERE id = $${p} RETURNING *`,
+    values,
   )
 
   if (!rows[0]) return null
