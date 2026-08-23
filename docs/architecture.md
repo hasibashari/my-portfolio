@@ -13,7 +13,7 @@ graph TD
   A --> D[Service / Data Access Layer: src/shared/lib/db/]
   B --> E[Route Handlers / API Layer: src/app/api/]
   E --> D
-  D --> F[(SQLite Database: data/portfolio.db)]
+  D --> F[(PostgreSQL Database)]
 ```
 
 ### 1. Page Orchestrator Layer (`src/app/`)
@@ -40,10 +40,10 @@ graph TD
 - Public API barrier: All feature components and views are exported exclusively through each feature's `index.ts`.
 
 ### 4. Database & Service Layer (`src/shared/lib/db/`)
-- Isolated server-only database access directly using `better-sqlite3` (no ORM).
-- Uses prepared and parameterized SQL statements for complete SQL injection protection.
-- Automatically initializes schema and seeds default data on first start.
-- SQLite WAL (Write-Ahead Logging) mode enabled for high concurrency and resilience.
+- Isolated server-only database access directly using PostgreSQL connection pool via `pg` (no ORM).
+- Uses prepared and parameterized SQL statements ($1, $2...) for complete SQL injection protection.
+- Automatically initializes schema and seeds default data on first start (`initDb()`).
+- Cloud-compatible pooled connections (e.g. Neon, Supabase, RDS).
 
 ### 5. API / Route Handler Layer (`src/app/api/admin/`)
 - Next.js Route Handlers exposing standard REST endpoints:

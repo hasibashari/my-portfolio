@@ -30,7 +30,7 @@ export default function AdminDashboardView({ projects, articles }: AdminDashboar
             Portfolio Administration
           </Typography>
           <Typography variant="body1" sx={{ color: 'var(--color-muted)', maxWidth: 600 }}>
-            Manage your engineering project showcases and technical journal articles directly backed by SQLite.
+            Manage your engineering project showcases and technical journal articles directly backed by PostgreSQL.
           </Typography>
         </Box>
 
@@ -119,7 +119,7 @@ export default function AdminDashboardView({ projects, articles }: AdminDashboar
               <Database size={20} color="var(--color-primary)" />
             </Box>
             <Typography variant="h5" sx={{ color: 'var(--color-ink)', fontWeight: 700, mt: 1 }}>
-              SQLite (WAL)
+              PostgreSQL
             </Typography>
           </Paper>
         </Box>

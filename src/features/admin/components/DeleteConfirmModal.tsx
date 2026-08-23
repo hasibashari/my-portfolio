@@ -59,7 +59,7 @@ export default function DeleteConfirmModal({
       </DialogTitle>
       <DialogContent>
         <DialogContentText sx={{ color: 'var(--color-muted)', fontSize: '0.925rem' }}>
-          Are you sure you want to delete <strong>&ldquo;{itemName}&rdquo;</strong>? This action cannot be undone and will permanently remove the record from SQLite.
+          Are you sure you want to delete <strong>&ldquo;{itemName}&rdquo;</strong>? This action cannot be undone and will permanently remove the record from the database.
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
