@@ -10,7 +10,7 @@ import ProjectCard from './ProjectCard'
 import ProjectModal from './ProjectModal'
 import Pagination from '../../../shared/components/Pagination'
 import {
-  projects,
+  projects as defaultProjects,
   ProjectItem,
   ProjectCategory,
   PROJECT_CATEGORIES,
@@ -18,7 +18,12 @@ import {
 
 const ITEMS_PER_PAGE = 6
 
-export default function ProjectList() {
+interface ProjectListProps {
+  initialProjects?: ProjectItem[]
+}
+
+export default function ProjectList({ initialProjects }: ProjectListProps) {
+  const allProjects = initialProjects || defaultProjects
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('All')
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -31,7 +36,7 @@ export default function ProjectList() {
   // Compute total counts per category
   const categoryCounts = useMemo(() => {
     const counts: Record<ProjectCategory, number> = {
-      All: projects.length,
+      All: allProjects.length,
       'AI & Backend': 0,
       'Cloud & Data': 0,
       Microservices: 0,
@@ -40,18 +45,18 @@ export default function ProjectList() {
 
     PROJECT_CATEGORIES.forEach((cat) => {
       if (cat !== 'All') {
-        counts[cat] = projects.filter((p) => p.category === cat).length
+        counts[cat] = allProjects.filter((p) => p.category === cat).length
       }
     })
 
     return counts
-  }, [])
+  }, [allProjects])
 
   // Filter projects strictly by category
   const filteredProjects = useMemo(() => {
-    if (selectedCategory === 'All') return projects
-    return projects.filter((project) => project.category === selectedCategory)
-  }, [selectedCategory])
+    if (selectedCategory === 'All') return allProjects
+    return allProjects.filter((project) => project.category === selectedCategory)
+  }, [allProjects, selectedCategory])
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)

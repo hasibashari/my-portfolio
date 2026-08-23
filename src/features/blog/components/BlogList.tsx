@@ -9,14 +9,20 @@ import BlogFilter from './BlogFilter'
 import BlogCard from './BlogCard'
 import Pagination from '../../../shared/components/Pagination'
 import {
-  blog,
+  blog as defaultBlog,
+  BlogPost,
   BlogCategory,
   BLOG_CATEGORIES,
 } from '../../../shared/constants/blog'
 
 const ITEMS_PER_PAGE = 4
 
-export default function BlogList() {
+interface BlogListProps {
+  initialPosts?: BlogPost[]
+}
+
+export default function BlogList({ initialPosts }: BlogListProps) {
+  const allBlogPosts = initialPosts || defaultBlog
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -34,7 +40,7 @@ export default function BlogList() {
   // Calculate counts per category
   const categoryCounts = useMemo(() => {
     const counts: Record<BlogCategory, number> = {
-      All: blog.length,
+      All: allBlogPosts.length,
       PERFORMANCE: 0,
       ARCHITECTURE: 0,
       'REACT & TS': 0,
@@ -42,16 +48,16 @@ export default function BlogList() {
 
     BLOG_CATEGORIES.forEach((cat) => {
       if (cat !== 'All') {
-        counts[cat] = blog.filter((p) => p.category === cat).length
+        counts[cat] = allBlogPosts.filter((p) => p.category === cat).length
       }
     })
 
     return counts
-  }, [])
+  }, [allBlogPosts])
 
   // Filter posts by category and search query
   const filteredPosts = useMemo(() => {
-    return blog.filter((post) => {
+    return allBlogPosts.filter((post) => {
       const matchesCategory =
         selectedCategory === 'All' || post.category === selectedCategory
 
@@ -63,7 +69,7 @@ export default function BlogList() {
 
       return matchesCategory && matchesSearch
     })
-  }, [selectedCategory, searchQuery])
+  }, [allBlogPosts, selectedCategory, searchQuery])
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)

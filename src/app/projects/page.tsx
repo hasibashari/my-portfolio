@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { ProjectsView } from '../../features/projects'
+import { getProjects } from '../../shared/lib/db'
 import Navbar from '../../shared/components/Navbar'
 import Footer from '../../shared/components/Footer'
 
@@ -15,12 +16,13 @@ export const metadata: Metadata = {
 }
 
 export default function ProjectsPage() {
+  const projects = getProjects()
+
   return (
     <main style={{ backgroundColor: 'var(--color-canvas)', minHeight: '100vh' }}>
       <Navbar />
-      <ProjectsView />
+      <ProjectsView initialProjects={projects} />
       <Footer />
     </main>
   )
 }
-

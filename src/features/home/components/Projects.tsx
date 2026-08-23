@@ -7,9 +7,13 @@ import { FaGithub } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
 import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { projects } from '../../../shared/constants/projects'
+import { ProjectItem } from '../../../shared/constants/projects'
 
-export default function Projects() {
+interface ProjectsProps {
+  projects: ProjectItem[]
+}
+
+export default function Projects({ projects }: ProjectsProps) {
   const [activeTab, setActiveTab] = useState(0)
 
   const showcaseProjects = projects.slice(0, 3)

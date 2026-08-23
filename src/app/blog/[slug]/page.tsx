@@ -5,7 +5,7 @@ import {
   getAllBlogSlugs,
   getBlogPostBySlug,
   getRelatedBlogPosts,
-} from '../../../shared/constants/blog'
+} from '../../../shared/lib/db'
 import Navbar from '../../../shared/components/Navbar'
 import Footer from '../../../shared/components/Footer'
 
@@ -14,8 +14,12 @@ interface PageProps {
 }
 
 export function generateStaticParams() {
-  const slugs = getAllBlogSlugs()
-  return slugs.map((slug) => ({ slug }))
+  try {
+    const slugs = getAllBlogSlugs()
+    return slugs.map((slug) => ({ slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

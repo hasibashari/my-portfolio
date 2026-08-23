@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { BlogView } from '../../features/blog'
+import { getArticles } from '../../shared/lib/db'
 import Navbar from '../../shared/components/Navbar'
 import Footer from '../../shared/components/Footer'
 
@@ -15,10 +16,12 @@ export const metadata: Metadata = {
 }
 
 export default function BlogPage() {
+  const articles = getArticles()
+
   return (
     <main style={{ backgroundColor: 'var(--color-canvas)', minHeight: '100vh' }}>
       <Navbar />
-      <BlogView />
+      <BlogView initialPosts={articles} />
       <Footer />
     </main>
   )

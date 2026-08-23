@@ -1,0 +1,14 @@
+import { Metadata } from 'next'
+import { AdminArticlesView } from '../../../features/admin'
+import { getArticles } from '../../../shared/lib/db'
+
+export const metadata: Metadata = {
+  title: 'Manage Articles | Admin Portfolio',
+  description: 'Manage and publish engineering articles.',
+}
+
+export default function AdminArticlesPage() {
+  const articles = getArticles()
+
+  return <AdminArticlesView initialArticles={articles} />
+}

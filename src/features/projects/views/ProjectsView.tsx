@@ -1,5 +1,10 @@
 import ProjectList from '../components/ProjectList'
+import { ProjectItem } from '../../../shared/constants/projects'
 
-export default function ProjectsView() {
-  return <ProjectList />
+interface ProjectsViewProps {
+  initialProjects?: ProjectItem[]
+}
+
+export default function ProjectsView({ initialProjects }: ProjectsViewProps) {
+  return <ProjectList initialProjects={initialProjects} />
 }
