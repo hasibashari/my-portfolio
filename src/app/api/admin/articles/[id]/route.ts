@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const article = getArticleById(articleId)
+    const article = await getArticleById(articleId)
     if (!article) {
       return NextResponse.json(
         { success: false, error: `Article with ID ${articleId} not found` },
@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const existing = getArticleById(articleId)
+    const existing = await getArticleById(articleId)
     if (!existing) {
       return NextResponse.json(
         { success: false, error: `Article with ID ${articleId} not found` },
@@ -77,7 +77,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       }
 
       // Check if new slug conflicts with another article
-      const conflict = getArticleBySlug(String(slug).trim())
+      const conflict = await getArticleBySlug(String(slug).trim())
       if (conflict && conflict.id !== articleId) {
         return NextResponse.json(
           { success: false, error: `Slug "${String(slug).trim()}" is already used by another article` },
@@ -109,7 +109,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       updates.sections = sections
     }
 
-    const updated = updateArticle(articleId, updates)
+    const updated = await updateArticle(articleId, updates)
     return NextResponse.json({ success: true, data: updated })
   } catch (error) {
     console.error('Failed to update article:', error)
@@ -131,7 +131,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const existing = getArticleById(articleId)
+    const existing = await getArticleById(articleId)
     if (!existing) {
       return NextResponse.json(
         { success: false, error: `Article with ID ${articleId} not found` },
@@ -139,7 +139,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const success = deleteArticle(articleId)
+    const success = await deleteArticle(articleId)
     if (!success) {
       return NextResponse.json(
         { success: false, error: 'Failed to delete article' },

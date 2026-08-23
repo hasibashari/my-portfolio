@@ -9,7 +9,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const project = getProjectById(id)
+  const project = await getProjectById(id)
 
   return {
     title: project ? `Edit ${project.title} | Admin` : 'Edit Project | Admin',
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function EditProjectPage({ params }: PageProps) {
   const { id } = await params
-  const project = getProjectById(id)
+  const project = await getProjectById(id)
 
   if (!project) {
     notFound()

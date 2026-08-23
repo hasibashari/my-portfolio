@@ -3,7 +3,7 @@ import { getArticles, createArticle, getArticleBySlug } from '../../../../shared
 
 export async function GET() {
   try {
-    const articles = getArticles()
+    const articles = await getArticles()
     return NextResponse.json({ success: true, data: articles })
   } catch (error) {
     console.error('Failed to get articles:', error)
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check slug uniqueness
-    const existing = getArticleBySlug(slug.trim())
+    const existing = await getArticleBySlug(slug.trim())
     if (existing) {
       return NextResponse.json(
         { success: false, error: `An article with slug "${slug.trim()}" already exists` },
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       sections: parsedSections,
     }
 
-    const created = createArticle(newArticle)
+    const created = await createArticle(newArticle)
     return NextResponse.json({ success: true, data: created }, { status: 201 })
   } catch (error) {
     console.error('Failed to create article:', error)

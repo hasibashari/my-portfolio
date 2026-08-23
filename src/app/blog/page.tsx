@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BlogPage() {
-  const articles = getArticles()
+export default async function BlogPage() {
+  const articles = await getArticles()
 
   return (
     <main style={{ backgroundColor: 'var(--color-canvas)', minHeight: '100vh' }}>

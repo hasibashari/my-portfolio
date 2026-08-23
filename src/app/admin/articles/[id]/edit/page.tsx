@@ -10,7 +10,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
   const articleId = parseInt(id, 10)
-  const article = isNaN(articleId) ? null : getArticleById(articleId)
+  const article = isNaN(articleId) ? null : await getArticleById(articleId)
 
   return {
     title: article ? `Edit ${article.title} | Admin` : 'Edit Article | Admin',
@@ -26,7 +26,7 @@ export default async function EditArticlePage({ params }: PageProps) {
     notFound()
   }
 
-  const article = getArticleById(articleId)
+  const article = await getArticleById(articleId)
 
   if (!article) {
     notFound()

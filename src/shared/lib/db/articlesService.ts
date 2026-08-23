@@ -1,4 +1,4 @@
-import { getDb } from './db'
+import { getPool, initDb } from './db'
 import { BlogPost, ArticleSection } from '../../constants/blog'
 
 interface ArticleRow {
@@ -7,7 +7,7 @@ interface ArticleRow {
   title: string
   date: string
   category: string
-  isCoralBadge: number
+  isCoralBadge: boolean
   readingTime: string
   description: string
   tags: string
@@ -55,119 +55,135 @@ function mapRowToArticle(row: ArticleRow): BlogPost {
   }
 }
 
-export function getArticles(): BlogPost[] {
-  const db = getDb()
-  const rows = db.prepare('SELECT * FROM articles ORDER BY datetime(createdAt) DESC').all() as ArticleRow[]
+export async function getArticles(): Promise<BlogPost[]> {
+  await initDb()
+  const pool = getPool()
+  const { rows } = await pool.query<ArticleRow>(
+    'SELECT * FROM articles ORDER BY "createdAt" DESC',
+  )
   return rows.map(mapRowToArticle)
 }
 
-export function getArticleById(id: number): BlogPost | null {
-  const db = getDb()
-  const row = db.prepare('SELECT * FROM articles WHERE id = ?').get(id) as ArticleRow | undefined
-  if (!row) return null
-  return mapRowToArticle(row)
+export async function getArticleById(id: number): Promise<BlogPost | null> {
+  await initDb()
+  const pool = getPool()
+  const { rows } = await pool.query<ArticleRow>(
+    'SELECT * FROM articles WHERE id = $1',
+    [id],
+  )
+  if (!rows[0]) return null
+  return mapRowToArticle(rows[0])
 }
 
-export function getArticleBySlug(slug: string): BlogPost | null {
-  const db = getDb()
-  const row = db.prepare('SELECT * FROM articles WHERE slug = ?').get(slug) as ArticleRow | undefined
-  if (!row) return null
-  return mapRowToArticle(row)
+export async function getArticleBySlug(slug: string): Promise<BlogPost | null> {
+  await initDb()
+  const pool = getPool()
+  const { rows } = await pool.query<ArticleRow>(
+    'SELECT * FROM articles WHERE slug = $1',
+    [slug],
+  )
+  if (!rows[0]) return null
+  return mapRowToArticle(rows[0])
 }
 
 export const getBlogPostBySlug = getArticleBySlug
 
-export function getAllBlogSlugs(): string[] {
-  const db = getDb()
-  const rows = db.prepare('SELECT slug FROM articles').all() as { slug: string }[]
-  return rows.map(r => r.slug)
+export async function getAllBlogSlugs(): Promise<string[]> {
+  await initDb()
+  const pool = getPool()
+  const { rows } = await pool.query<{ slug: string }>('SELECT slug FROM articles')
+  return rows.map((r) => r.slug)
 }
 
-export function getRelatedBlogPosts(currentSlug: string, count: number = 2): BlogPost[] {
-  const db = getDb()
-  const rows = db.prepare('SELECT * FROM articles WHERE slug != ? ORDER BY datetime(createdAt) DESC LIMIT ?').all(currentSlug, count) as ArticleRow[]
+export async function getRelatedBlogPosts(
+  currentSlug: string,
+  count: number = 2,
+): Promise<BlogPost[]> {
+  await initDb()
+  const pool = getPool()
+  const { rows } = await pool.query<ArticleRow>(
+    'SELECT * FROM articles WHERE slug != $1 ORDER BY "createdAt" DESC LIMIT $2',
+    [currentSlug, count],
+  )
   return rows.map(mapRowToArticle)
 }
 
-export function createArticle(data: Omit<BlogPost, 'id'> & { id?: number }): BlogPost {
-  const db = getDb()
-  const insert = db.prepare(`
-    INSERT INTO articles (
-      slug, title, date, category, isCoralBadge, readingTime,
-      description, tags, author, sections, createdAt, updatedAt
-    ) VALUES (
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, datetime('now'), datetime('now')
-    )
-  `)
+export async function createArticle(
+  data: Omit<BlogPost, 'id'> & { id?: number },
+): Promise<BlogPost> {
+  await initDb()
+  const pool = getPool()
 
-  const info = insert.run(
-    data.slug,
-    data.title,
-    data.date,
-    data.category,
-    data.isCoralBadge ? 1 : 0,
-    data.readingTime,
-    data.description,
-    JSON.stringify(data.tags || []),
-    JSON.stringify(data.author || { name: 'Hasib Ashari', role: 'Software Engineer' }),
-    JSON.stringify(data.sections || [])
+  const { rows } = await pool.query<ArticleRow>(
+    `INSERT INTO articles (
+       slug, title, date, category, "isCoralBadge", "readingTime",
+       description, tags, author, sections, "createdAt", "updatedAt"
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
+     RETURNING *`,
+    [
+      data.slug,
+      data.title,
+      data.date,
+      data.category,
+      data.isCoralBadge ?? false,
+      data.readingTime,
+      data.description,
+      JSON.stringify(data.tags ?? []),
+      JSON.stringify(data.author ?? { name: 'Hasib Ashari', role: 'Software Engineer' }),
+      JSON.stringify(data.sections ?? []),
+    ],
   )
 
-  const createdId = Number(info.lastInsertRowid)
-  const created = getArticleById(createdId)
-  if (!created) {
-    throw new Error('Failed to retrieve newly created article')
-  }
-  return created
+  if (!rows[0]) throw new Error('Failed to retrieve newly created article')
+  return mapRowToArticle(rows[0])
 }
 
-export function updateArticle(id: number, updates: Partial<BlogPost>): BlogPost | null {
-  const existing = getArticleById(id)
+export async function updateArticle(
+  id: number,
+  updates: Partial<BlogPost>,
+): Promise<BlogPost | null> {
+  const existing = await getArticleById(id)
   if (!existing) return null
 
-  const updated: BlogPost = {
-    ...existing,
-    ...updates,
-    id: existing.id,
-  }
+  const merged: BlogPost = { ...existing, ...updates, id: existing.id }
 
-  const db = getDb()
-  const stmt = db.prepare(`
-    UPDATE articles SET
-      slug = ?,
-      title = ?,
-      date = ?,
-      category = ?,
-      isCoralBadge = ?,
-      readingTime = ?,
-      description = ?,
-      tags = ?,
-      author = ?,
-      sections = ?,
-      updatedAt = datetime('now')
-    WHERE id = ?
-  `)
-
-  stmt.run(
-    updated.slug,
-    updated.title,
-    updated.date,
-    updated.category,
-    updated.isCoralBadge ? 1 : 0,
-    updated.readingTime,
-    updated.description,
-    JSON.stringify(updated.tags || []),
-    JSON.stringify(updated.author || { name: 'Hasib Ashari', role: 'Software Engineer' }),
-    JSON.stringify(updated.sections || []),
-    id
+  const pool = getPool()
+  const { rows } = await pool.query<ArticleRow>(
+    `UPDATE articles SET
+       slug           = $1,
+       title          = $2,
+       date           = $3,
+       category       = $4,
+       "isCoralBadge" = $5,
+       "readingTime"  = $6,
+       description    = $7,
+       tags           = $8,
+       author         = $9,
+       sections       = $10,
+       "updatedAt"    = NOW()
+     WHERE id = $11
+     RETURNING *`,
+    [
+      merged.slug,
+      merged.title,
+      merged.date,
+      merged.category,
+      merged.isCoralBadge ?? false,
+      merged.readingTime,
+      merged.description,
+      JSON.stringify(merged.tags ?? []),
+      JSON.stringify(merged.author ?? { name: 'Hasib Ashari', role: 'Software Engineer' }),
+      JSON.stringify(merged.sections ?? []),
+      id,
+    ],
   )
 
-  return getArticleById(id)
+  if (!rows[0]) return null
+  return mapRowToArticle(rows[0])
 }
 
-export function deleteArticle(id: number): boolean {
-  const db = getDb()
-  const info = db.prepare('DELETE FROM articles WHERE id = ?').run(id)
-  return info.changes > 0
+export async function deleteArticle(id: number): Promise<boolean> {
+  const pool = getPool()
+  const { rowCount } = await pool.query('DELETE FROM articles WHERE id = $1', [id])
+  return (rowCount ?? 0) > 0
 }

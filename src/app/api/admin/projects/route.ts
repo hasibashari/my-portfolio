@@ -4,7 +4,7 @@ import { ProjectItem, PROJECT_CATEGORIES } from '../../../../shared/constants/pr
 
 export async function GET() {
   try {
-    const projects = getProjects()
+    const projects = await getProjects()
     return NextResponse.json({ success: true, data: projects })
   } catch (error) {
     console.error('Failed to get projects:', error)
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check duplicate ID
-    const existing = getProjectById(id.trim())
+    const existing = await getProjectById(id.trim())
     if (existing) {
       return NextResponse.json(
         { success: false, error: `A project with ID "${id.trim()}" already exists` },
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       featured: Boolean(featured),
     }
 
-    const created = createProject(newProject)
+    const created = await createProject(newProject)
     return NextResponse.json({ success: true, data: created }, { status: 201 })
   } catch (error) {
     console.error('Failed to create project:', error)

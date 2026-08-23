@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: 'Manage and publish engineering articles.',
 }
 
-export default function AdminArticlesPage() {
-  const articles = getArticles()
+export default async function AdminArticlesPage() {
+  const articles = await getArticles()
 
   return <AdminArticlesView initialArticles={articles} />
 }

@@ -9,7 +9,7 @@ interface RouteContext {
 export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params
-    const project = getProjectById(id)
+    const project = await getProjectById(id)
     if (!project) {
       return NextResponse.json(
         { success: false, error: `Project with ID "${id}" not found` },
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params
-    const existing = getProjectById(id)
+    const existing = await getProjectById(id)
     if (!existing) {
       return NextResponse.json(
         { success: false, error: `Project with ID "${id}" not found` },
@@ -77,7 +77,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (codeSnippet !== undefined) updates.codeSnippet = String(codeSnippet).trim()
     if (featured !== undefined) updates.featured = Boolean(featured)
 
-    const updated = updateProject(id, updates)
+    const updated = await updateProject(id, updates)
     return NextResponse.json({ success: true, data: updated })
   } catch (error) {
     console.error('Failed to update project:', error)
@@ -91,7 +91,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params
-    const existing = getProjectById(id)
+    const existing = await getProjectById(id)
     if (!existing) {
       return NextResponse.json(
         { success: false, error: `Project with ID "${id}" not found` },
@@ -99,7 +99,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const success = deleteProject(id)
+    const success = await deleteProject(id)
     if (!success) {
       return NextResponse.json(
         { success: false, error: 'Failed to delete project' },

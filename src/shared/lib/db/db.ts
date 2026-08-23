@@ -1,144 +1,151 @@
-import Database from 'better-sqlite3'
-import path from 'path'
-import fs from 'fs'
+import { Pool } from 'pg'
 import { projects as defaultProjects, ProjectItem } from '../../constants/projects'
 import { blog as defaultBlogPosts, BlogPost } from '../../constants/blog'
 
-let dbInstance: Database.Database | null = null
+// --------------------------------------------------------------------------
+// Connection pool — reused across requests in the same Node.js process.
+// DATABASE_URL is read from the environment at module load time so that no
+// credentials are hard-coded in source.
+// --------------------------------------------------------------------------
 
-export function getDb(): Database.Database {
-  if (dbInstance) {
-    return dbInstance
+let poolInstance: Pool | null = null
+
+export function getPool(): Pool {
+  if (poolInstance) {
+    return poolInstance
   }
 
-  const dbDir = path.join(process.cwd(), 'data')
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true })
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL environment variable is not set.')
   }
 
-  const dbPath = path.join(dbDir, 'portfolio.db')
-  const db = new Database(dbPath)
+  poolInstance = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 10,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 5_000,
+    ssl: { rejectUnauthorized: false },
+  })
 
-  // Configure pragmas for performance & integrity
-  db.pragma('journal_mode = WAL')
-  db.pragma('foreign_keys = ON')
-
-  // Initialize Tables
-  initTables(db)
-
-  dbInstance = db
-  return dbInstance
+  return poolInstance
 }
 
-function initTables(db: Database.Database) {
-  // Projects Table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS projects (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      badge TEXT NOT NULL,
-      category TEXT NOT NULL,
-      badgeColor TEXT NOT NULL,
-      description TEXT NOT NULL,
-      longDescription TEXT,
-      techStack TEXT NOT NULL,
-      demoUrl TEXT NOT NULL,
-      githubUrl TEXT,
-      imageUrl TEXT NOT NULL,
-      codeSnippet TEXT NOT NULL,
-      featured INTEGER DEFAULT 0,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-  `)
+// --------------------------------------------------------------------------
+// Schema initialisation + seed — call once per process startup.
+// --------------------------------------------------------------------------
 
-  // Articles Table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS articles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      date TEXT NOT NULL,
-      category TEXT NOT NULL,
-      isCoralBadge INTEGER DEFAULT 0,
-      readingTime TEXT NOT NULL,
-      description TEXT NOT NULL,
-      tags TEXT NOT NULL,
-      author TEXT NOT NULL,
-      sections TEXT NOT NULL,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-  `)
+let initialised = false
 
-  // Seed default data if empty
-  const projectCount = db.prepare('SELECT COUNT(*) as count FROM projects').get() as { count: number }
-  if (projectCount.count === 0) {
-    const insertProject = db.prepare(`
-      INSERT INTO projects (
-        id, title, badge, category, badgeColor, description,
-        longDescription, techStack, demoUrl, githubUrl, imageUrl,
-        codeSnippet, featured
-      ) VALUES (
-        ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
-        ?, ?
-      )
+export async function initDb(): Promise<void> {
+  if (initialised) return
+
+  const pool = getPool()
+  const client = await pool.connect()
+
+  try {
+    await client.query('BEGIN')
+
+    // ── Projects table ──────────────────────────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS projects (
+        id            TEXT        PRIMARY KEY,
+        title         TEXT        NOT NULL,
+        badge         TEXT        NOT NULL,
+        category      TEXT        NOT NULL,
+        "badgeColor"  TEXT        NOT NULL,
+        description   TEXT        NOT NULL,
+        "longDescription"  TEXT,
+        "techStack"   TEXT        NOT NULL,
+        "demoUrl"     TEXT        NOT NULL,
+        "githubUrl"   TEXT,
+        "imageUrl"    TEXT        NOT NULL,
+        "codeSnippet" TEXT        NOT NULL,
+        featured      BOOLEAN     NOT NULL DEFAULT FALSE,
+        "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        "updatedAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
     `)
 
-    const insertMany = db.transaction((items: ProjectItem[]) => {
-      for (const item of items) {
-        insertProject.run(
-          item.id,
-          item.title,
-          item.badge,
-          item.category,
-          item.badgeColor,
-          item.description,
-          item.longDescription || null,
-          JSON.stringify(item.techStack || []),
-          item.demoUrl,
-          item.githubUrl || null,
-          item.imageUrl,
-          item.codeSnippet,
-          item.featured ? 1 : 0
-        )
-      }
-    })
-
-    insertMany(defaultProjects)
-  }
-
-  const articleCount = db.prepare('SELECT COUNT(*) as count FROM articles').get() as { count: number }
-  if (articleCount.count === 0) {
-    const insertArticle = db.prepare(`
-      INSERT INTO articles (
-        id, slug, title, date, category, isCoralBadge, readingTime,
-        description, tags, author, sections
-      ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?
-      )
+    // ── Articles table ──────────────────────────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS articles (
+        id             SERIAL      PRIMARY KEY,
+        slug           TEXT        NOT NULL UNIQUE,
+        title          TEXT        NOT NULL,
+        date           TEXT        NOT NULL,
+        category       TEXT        NOT NULL,
+        "isCoralBadge" BOOLEAN     NOT NULL DEFAULT FALSE,
+        "readingTime"  TEXT        NOT NULL,
+        description    TEXT        NOT NULL,
+        tags           TEXT        NOT NULL,
+        author         TEXT        NOT NULL,
+        sections       TEXT        NOT NULL,
+        "createdAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        "updatedAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
     `)
 
-    const insertManyArticles = db.transaction((posts: BlogPost[]) => {
-      for (const post of posts) {
-        insertArticle.run(
-          post.id,
-          post.slug,
-          post.title,
-          post.date,
-          post.category,
-          post.isCoralBadge ? 1 : 0,
-          post.readingTime,
-          post.description,
-          JSON.stringify(post.tags || []),
-          JSON.stringify(post.author || { name: '', role: '' }),
-          JSON.stringify(post.sections || [])
+    // ── Seed projects if empty ──────────────────────────────────────────────
+    const { rows: pRows } = await client.query('SELECT COUNT(*)::int AS count FROM projects')
+    if (pRows[0].count === 0) {
+      for (const item of defaultProjects as ProjectItem[]) {
+        await client.query(
+          `INSERT INTO projects (
+             id, title, badge, category, "badgeColor", description,
+             "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
+             "codeSnippet", featured
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+          [
+            item.id,
+            item.title,
+            item.badge,
+            item.category,
+            item.badgeColor,
+            item.description,
+            item.longDescription ?? null,
+            JSON.stringify(item.techStack ?? []),
+            item.demoUrl,
+            item.githubUrl ?? null,
+            item.imageUrl,
+            item.codeSnippet,
+            item.featured ?? false,
+          ],
         )
       }
-    })
+    }
 
-    insertManyArticles(defaultBlogPosts)
+    // ── Seed articles if empty ──────────────────────────────────────────────
+    const { rows: aRows } = await client.query('SELECT COUNT(*)::int AS count FROM articles')
+    if (aRows[0].count === 0) {
+      for (const post of defaultBlogPosts as BlogPost[]) {
+        await client.query(
+          `INSERT INTO articles (
+             id, slug, title, date, category, "isCoralBadge", "readingTime",
+             description, tags, author, sections
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+          [
+            post.id,
+            post.slug,
+            post.title,
+            post.date,
+            post.category,
+            post.isCoralBadge ?? false,
+            post.readingTime,
+            post.description,
+            JSON.stringify(post.tags ?? []),
+            JSON.stringify(post.author ?? { name: '', role: '' }),
+            JSON.stringify(post.sections ?? []),
+          ],
+        )
+      }
+    }
+
+    await client.query('COMMIT')
+    initialised = true
+  } catch (err) {
+    await client.query('ROLLBACK')
+    throw err
+  } finally {
+    client.release()
   }
 }

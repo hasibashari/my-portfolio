@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   description: 'Manage projects, articles, and content in the portfolio.',
 }
 
-export default function AdminPage() {
-  const projects = getProjects()
-  const articles = getArticles()
+export default async function AdminPage() {
+  const projects = await getProjects()
+  const articles = await getArticles()
 
   return <AdminDashboardView projects={projects} articles={articles} />
 }

@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: 'Manage and configure project items.',
 }
 
-export default function AdminProjectsPage() {
-  const projects = getProjects()
+export default async function AdminProjectsPage() {
+  const projects = await getProjects()
 
   return <AdminProjectsView initialProjects={projects} />
 }
