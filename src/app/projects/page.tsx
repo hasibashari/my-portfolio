@@ -4,6 +4,8 @@ import { getProjects } from '../../shared/lib/db'
 import Navbar from '../../shared/components/Navbar'
 import Footer from '../../shared/components/Footer'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'All Projects & Engineering Archive | Hasib Ashari',
   description:

@@ -3,6 +3,8 @@ import { getProjects } from '../shared/lib/db'
 import Navbar from '../shared/components/Navbar'
 import Footer from '../shared/components/Footer'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const projects = await getProjects()
 

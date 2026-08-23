@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Box, Container, Typography } from '@mui/material'
 import AdminNav from '../components/AdminNav'
 import ProjectForm from '../components/ProjectForm'
@@ -13,6 +14,7 @@ interface AdminProjectFormViewProps {
 
 export default function AdminProjectFormView({ project, isEdit = false }: AdminProjectFormViewProps) {
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (payload: ProjectItem) => {
     setLoading(true)
@@ -30,6 +32,9 @@ export default function AdminProjectFormView({ project, isEdit = false }: AdminP
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to save project')
       }
+
+      // Force the admin list (and any server components) to re-fetch fresh data
+      router.refresh()
     } finally {
       setLoading(false)
     }

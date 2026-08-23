@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { AdminProjectsView } from '../../../features/admin'
 import { getProjects } from '../../../shared/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Manage Projects | Admin Portfolio',
   description: 'Manage and configure project items.',

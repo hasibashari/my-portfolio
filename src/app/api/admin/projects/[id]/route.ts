@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getProjectById, updateProject, deleteProject } from '../../../../../shared/lib/db'
 import { ProjectItem, PROJECT_CATEGORIES } from '../../../../../shared/constants/projects'
 
@@ -49,7 +50,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       demoUrl,
       githubUrl,
       imageUrl,
-      codeSnippet,
       featured,
     } = body
 
@@ -74,10 +74,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (demoUrl !== undefined) updates.demoUrl = String(demoUrl).trim()
     if (githubUrl !== undefined) updates.githubUrl = String(githubUrl).trim()
     if (imageUrl !== undefined) updates.imageUrl = String(imageUrl).trim()
-    if (codeSnippet !== undefined) updates.codeSnippet = String(codeSnippet).trim()
     if (featured !== undefined) updates.featured = Boolean(featured)
 
     const updated = await updateProject(id, updates)
+
+    // Invalidate SSR cache so home and projects pages reflect the update immediately
+    revalidatePath('/')
+    revalidatePath('/projects')
+
     return NextResponse.json({ success: true, data: updated })
   } catch (error) {
     console.error('Failed to update project:', error)
@@ -106,6 +110,10 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
         { status: 500 }
       )
     }
+
+    // Invalidate SSR cache so home and projects pages no longer show the deleted project
+    revalidatePath('/')
+    revalidatePath('/projects')
 
     return NextResponse.json({ success: true, message: `Project "${id}" deleted successfully` })
   } catch (error) {

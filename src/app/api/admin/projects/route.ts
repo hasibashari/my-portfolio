@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getProjects, createProject, getProjectById } from '../../../../shared/lib/db'
 import { ProjectItem, PROJECT_CATEGORIES } from '../../../../shared/constants/projects'
 
@@ -32,7 +33,6 @@ export async function POST(request: NextRequest) {
       demoUrl,
       githubUrl,
       imageUrl,
-      codeSnippet,
       featured,
     } = body
 
@@ -108,11 +108,15 @@ export async function POST(request: NextRequest) {
       demoUrl: demoUrl.trim(),
       githubUrl: (githubUrl && typeof githubUrl === 'string') ? githubUrl.trim() : undefined,
       imageUrl: imageUrl.trim(),
-      codeSnippet: (codeSnippet && typeof codeSnippet === 'string') ? codeSnippet.trim() : '// Code snippet',
       featured: Boolean(featured),
     }
 
     const created = await createProject(newProject)
+
+    // Invalidate SSR cache so home and projects pages show the new project immediately
+    revalidatePath('/')
+    revalidatePath('/projects')
+
     return NextResponse.json({ success: true, data: created }, { status: 201 })
   } catch (error) {
     console.error('Failed to create project:', error)

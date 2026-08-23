@@ -45,7 +45,6 @@ export default function ProjectForm({
     demoUrl: initialData?.demoUrl || '',
     githubUrl: initialData?.githubUrl || '',
     imageUrl: initialData?.imageUrl || '',
-    codeSnippet: initialData?.codeSnippet || '',
     featured: initialData?.featured || false,
   })
 
@@ -105,7 +104,6 @@ export default function ProjectForm({
         demoUrl: formData.demoUrl.trim(),
         githubUrl: formData.githubUrl.trim() || undefined,
         imageUrl: formData.imageUrl.trim(),
-        codeSnippet: formData.codeSnippet.trim() || '// Code snippet',
         featured: formData.featured,
       }
 
@@ -139,6 +137,42 @@ export default function ProjectForm({
           {serverError}
         </Alert>
       )}
+
+      {/* Featured Flag — placed at the top for prominence */}
+      <Box
+        sx={{
+          mb: 3,
+          p: 2,
+          bgcolor: formData.featured ? 'rgba(232, 165, 90, 0.08)' : 'var(--color-canvas)',
+          border: '1px solid',
+          borderColor: formData.featured ? 'rgba(232, 165, 90, 0.4)' : 'var(--color-hairline)',
+          borderRadius: '10px',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.featured}
+              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+              disabled={loading}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: 'var(--color-primary)',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: 'var(--color-primary)',
+                },
+              }}
+            />
+          }
+          label={
+            <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-ink)', fontWeight: 500 }}>
+              Mark as Featured Project on Home &amp; Project list
+            </Typography>
+          }
+        />
+      </Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 3 }}>
         {/* Project ID */}
@@ -376,59 +410,6 @@ export default function ProjectForm({
                 sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
               },
             }}
-          />
-        </Box>
-
-        {/* Code Snippet */}
-        <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
-          <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Featured Code Snippet
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            placeholder="// TypeScript or architectural code snippet"
-            value={formData.codeSnippet}
-            onChange={(e) => setFormData({ ...formData, codeSnippet: e.target.value })}
-            disabled={loading}
-            slotProps={{
-              input: {
-                sx: {
-                  bgcolor: 'var(--color-canvas)',
-                  borderRadius: '8px',
-                  color: 'var(--color-ink)',
-                  fontFamily: 'monospace',
-                  fontSize: '0.85rem',
-                },
-              },
-            }}
-          />
-        </Box>
-
-        {/* Featured Flag */}
-        <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.featured}
-                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                disabled={loading}
-                sx={{
-                  '& .MuiSwitch-switchBase.Mui-checked': {
-                    color: 'var(--color-primary)',
-                  },
-                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                    backgroundColor: 'var(--color-primary)',
-                  },
-                }}
-              />
-            }
-            label={
-              <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-ink)', fontWeight: 500 }}>
-                Mark as Featured Project on Home & Project list
-              </Typography>
-            }
           />
         </Box>
       </Box>

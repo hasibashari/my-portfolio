@@ -16,7 +16,8 @@ interface ProjectsProps {
 export default function Projects({ projects }: ProjectsProps) {
   const [activeTab, setActiveTab] = useState(0)
 
-  const showcaseProjects = projects.slice(0, 3)
+  const featuredProjects = projects.filter((p) => p.featured)
+  const showcaseProjects = featuredProjects.length > 0 ? featuredProjects.slice(0, 3) : projects.slice(0, 3)
   const current = showcaseProjects[activeTab] || showcaseProjects[0]
 
   return (

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import {
   Box,
@@ -19,9 +20,24 @@ interface AdminProjectsViewProps {
   initialProjects: ProjectItem[]
 }
 
+/** Always keep featured projects pinned to the top of the list. */
+function sortByFeatured(list: ProjectItem[]): ProjectItem[] {
+  return [...list].sort((a, b) => {
+    if (a.featured && !b.featured) return -1
+    if (!a.featured && b.featured) return 1
+    return 0
+  })
+}
+
 export default function AdminProjectsView({ initialProjects }: AdminProjectsViewProps) {
-  const [projects, setProjects] = useState<ProjectItem[]>(initialProjects)
+  const [projects, setProjects] = useState<ProjectItem[]>(() => sortByFeatured(initialProjects))
   const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' } | null>(null)
+  const router = useRouter()
+
+  // Sync local state when server re-renders with fresh data (e.g. after router.refresh())
+  useEffect(() => {
+    setProjects(sortByFeatured(initialProjects))
+  }, [initialProjects])
 
   const handleDeleteProject = async (id: string) => {
     try {
@@ -34,8 +50,9 @@ export default function AdminProjectsView({ initialProjects }: AdminProjectsView
         throw new Error(data.error || 'Failed to delete project')
       }
 
-      setProjects((prev) => prev.filter((p) => p.id !== id))
+      setProjects((prev) => sortByFeatured(prev.filter((p) => p.id !== id)))
       setNotification({ message: 'Project deleted successfully.', severity: 'success' })
+      router.refresh()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to delete project.'
       setNotification({ message, severity: 'error' })

@@ -52,10 +52,18 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
     return counts
   }, [allProjects])
 
-  // Filter projects strictly by category
+  // Filter projects strictly by category, featured first
   const filteredProjects = useMemo(() => {
-    if (selectedCategory === 'All') return allProjects
-    return allProjects.filter((project) => project.category === selectedCategory)
+    const list =
+      selectedCategory === 'All'
+        ? allProjects
+        : allProjects.filter((project) => project.category === selectedCategory)
+    // Featured projects always appear at the top
+    return [...list].sort((a, b) => {
+      if (a.featured && !b.featured) return -1
+      if (!a.featured && b.featured) return 1
+      return 0
+    })
   }, [allProjects, selectedCategory])
 
   // Pagination calculation

@@ -59,7 +59,6 @@ export async function initDb(): Promise<void> {
         "demoUrl"     TEXT        NOT NULL,
         "githubUrl"   TEXT,
         "imageUrl"    TEXT        NOT NULL,
-        "codeSnippet" TEXT        NOT NULL,
         featured      BOOLEAN     NOT NULL DEFAULT FALSE,
         "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updatedAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -93,8 +92,8 @@ export async function initDb(): Promise<void> {
           `INSERT INTO projects (
              id, title, badge, category, "badgeColor", description,
              "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
-             "codeSnippet", featured
-           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+             featured
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
           [
             item.id,
             item.title,
@@ -107,7 +106,6 @@ export async function initDb(): Promise<void> {
             item.demoUrl,
             item.githubUrl ?? null,
             item.imageUrl,
-            item.codeSnippet,
             item.featured ?? false,
           ],
         )

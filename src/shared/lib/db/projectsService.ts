@@ -13,7 +13,6 @@ interface ProjectRow {
   demoUrl: string
   githubUrl: string | null
   imageUrl: string
-  codeSnippet: string
   featured: boolean
   createdAt: string
   updatedAt: string
@@ -39,7 +38,6 @@ function mapRowToProject(row: ProjectRow): ProjectItem {
     demoUrl: row.demoUrl,
     githubUrl: row.githubUrl ?? undefined,
     imageUrl: row.imageUrl,
-    codeSnippet: row.codeSnippet,
     featured: Boolean(row.featured),
   }
 }
@@ -48,7 +46,7 @@ export async function getProjects(): Promise<ProjectItem[]> {
   await initDb()
   const pool = getPool()
   const { rows } = await pool.query<ProjectRow>(
-    'SELECT * FROM projects ORDER BY "createdAt" DESC',
+    'SELECT * FROM projects ORDER BY featured DESC, "createdAt" DESC',
   )
   return rows.map(mapRowToProject)
 }
@@ -72,8 +70,8 @@ export async function createProject(item: ProjectItem): Promise<ProjectItem> {
     `INSERT INTO projects (
        id, title, badge, category, "badgeColor", description,
        "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
-       "codeSnippet", featured, "createdAt", "updatedAt"
-     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NOW(),NOW())
+       featured, "createdAt", "updatedAt"
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW())
      RETURNING *`,
     [
       item.id,
@@ -87,7 +85,6 @@ export async function createProject(item: ProjectItem): Promise<ProjectItem> {
       item.demoUrl,
       item.githubUrl ?? null,
       item.imageUrl,
-      item.codeSnippet,
       item.featured ?? false,
     ],
   )
@@ -122,10 +119,9 @@ export async function updateProject(
        "demoUrl"        = $8,
        "githubUrl"      = $9,
        "imageUrl"       = $10,
-       "codeSnippet"    = $11,
-       featured         = $12,
+       featured         = $11,
        "updatedAt"      = NOW()
-     WHERE id = $13
+     WHERE id = $12
      RETURNING *`,
     [
       merged.title,
@@ -138,7 +134,6 @@ export async function updateProject(
       merged.demoUrl,
       merged.githubUrl ?? null,
       merged.imageUrl,
-      merged.codeSnippet,
       merged.featured ?? false,
       id,
     ],
