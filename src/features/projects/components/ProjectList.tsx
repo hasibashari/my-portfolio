@@ -1,70 +1,68 @@
-'use client'
+'use client';
 
-import { useState, useMemo, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { Box, Container, Typography, Button } from '@mui/material'
-import { AnimatePresence, motion } from 'motion/react'
-import { FolderGit2 } from 'lucide-react'
-import ProjectsHero from './ProjectsHero'
-import ProjectsFilter from './ProjectsFilter'
-import ProjectCard from './ProjectCard'
-import ProjectModal from './ProjectModal'
-import Pagination from '@/shared/components/Pagination'
-import {
-  ProjectItem,
-  ProjectCategory,
-  PROJECT_CATEGORIES,
-} from '@/shared/types/projects'
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Box, Container, Typography, Button } from '@mui/material';
+import { AnimatePresence, motion } from 'motion/react';
+import { FolderGit2 } from 'lucide-react';
+import ProjectsHero from './ProjectsHero';
+import FilterBar from '@/shared/components/FilterBar';
+import ProjectCard from './ProjectCard';
+import ProjectModal from './ProjectModal';
+import Pagination from '@/shared/components/Pagination';
+import { ProjectItem, ProjectCategory, PROJECT_CATEGORIES } from '@/shared/types/projects';
 
-const ITEMS_PER_PAGE = 6
+const ITEMS_PER_PAGE = 6;
 
 interface ProjectListProps {
-  initialProjects?: ProjectItem[]
+  initialProjects?: ProjectItem[];
 }
 
 export default function ProjectList({ initialProjects = [] }: ProjectListProps) {
-  const searchParams = useSearchParams()
-  const allProjects = initialProjects
+  const searchParams = useSearchParams();
+  const allProjects = initialProjects;
 
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('All')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Auto-open modal if URL query param `?project=<id>` is present
+  // Auto-open modal if URL query param `?project=<slug|id>` is present
   useEffect(() => {
-    const projectIdFromUrl = searchParams.get('project')
+    const projectIdFromUrl = searchParams.get('project');
     if (projectIdFromUrl) {
-      const match = allProjects.find((p) => p.id === projectIdFromUrl)
+      const match = allProjects.find(
+        p => (p.slug && p.slug === projectIdFromUrl) || p.id === projectIdFromUrl,
+      );
       if (match) {
-        setActiveModalProject(match)
+        setActiveModalProject(match);
       }
     }
-  }, [searchParams, allProjects])
+  }, [searchParams, allProjects]);
 
   const handleOpenModal = (project: ProjectItem) => {
-    setActiveModalProject(project)
+    setActiveModalProject(project);
     if (typeof window !== 'undefined') {
-      window.history.pushState(null, '', `/projects?project=${project.id}`)
+      window.history.pushState(null, '', `/projects?project=${project.slug || project.id}`);
     }
-  }
+  };
 
   const handleCloseModal = () => {
-    setActiveModalProject(null)
+    setActiveModalProject(null);
     if (typeof window !== 'undefined') {
-      window.history.pushState(null, '', '/projects')
+      window.history.pushState(null, '', '/projects');
     }
-  }
+  };
 
   const handleCategoryChange = (category: ProjectCategory) => {
-    setSelectedCategory(category)
-    setCurrentPage(1)
-  }
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
 
   const handleSearchChange = (query: string) => {
-    setSearchQuery(query)
-    setCurrentPage(1)
-  }
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   // Compute total counts per category
   const categoryCounts = useMemo(() => {
@@ -74,68 +72,74 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
       'Cloud & Data': 0,
       Microservices: 0,
       Fullstack: 0,
-    }
+    };
 
-    PROJECT_CATEGORIES.forEach((cat) => {
+    PROJECT_CATEGORIES.forEach(cat => {
       if (cat !== 'All') {
-        counts[cat] = allProjects.filter((p) => p.category === cat).length
+        counts[cat] = allProjects.filter(p => p.category === cat).length;
       }
-    })
+    });
 
-    return counts
-  }, [allProjects])
+    return counts;
+  }, [allProjects]);
 
   // Filter projects strictly by category AND search query, featured first
   const filteredProjects = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
+    const query = searchQuery.trim().toLowerCase();
 
     return allProjects
-      .filter((project) => {
+      .filter(project => {
         // Category filter
         if (selectedCategory !== 'All' && project.category !== selectedCategory) {
-          return false
+          return false;
         }
         // Search query filter (matches title, description, badge, or tech stack)
         if (query) {
-          const matchTitle = project.title.toLowerCase().includes(query)
-          const matchDesc = project.description.toLowerCase().includes(query)
-          const matchBadge = project.badge.toLowerCase().includes(query)
-          const matchTech = project.techStack.some((tech) => tech.toLowerCase().includes(query))
+          const matchTitle = project.title.toLowerCase().includes(query);
+          const matchDesc = project.description.toLowerCase().includes(query);
+          const matchBadge = project.badge.toLowerCase().includes(query);
+          const matchTech = project.techStack.some(tech => tech.toLowerCase().includes(query));
           if (!matchTitle && !matchDesc && !matchBadge && !matchTech) {
-            return false
+            return false;
           }
         }
-        return true
+        return true;
       })
       .sort((a, b) => {
-        if (a.featured && !b.featured) return -1
-        if (!a.featured && b.featured) return 1
-        return 0
-      })
-  }, [allProjects, selectedCategory, searchQuery])
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return 0;
+      });
+  }, [allProjects, selectedCategory, searchQuery]);
 
   // Pagination calculation
-  const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
   const paginatedProjects = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    return filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE)
-  }, [filteredProjects, currentPage])
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProjects, currentPage]);
 
   return (
     <Box sx={{ minHeight: '80vh', pb: { xs: 10, md: 14 }, bgcolor: 'var(--color-canvas)' }}>
       {/* Editorial Hero Header */}
       <ProjectsHero />
 
-      {/* Modular Category Filter & Search Component */}
-      <ProjectsFilter
+      {/* Shared Modular Category Filter & Search Component */}
+      <FilterBar<ProjectCategory>
+        categories={PROJECT_CATEGORIES}
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
         categoryCounts={categoryCounts}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
+        searchPlaceholder="Search projects or tech..."
       />
 
-      <Container id="projects-content-list" maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 3, sm: 4 } }}>
+      <Container
+        id='projects-content-list'
+        maxWidth='lg'
+        sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 3, sm: 4 } }}
+      >
         {/* Results Counter */}
         <Box
           sx={{
@@ -145,9 +149,9 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
             mb: { xs: 3, md: 3.5 },
           }}
         >
-          <Typography variant="body2" sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
+          <Typography variant='body2' sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
             Showing{' '}
-            <Box component="span" sx={{ color: 'var(--color-ink)', fontWeight: 600 }}>
+            <Box component='span' sx={{ color: 'var(--color-ink)', fontWeight: 600 }}>
               {filteredProjects.length}
             </Box>{' '}
             {filteredProjects.length === 1 ? 'project' : 'projects'}
@@ -158,11 +162,11 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
 
           {(selectedCategory !== 'All' || searchQuery) && (
             <Button
-              size="small"
+              size='small'
               onClick={() => {
-                setSelectedCategory('All')
-                setSearchQuery('')
-                setCurrentPage(1)
+                setSelectedCategory('All');
+                setSearchQuery('');
+                setCurrentPage(1);
               }}
               sx={{
                 color: 'var(--color-primary)',
@@ -192,19 +196,19 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
               alignItems: 'stretch',
             }}
           >
-            <AnimatePresence mode="popLayout">
-              {paginatedProjects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onOpenModal={handleOpenModal}
-                />
+            <AnimatePresence mode='popLayout'>
+              {paginatedProjects.map(project => (
+                <ProjectCard key={project.id} project={project} onOpenModal={handleOpenModal} />
               ))}
             </AnimatePresence>
           </Box>
         ) : (
           /* Empty State */
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <Box
               sx={{
                 textAlign: 'center',
@@ -213,8 +217,7 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
                 borderRadius: '16px',
                 bgcolor: 'var(--color-surface-soft)',
                 border: '1px dashed var(--color-hairline)',
-                maxWidth: '500px',
-                mx: 'auto',
+                width: '100%',
               }}
             >
               <Box
@@ -229,18 +232,22 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
               >
                 <FolderGit2 size={32} />
               </Box>
-              <Typography variant="h6" className="font-serif-display" sx={{ color: 'var(--color-ink)', mb: 1 }}>
+              <Typography
+                variant='h6'
+                className='font-serif-display'
+                sx={{ color: 'var(--color-ink)', mb: 1 }}
+              >
                 No projects matched your criteria
               </Typography>
-              <Typography variant="body2" sx={{ color: 'var(--color-muted)', mb: 3 }}>
+              <Typography variant='body2' sx={{ color: 'var(--color-muted)', mb: 3 }}>
                 Try adjusting your search keyword or switching category tabs.
               </Typography>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={() => {
-                  setSelectedCategory('All')
-                  setSearchQuery('')
-                  setCurrentPage(1)
+                  setSelectedCategory('All');
+                  setSearchQuery('');
+                  setCurrentPage(1);
                 }}
                 sx={{
                   color: 'var(--color-ink)',
@@ -267,7 +274,7 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
-          scrollTargetId="projects-content-list"
+          scrollTargetId='projects-content-list'
         />
       </Container>
 
@@ -278,5 +285,5 @@ export default function ProjectList({ initialProjects = [] }: ProjectListProps) 
         onClose={handleCloseModal}
       />
     </Box>
-  )
+  );
 }

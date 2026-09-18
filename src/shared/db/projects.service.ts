@@ -3,6 +3,7 @@ import { ProjectItem } from '@/shared/types/projects';
 
 interface ProjectRow {
   id: string;
+  slug: string;
   title: string;
   badge: string;
   category: string;
@@ -28,6 +29,7 @@ function mapRowToProject(row: ProjectRow): ProjectItem {
 
   return {
     id: row.id,
+    slug: row.slug || row.id,
     title: row.title,
     badge: row.badge,
     category: row.category as ProjectItem['category'],
@@ -54,34 +56,52 @@ export async function getProjects(): Promise<ProjectItem[]> {
 export async function getProjectById(id: string): Promise<ProjectItem | null> {
   await initDb();
   const pool = getPool();
-  const { rows } = await pool.query<ProjectRow>('SELECT * FROM projects WHERE id = $1', [id]);
+  const { rows } = await pool.query<ProjectRow>(
+    'SELECT * FROM projects WHERE id = $1 OR slug = $1 LIMIT 1',
+    [id],
+  );
   if (!rows[0]) return null;
   return mapRowToProject(rows[0]);
 }
 
-export async function createProject(item: ProjectItem): Promise<ProjectItem> {
+export async function getProjectBySlug(slug: string): Promise<ProjectItem | null> {
+  await initDb();
+  const pool = getPool();
+  const { rows } = await pool.query<ProjectRow>(
+    'SELECT * FROM projects WHERE slug = $1 LIMIT 1',
+    [slug],
+  );
+  if (!rows[0]) return null;
+  return mapRowToProject(rows[0]);
+}
+
+export async function createProject(item: Partial<ProjectItem> & { title: string; category: ProjectItem['category']; description: string; imageUrl: string; demoUrl: string }): Promise<ProjectItem> {
   await initDb();
   const pool = getPool();
 
+  const id = item.id && item.id.trim() !== '' ? item.id.trim() : crypto.randomUUID();
+  const slug = item.slug && item.slug.trim() !== '' ? item.slug.trim() : id;
+
   const { rows } = await pool.query<ProjectRow>(
     `INSERT INTO projects (
-       id, title, badge, category, "badgeColor", description,
+       id, slug, title, badge, category, "badgeColor", description,
        "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
        featured, "createdAt", "updatedAt"
-     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW())
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NOW(),NOW())
      RETURNING *`,
     [
-      item.id,
-      item.title,
-      item.badge,
+      id,
+      slug,
+      item.title.trim(),
+      item.badge ?? item.category.toUpperCase(),
       item.category,
-      item.badgeColor,
-      item.description,
+      item.badgeColor ?? '#cc785c',
+      item.description.trim(),
       item.longDescription ?? null,
       JSON.stringify(item.techStack ?? []),
-      item.demoUrl,
+      item.demoUrl.trim(),
       item.githubUrl ?? null,
-      item.imageUrl,
+      item.imageUrl.trim(),
       item.featured ?? false,
     ],
   );
@@ -103,6 +123,10 @@ export async function updateProject(
   const values: unknown[] = [];
   let p = 1;
 
+  if (updates.slug !== undefined) {
+    setClauses.push(`slug             = $${p++}`);
+    values.push(updates.slug.trim());
+  }
   if (updates.title !== undefined) {
     setClauses.push(`title             = $${p++}`);
     values.push(updates.title);

@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hasib Ashari",
-  description: "A warm-canvas editorial interface inspired by Claude's design system.",
+  title: "Hasib Ashari | Cloud & Backend Engineer",
+  description: "Portfolio of Hasib Ashari — Cloud & Backend Engineer specializing in AWS cloud infrastructure, Docker containerization, and modular backend APIs.",
 };
 
 export default function RootLayout({

@@ -1,37 +1,36 @@
-'use client'
+'use client';
 
-import {
-  Box,
-  Button,
-  Container,
-  Typography,
-} from '@mui/material'
-import { ArrowRight, Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import ArchitectureCanvas from './ArchitectureCanvas'
+import { Box, Button, Container, Typography } from '@mui/material';
+import { ArrowRight, Download, Sparkles } from 'lucide-react';
+import { motion } from 'motion/react';
+import ArchitectureCanvas from './ArchitectureCanvas';
 
 export default function Hero() {
   return (
     <Box
-      id="hero"
+      id='hero'
       sx={{
         bgcolor: 'var(--color-canvas)',
         color: 'var(--color-ink)',
         position: 'relative',
         overflow: 'hidden',
+        minHeight: { xs: 'calc(100dvh - 64px)', md: 'calc(100vh - 64px)' },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        scrollMarginTop: '64px',
       }}
     >
       {/* Interactive Cursor-Driven Architecture Dot Matrix Canvas */}
       <ArchitectureCanvas />
 
       <Container
-        maxWidth="lg"
+        maxWidth='lg'
         sx={{
           position: 'relative',
           zIndex: 1,
           px: { xs: 2, sm: 3, md: 4 },
-          pt: { xs: 8, sm: 10, md: 14 },
-          pb: { xs: 8, sm: 10, md: 14 },
+          py: { xs: 4, sm: 6, md: 8 },
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -61,9 +60,12 @@ export default function Hero() {
                 boxShadow: '0 2px 8px -2px rgba(20, 20, 19, 0.05)',
               }}
             >
-              <Sparkles size={14} color="#cc785c" style={{ flexShrink: 0 }} />
-              <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 500, lineHeight: 1 }}>
-                Open for Backend & Cloud Engineering Roles
+              <Sparkles size={14} color='#cc785c' style={{ flexShrink: 0 }} />
+              <Typography
+                variant='caption'
+                sx={{ color: 'var(--color-ink)', fontWeight: 500, lineHeight: 1 }}
+              >
+                Cloud & Backend Engineer • Available for Opportunities
               </Typography>
             </Box>
           </Box>
@@ -76,8 +78,8 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
           <Typography
-            variant="h1"
-            className="font-serif-display"
+            variant='h1'
+            className='font-serif-display'
             sx={{
               fontSize: { xs: '2.5rem', sm: '3.75rem', md: '4.25rem' },
               fontWeight: 400,
@@ -89,7 +91,7 @@ export default function Hero() {
               mb: 3,
             }}
           >
-            Hi, I&apos;m Hasib Ashari. Building highly scalable cloud systems.
+            Hi, I&apos;m Hasib Ashari. Designing reliable cloud infrastructure & backend systems.
           </Typography>
         </motion.div>
 
@@ -100,17 +102,18 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.35, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
           <Typography
-            variant="body1"
+            variant='body1'
             sx={{
               fontSize: { xs: '1.0625rem', sm: '1.25rem' },
               lineHeight: 1.6,
               color: 'var(--color-body)',
               maxWidth: '680px',
               mx: 'auto',
-              mb: 4.5,
+              mb: 3.5,
             }}
           >
-            Backend & Cloud Engineer specializing in scalable architectures, cloud infrastructure (AWS/GCP), and building robust API layers for AI-driven applications.
+            Cloud & Backend Engineer with hands-on experience in AWS cloud infrastructure,
+            Docker containerization, and building modular backend APIs with NestJS & Express.js.
           </Typography>
         </motion.div>
 
@@ -127,16 +130,20 @@ export default function Hero() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 2,
-              mb: 6,
+              mb: 0,
             }}
           >
             <Button
-              variant="contained"
+              variant='contained'
               disableElevation
-              component="a"
-              href="#projects"
-              endIcon={<ArrowRight size={18} />}
+              component='a'
+              href='/hasib-ashari-cv.pdf'
+              download='HASIB_ASHARI_CV.pdf'
+              target='_blank'
+              rel='noopener noreferrer'
+              startIcon={<Download size={18} />}
               sx={{
+                minWidth: { xs: '100%', sm: '190px' },
                 bgcolor: 'var(--color-primary)',
                 color: 'var(--color-on-primary)',
                 px: 3.5,
@@ -147,21 +154,26 @@ export default function Hero() {
                 fontSize: '0.9375rem',
                 boxShadow: '0 4px 14px 0 rgba(204, 120, 92, 0.35)',
                 transition: 'all 0.2s ease-in-out',
-                '&:hover': { bgcolor: 'var(--color-primary-active)', boxShadow: '0 6px 20px 0 rgba(204, 120, 92, 0.45)', transform: 'translateY(-2px)' },
+                '&:hover': {
+                  bgcolor: 'var(--color-primary-active)',
+                  boxShadow: '0 6px 20px 0 rgba(204, 120, 92, 0.45)',
+                  transform: 'translateY(-2px)',
+                },
               }}
             >
-              Explore Featured Projects
+              Download CV
             </Button>
 
             <Button
-              variant="outlined"
-              component="a"
-              href="#contact"
+              variant='outlined'
+              component='a'
+              href='#contact'
               sx={{
+                minWidth: { xs: '100%', sm: '190px' },
                 bgcolor: 'var(--color-canvas)',
                 color: 'var(--color-ink)',
                 borderColor: 'var(--color-hairline)',
-                px: 3,
+                px: 3.5,
                 py: 1.5,
                 borderRadius: '8px',
                 textTransform: 'none',
@@ -169,7 +181,12 @@ export default function Hero() {
                 fontSize: '0.9375rem',
                 backdropFilter: 'blur(8px)',
                 transition: 'all 0.2s ease-in-out',
-                '&:hover': { bgcolor: 'var(--color-surface-card)', borderColor: 'var(--color-primary)', transform: 'translateY(-2px)' },
+                '&:hover': {
+                  bgcolor: 'var(--color-surface-card)',
+                  borderColor: 'var(--color-primary)',
+                  color: 'var(--color-primary)',
+                  transform: 'translateY(-2px)',
+                },
               }}
             >
               Contact Me
@@ -178,5 +195,5 @@ export default function Hero() {
         </motion.div>
       </Container>
     </Box>
-  )
+  );
 }

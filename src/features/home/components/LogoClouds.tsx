@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Box, Container, Typography, Tooltip } from '@mui/material'
-import ScrollReveal from '@/shared/components/ScrollReveal'
-import { logo } from '../constants/home'
+import { Box, Container, Typography, Tooltip } from '@mui/material';
+import ScrollReveal from '@/shared/components/ScrollReveal';
+import { logo } from '../constants/home';
 
 export default function LogoClouds() {
   return (
     <Box
-      id="technologies"
+      id='technologies'
       sx={{
         bgcolor: 'var(--color-surface-soft)',
         borderTop: '1px solid var(--color-hairline)',
@@ -15,12 +15,12 @@ export default function LogoClouds() {
         py: { xs: 4, sm: 5 },
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth='lg' sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         <ScrollReveal duration={0.5}>
           {/* Minimal Section Label */}
           <Typography
-            variant="overline"
-            className="font-serif-display"
+            variant='overline'
+            className='font-serif-display'
             sx={{
               display: 'block',
               textAlign: 'center',
@@ -44,8 +44,8 @@ export default function LogoClouds() {
               gap: { xs: 3, sm: 5, md: 6 },
             }}
           >
-            {logo.map((item) => (
-              <Tooltip key={item.name} title={item.tag} arrow placement="top">
+            {logo.map(item => (
+              <Tooltip key={item.name} title={item.tag} arrow placement='top'>
                 <Box
                   sx={{
                     display: 'flex',
@@ -65,7 +65,7 @@ export default function LogoClouds() {
                 >
                   {/* Clean Large Official SVG Brand Icon */}
                   <Box
-                    component="img"
+                    component='img'
                     src={item.logoUrl}
                     alt={`${item.name} logo`}
                     sx={{
@@ -82,5 +82,5 @@ export default function LogoClouds() {
         </ScrollReveal>
       </Container>
     </Box>
-  )
+  );
 }

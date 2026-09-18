@@ -1,45 +1,33 @@
-import { Server, Cloud, Database } from 'lucide-react'
+import { Server, Cloud, Database } from 'lucide-react';
 
 export const experiences = [
   {
-    role: 'Senior Backend Engineer',
-    company: 'TechCorp Inc.',
-    period: '2022 - Present',
+    role: 'DevOps Trainee (OJT)',
+    company: 'Elitry',
+    period: 'Dec 2024 – Jan 2025',
     location: 'Remote',
     description:
-      'Leading backend architecture for enterprise AI applications using Express.js, NestJS, and AWS. Designed robust APIs handling high traffic and seamless AI model integrations.',
+      'Focused on automating cloud operations, containerizing service workloads with Docker on Amazon EC2, and implementing robust AWS backup and continuity procedures.',
     highlights: [
-      'Architected microservices infrastructure deployed on AWS ECS via Docker.',
-      'Mentored junior engineers and led code reviews for backend API development.',
-      'Spearheaded LLM integration using OpenAI API, reducing processing time by 40%.',
+      'Applied foundational Infrastructure as Code (IaC) practices for infrastructure provisioning and configuration management.',
+      'Configured AWS Backup and restore workflows to support data protection and operational continuity.',
+      'Containerized and deployed Ghost CMS and Uptime Kuma on Amazon EC2 using Docker.',
     ],
   },
   {
-    role: 'Cloud & Backend Developer',
-    company: 'Innovate Labs',
-    period: '2020 - 2022',
-    location: 'Hybrid',
+    role: 'Cloud Solution Architect Trainee (OJT)',
+    company: 'Elitry',
+    period: 'Nov 2024 – Dec 2024',
+    location: 'Remote',
     description:
-      'Engineered scalable RESTful APIs with Node.js/Express and managed cloud deployments using Google Cloud Platform (GCP).',
+      'Engaged in architectural solution design, disaster recovery planning, and Proof-of-Concept (PoC) implementations for institutional and public-sector cloud workloads on AWS.',
     highlights: [
-      'Built a distributed data processing engine serving 50k daily active users.',
-      'Designed PostgreSQL database schema migrations and optimized query latency by 30%.',
-      'Automated CI/CD deployment pipelines using GitHub Actions and Docker.',
+      'Designed AWS Disaster Recovery Center (DRC) topologies and architectures for academic and public-sector use cases.',
+      'Developed AWS solution designs for government and institutional projects, including Pusdatin Kemenkes SMILE and BPD Bali.',
+      'Implemented PoC deployments for WordPress workloads using AWS Elastic Beanstalk and Amazon S3.',
     ],
   },
-  {
-    role: 'Software Engineer',
-    company: 'Digital Creative Agency',
-    period: '2018 - 2020',
-    location: 'On-site',
-    description:
-      'Developed custom backend services, API integrations, and robust data management systems for client platforms.',
-    highlights: [
-      'Delivered 20+ secure backend integrations on tight deadlines with high reliability.',
-      'Integrated Stripe payment gateways and third-party SaaS APIs via robust webhooks.',
-    ],
-  },
-]
+];
 
 // logo
 
@@ -84,34 +72,57 @@ export const logo = [
     logoUrl: 'https://cdn.simpleicons.org/typescript/3178C6',
     tag: 'TypeScript • Type Safety',
   },
-]
-
+];
 
 // skills
 
 export const skills = [
   {
-    name: 'Backend & AI Integrations',
-    badge: 'EXPERT',
+    name: 'Cloud Infrastructure & AWS',
+    badge: 'CORE FOCUS',
     badgeColor: '#cc785c',
-    description: 'Building robust microservices and integrating LLM APIs into modern scalable applications.',
-    skills: ['Node.js & Express.js', 'NestJS Architecture', 'Spring Boot (Familiar)', 'OpenAI & Claude APIs', 'REST & GraphQL APIs', 'Redis Caching'],
-    icon: Server,
-  },
-  {
-    name: 'Cloud Infrastructure & DevOps',
-    badge: 'ADVANCED',
-    badgeColor: '#e8a55a',
-    description: 'Designing fault-tolerant cloud environments and automated deployment pipelines.',
-    skills: ['AWS (EC2, S3, RDS)', 'Google Cloud Platform (GCP)', 'Docker Containerization', 'CI/CD Pipelines', 'Nginx & Load Balancing'],
+    description:
+      'Architecting resilient cloud environments, AWS disaster recovery solutions, and automated cloud backup strategies.',
+    skills: [
+      'AWS (EC2, S3, Elastic Beanstalk)',
+      'Disaster Recovery (DRC)',
+      'AWS Backup & Restore',
+      'Linux Server Admin',
+      'VPC & Cloud Networking',
+      'Cloud Security Basics',
+    ],
     icon: Cloud,
   },
   {
-    name: 'Database & System Architecture',
+    name: 'Backend Engineering & APIs',
     badge: 'PROFICIENT',
+    badgeColor: '#e8a55a',
+    description:
+      'Building modular RESTful backend services, authentication mechanisms, and reliable server-side business logic.',
+    skills: [
+      'Node.js & Express.js',
+      'NestJS Framework',
+      'TypeScript',
+      'RESTful API Design',
+      'PostgreSQL & Relational DBs',
+      'Prisma ORM',
+    ],
+    icon: Server,
+  },
+  {
+    name: 'Containerization & DevOps',
+    badge: 'HANDS-ON',
     badgeColor: '#5db8a6',
-    description: 'Designing scalable database schemas and optimizing query performance for data-intensive systems.',
-    skills: ['PostgreSQL & Relational DBs', 'Prisma ORM & TypeORM', 'Microservices Architecture', 'Secure API Design', 'Performance Tuning'],
+    description:
+      'Containerizing services, implementing Infrastructure as Code (IaC), and setting up automated CI/CD pipelines.',
+    skills: [
+      'Docker Containerization',
+      'Infrastructure as Code (IaC)',
+      'CI/CD Automation',
+      'Nginx & Reverse Proxy',
+      'System Monitoring (Uptime Kuma)',
+      'Git & Version Control',
+    ],
     icon: Database,
   },
-]
+];

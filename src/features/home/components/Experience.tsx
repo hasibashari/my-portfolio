@@ -1,34 +1,41 @@
-'use client'
+'use client';
 
-import { Box, Container, Typography } from '@mui/material'
-import { CheckCircle2 } from 'lucide-react'
-import ScrollReveal from '@/shared/components/ScrollReveal'
-import { experiences } from '../constants/home'
+import { Box, Container, Typography } from '@mui/material';
+import { CheckCircle2 } from 'lucide-react';
+import ScrollReveal from '@/shared/components/ScrollReveal';
+import { experiences } from '../constants/home';
 
 export default function Experience() {
   return (
     <Box
-      id="experience"
+      id='experience'
       sx={{
         bgcolor: 'var(--color-surface-soft)',
         py: { xs: 8, sm: 10, md: 12 },
         borderTop: '1px solid var(--color-hairline)',
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth='lg' sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* Centered Section Header with Blur-Reveal */}
-        <ScrollReveal variant="blur-reveal">
+        <ScrollReveal variant='blur-reveal'>
           <Box sx={{ textAlign: 'center', maxWidth: '720px', mx: 'auto', mb: { xs: 5, md: 7 } }}>
             <Typography
-              variant="overline"
-              className="font-serif-display"
-              sx={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
+              variant='overline'
+              className='font-serif-display'
+              sx={{
+                color: 'var(--color-primary)',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                letterSpacing: '0.1em',
+                display: 'block',
+                mb: 1.5,
+              }}
             >
               CAREER TIMELINE
             </Typography>
             <Typography
-              variant="h2"
-              className="font-serif-display"
+              variant='h2'
+              className='font-serif-display'
               sx={{
                 fontSize: { xs: '2rem', sm: '2.75rem', md: '3.25rem' },
                 fontWeight: 400,
@@ -38,15 +45,28 @@ export default function Experience() {
                 mb: 2.5,
               }}
             >
-              Work Experience & Professional Impact.
+              Experience & Milestones.
             </Typography>
-            <Typography variant="body1" sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}>
-              My journey building software across high-growth startups and established technology teams.
+            <Typography
+              variant='body1'
+              sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}
+            >
+              A timeline of my practical industry roles, technical responsibilities, and engineering
+              contributions.
             </Typography>
           </Box>
         </ScrollReveal>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '900px', mx: 'auto', position: 'relative' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            maxWidth: '900px',
+            mx: 'auto',
+            position: 'relative',
+          }}
+        >
           {/* Vertical Timeline Line */}
           <Box
             sx={{
@@ -60,7 +80,7 @@ export default function Experience() {
             }}
           />
           {experiences.map((exp, idx) => (
-            <ScrollReveal key={exp.role + exp.company} variant="fade-up" delay={idx * 0.1}>
+            <ScrollReveal key={exp.role + exp.company} variant='fade-up' delay={idx * 0.1}>
               <Box sx={{ position: 'relative', zIndex: 1 }}>
                 {/* Timeline Dot */}
                 <Box
@@ -76,7 +96,7 @@ export default function Experience() {
                     zIndex: 2,
                   }}
                 />
-                
+
                 <Box
                   sx={{
                     ml: { xs: '28px', sm: '48px' },
@@ -92,11 +112,20 @@ export default function Experience() {
                     },
                   }}
                 >
-                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1, mb: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      justifyContent: 'space-between',
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      gap: 1,
+                      mb: 2,
+                    }}
+                  >
                     <Box>
                       <Typography
-                        variant="h5"
-                        className="font-serif-display"
+                        variant='h5'
+                        className='font-serif-display'
                         sx={{
                           fontSize: '1.375rem',
                           fontWeight: 600,
@@ -106,13 +135,21 @@ export default function Experience() {
                       >
                         {exp.role}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.9375rem', mt: 0.25 }}>
+                      <Typography
+                        variant='body2'
+                        sx={{
+                          color: 'var(--color-primary)',
+                          fontWeight: 600,
+                          fontSize: '0.9375rem',
+                          mt: 0.25,
+                        }}
+                      >
                         {exp.company} • {exp.location}
                       </Typography>
                     </Box>
 
                     <Typography
-                      variant="caption"
+                      variant='caption'
                       sx={{
                         bgcolor: 'var(--color-surface-card)',
                         color: 'var(--color-ink)',
@@ -128,15 +165,44 @@ export default function Experience() {
                     </Typography>
                   </Box>
 
-                  <Typography variant="body2" sx={{ fontSize: '0.9375rem', color: 'var(--color-body)', lineHeight: 1.6, mb: 3 }}>
+                  <Typography
+                    variant='body2'
+                    sx={{
+                      fontSize: '0.9375rem',
+                      color: 'var(--color-body)',
+                      lineHeight: 1.6,
+                      mb: 3,
+                    }}
+                  >
                     {exp.description}
                   </Typography>
 
-                  <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 1.25 }}>
-                    {exp.highlights.map((item) => (
-                      <Box component="li" key={item} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25 }}>
-                        <CheckCircle2 size={16} color="#cc785c" style={{ marginTop: 3, flexShrink: 0 }} />
-                        <Typography variant="body2" sx={{ fontSize: '0.875rem', color: 'var(--color-body)', lineHeight: 1.5 }}>
+                  <Box
+                    component='ul'
+                    sx={{
+                      m: 0,
+                      p: 0,
+                      listStyle: 'none',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1.25,
+                    }}
+                  >
+                    {exp.highlights.map(item => (
+                      <Box
+                        component='li'
+                        key={item}
+                        sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25 }}
+                      >
+                        <CheckCircle2
+                          size={16}
+                          color='#cc785c'
+                          style={{ marginTop: 3, flexShrink: 0 }}
+                        />
+                        <Typography
+                          variant='body2'
+                          sx={{ fontSize: '0.875rem', color: 'var(--color-body)', lineHeight: 1.5 }}
+                        >
                           {item}
                         </Typography>
                       </Box>
@@ -149,5 +215,5 @@ export default function Experience() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

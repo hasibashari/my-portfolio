@@ -28,7 +28,7 @@ export default function ProjectTable({ projects, onDelete }: ProjectTableProps) 
             {project.title}
           </Typography>
           <Typography sx={{ color: 'var(--color-muted)', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-            {project.id}
+            /projects?project={project.slug || project.id}
           </Typography>
         </Box>
       ),

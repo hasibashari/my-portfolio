@@ -1,46 +1,53 @@
-'use client'
+'use client';
 
-import { Box, Container, Typography, Card, CardContent, Chip, Button } from '@mui/material'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import ScrollReveal from '@/shared/components/ScrollReveal'
-import { BlogPost } from '@/shared/types/blog'
+import { Box, Container, Typography, Card, CardContent, Chip, Button } from '@mui/material';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import ScrollReveal from '@/shared/components/ScrollReveal';
+import { BlogPost } from '@/shared/types/blog';
 
 interface BlogProps {
-  articles?: BlogPost[]
+  articles?: BlogPost[];
 }
 
 export default function Blog({ articles = [] }: BlogProps) {
   if (articles.length === 0) {
-    return null
+    return null;
   }
 
-  const featuredPost = articles[0]
-  const recentPosts = articles.slice(1, 3)
+  const featuredPost = articles[0];
+  const recentPosts = articles.slice(1, 3);
 
   return (
     <Box
-      id="blog"
+      id='blog'
       sx={{
         bgcolor: 'var(--color-surface-soft)',
         py: { xs: 8, sm: 10, md: 12 },
         borderTop: '1px solid var(--color-hairline)',
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth='lg' sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* Centered Section Header with Blur-Reveal */}
-        <ScrollReveal variant="blur-reveal">
+        <ScrollReveal variant='blur-reveal'>
           <Box sx={{ maxWidth: '720px', mb: { xs: 5, md: 7 }, mx: 'auto', textAlign: 'center' }}>
             <Typography
-              variant="overline"
-              className="font-serif-display"
-              sx={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
+              variant='overline'
+              className='font-serif-display'
+              sx={{
+                color: 'var(--color-primary)',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                letterSpacing: '0.1em',
+                display: 'block',
+                mb: 1.5,
+              }}
             >
               ARTICLES & JOURNAL
             </Typography>
             <Typography
-              variant="h2"
-              className="font-serif-display"
+              variant='h2'
+              className='font-serif-display'
               sx={{
                 fontSize: { xs: '2rem', sm: '2.75rem', md: '3.25rem' },
                 fontWeight: 400,
@@ -52,15 +59,24 @@ export default function Blog({ articles = [] }: BlogProps) {
             >
               Engineering Insights & Thoughts.
             </Typography>
-            <Typography variant="body1" sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}>
+            <Typography
+              variant='body1'
+              sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}
+            >
               Technical articles, tutorials, and reflections on building high-quality web software.
             </Typography>
           </Box>
         </ScrollReveal>
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' }, gap: { xs: 3, lg: 5 } }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
+            gap: { xs: 3, lg: 5 },
+          }}
+        >
           {/* Featured Post Card - Slides from Left */}
-          <ScrollReveal variant="slide-right" delay={0.1} style={{ height: '100%' }}>
+          <ScrollReveal variant='slide-right' delay={0.1} style={{ height: '100%' }}>
             <Card
               component={Link}
               href={`/blog/${featuredPost.slug}`}
@@ -101,14 +117,17 @@ export default function Blog({ articles = [] }: BlogProps) {
                       px: 1,
                     }}
                   />
-                  <Typography variant="caption" sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
+                  <Typography
+                    variant='caption'
+                    sx={{ color: 'var(--color-muted)', fontWeight: 500 }}
+                  >
                     {featuredPost.date}
                   </Typography>
                 </Box>
 
                 <Typography
-                  variant="h2"
-                  className="font-serif-display"
+                  variant='h2'
+                  className='font-serif-display'
                   sx={{
                     fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
                     fontWeight: 500,
@@ -121,18 +140,29 @@ export default function Blog({ articles = [] }: BlogProps) {
                   {featuredPost.title}
                 </Typography>
 
-                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: 'var(--color-body)', lineHeight: 1.6, mb: 4 }}>
+                <Typography
+                  variant='body1'
+                  sx={{ fontSize: '1.0625rem', color: 'var(--color-body)', lineHeight: 1.6, mb: 4 }}
+                >
                   {featuredPost.description}
                 </Typography>
               </CardContent>
 
-              <Box sx={{ pt: 3, borderTop: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="caption" sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
+              <Box
+                sx={{
+                  pt: 3,
+                  borderTop: '1px solid var(--color-hairline)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant='caption' sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
                   By Hasib Ashari
                 </Typography>
 
                 <Box
-                  className="read-more-btn"
+                  className='read-more-btn'
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -152,7 +182,7 @@ export default function Blog({ articles = [] }: BlogProps) {
           {/* Secondary Posts Column - Slides from Right with Stagger */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
             {recentPosts.map((post, idx) => (
-              <ScrollReveal key={post.id} variant="slide-left" delay={0.15 + idx * 0.12}>
+              <ScrollReveal key={post.id} variant='slide-left' delay={0.15 + idx * 0.12}>
                 <Card
                   component={Link}
                   href={`/blog/${post.slug}`}
@@ -191,14 +221,14 @@ export default function Blog({ articles = [] }: BlogProps) {
                           border: '1px solid var(--color-hairline)',
                         }}
                       />
-                      <Typography variant="caption" sx={{ color: 'var(--color-muted)' }}>
+                      <Typography variant='caption' sx={{ color: 'var(--color-muted)' }}>
                         {post.date}
                       </Typography>
                     </Box>
 
                     <Typography
-                      variant="h5"
-                      className="font-serif-display"
+                      variant='h5'
+                      className='font-serif-display'
                       sx={{
                         fontSize: '1.375rem',
                         fontWeight: 500,
@@ -211,17 +241,30 @@ export default function Blog({ articles = [] }: BlogProps) {
                       {post.title}
                     </Typography>
 
-                    <Typography variant="body2" sx={{ fontSize: '0.9375rem', color: 'var(--color-body)', lineHeight: 1.6, mb: 3 }}>
+                    <Typography
+                      variant='body2'
+                      sx={{
+                        fontSize: '0.9375rem',
+                        color: 'var(--color-body)',
+                        lineHeight: 1.6,
+                        mb: 3,
+                      }}
+                    >
                       {post.description}
                     </Typography>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant="caption" sx={{ color: 'var(--color-muted)', fontWeight: 500 }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      variant='caption'
+                      sx={{ color: 'var(--color-muted)', fontWeight: 500 }}
+                    >
                       By Hasib Ashari
                     </Typography>
                     <Box
-                      className="read-more-btn"
+                      className='read-more-btn'
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -242,12 +285,12 @@ export default function Blog({ articles = [] }: BlogProps) {
         </Box>
 
         {/* Centered Read More / View All Articles Button */}
-        <ScrollReveal variant="fade-up" delay={0.25}>
+        <ScrollReveal variant='fade-up' delay={0.25}>
           <Box sx={{ mt: { xs: 5, md: 7 }, textAlign: 'center' }}>
             <Button
               component={Link}
-              href="/blog"
-              variant="outlined"
+              href='/blog'
+              variant='outlined'
               endIcon={<ArrowRight size={18} />}
               sx={{
                 color: 'var(--color-ink)',
@@ -274,5 +317,5 @@ export default function Blog({ articles = [] }: BlogProps) {
         </ScrollReveal>
       </Container>
     </Box>
-  )
+  );
 }

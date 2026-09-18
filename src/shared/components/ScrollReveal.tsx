@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { motion, type HTMLMotionProps, type TargetAndTransition } from 'motion/react'
-import { type ReactNode } from 'react'
+import { motion, type HTMLMotionProps, type TargetAndTransition } from 'motion/react';
+import { type ReactNode } from 'react';
 
 export type AnimationVariant =
   | 'fade-up'
@@ -10,16 +10,19 @@ export type AnimationVariant =
   | 'slide-right'
   | 'zoom-in'
   | 'blur-reveal'
-  | 'pop-up'
+  | 'pop-up';
 
-interface ScrollRevealProps extends Omit<HTMLMotionProps<'div'>, 'initial' | 'whileInView' | 'viewport' | 'transition'> {
-  children: ReactNode
-  variant?: AnimationVariant
-  delay?: number
-  duration?: number
-  distance?: number
-  once?: boolean
-  className?: string
+interface ScrollRevealProps extends Omit<
+  HTMLMotionProps<'div'>,
+  'initial' | 'whileInView' | 'viewport' | 'transition'
+> {
+  children: ReactNode;
+  variant?: AnimationVariant;
+  delay?: number;
+  duration?: number;
+  distance?: number;
+  once?: boolean;
+  className?: string;
 }
 
 export default function ScrollReveal({
@@ -33,44 +36,44 @@ export default function ScrollReveal({
   style,
   ...props
 }: ScrollRevealProps) {
-  let initial: TargetAndTransition = { opacity: 0 }
-  let whileInView: TargetAndTransition = { opacity: 1 }
+  let initial: TargetAndTransition = { opacity: 0 };
+  let whileInView: TargetAndTransition = { opacity: 1 };
 
   switch (variant) {
     case 'fade-up':
-      initial = { opacity: 0, y: distance }
-      whileInView = { opacity: 1, y: 0 }
-      break
+      initial = { opacity: 0, y: distance };
+      whileInView = { opacity: 1, y: 0 };
+      break;
 
     case 'fade-down':
-      initial = { opacity: 0, y: -distance }
-      whileInView = { opacity: 1, y: 0 }
-      break
+      initial = { opacity: 0, y: -distance };
+      whileInView = { opacity: 1, y: 0 };
+      break;
 
     case 'slide-left':
-      initial = { opacity: 0, x: distance, filter: 'blur(4px)' }
-      whileInView = { opacity: 1, x: 0, filter: 'blur(0px)' }
-      break
+      initial = { opacity: 0, x: distance, filter: 'blur(4px)' };
+      whileInView = { opacity: 1, x: 0, filter: 'blur(0px)' };
+      break;
 
     case 'slide-right':
-      initial = { opacity: 0, x: -distance, filter: 'blur(4px)' }
-      whileInView = { opacity: 1, x: 0, filter: 'blur(0px)' }
-      break
+      initial = { opacity: 0, x: -distance, filter: 'blur(4px)' };
+      whileInView = { opacity: 1, x: 0, filter: 'blur(0px)' };
+      break;
 
     case 'zoom-in':
-      initial = { opacity: 0, scale: 0.92, y: distance * 0.5 }
-      whileInView = { opacity: 1, scale: 1, y: 0 }
-      break
+      initial = { opacity: 0, scale: 0.92, y: distance * 0.5 };
+      whileInView = { opacity: 1, scale: 1, y: 0 };
+      break;
 
     case 'blur-reveal':
-      initial = { opacity: 0, filter: 'blur(10px)', y: distance * 0.4 }
-      whileInView = { opacity: 1, filter: 'blur(0px)', y: 0 }
-      break
+      initial = { opacity: 0, filter: 'blur(10px)', y: distance * 0.4 };
+      whileInView = { opacity: 1, filter: 'blur(0px)', y: 0 };
+      break;
 
     case 'pop-up':
-      initial = { opacity: 0, scale: 0.95, y: distance }
-      whileInView = { opacity: 1, scale: 1, y: 0 }
-      break
+      initial = { opacity: 0, scale: 0.95, y: distance };
+      whileInView = { opacity: 1, scale: 1, y: 0 };
+      break;
   }
 
   return (
@@ -89,5 +92,5 @@ export default function ScrollReveal({
     >
       {children}
     </motion.div>
-  )
+  );
 }

@@ -1,5 +1,6 @@
 export interface ProjectItem {
   id: string
+  slug: string
   title: string
   badge: string
   category: 'AI & Backend' | 'Cloud & Data' | 'Microservices' | 'Fullstack'
@@ -13,6 +14,8 @@ export interface ProjectItem {
   featured?: boolean
 }
 
+export type ProjectFormData = Omit<ProjectItem, 'id'> & { id?: string }
+
 export const PROJECT_CATEGORIES = [
   'All',
   'AI & Backend',
@@ -22,3 +25,4 @@ export const PROJECT_CATEGORIES = [
 ] as const
 
 export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number]
+

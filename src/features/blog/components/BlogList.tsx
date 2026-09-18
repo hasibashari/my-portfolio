@@ -5,7 +5,7 @@ import { Box, Container, Typography, Button } from '@mui/material'
 import { motion, AnimatePresence } from 'motion/react'
 import { BookOpen } from 'lucide-react'
 import BlogHero from './BlogHero'
-import BlogFilter from './BlogFilter'
+import FilterBar from '@/shared/components/FilterBar'
 import BlogCard from './BlogCard'
 import Pagination from '@/shared/components/Pagination'
 import {
@@ -82,13 +82,16 @@ export default function BlogList({ initialPosts = [] }: BlogListProps) {
       {/* Editorial Hero Banner */}
       <BlogHero />
 
-      {/* Category Filter & Search Bar */}
-      <BlogFilter
+      {/* Shared Category Filter & Search Bar */}
+      <FilterBar<BlogCategory>
+        categories={BLOG_CATEGORIES}
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
         categoryCounts={categoryCounts}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
+        searchPlaceholder="Search articles & topics..."
+        sticky={true}
       />
 
       <Container id="blog-content-list" maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, sm: 5 } }}>

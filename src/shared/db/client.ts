@@ -1,4 +1,4 @@
-import { Pool } from 'pg'
+import { Pool } from 'pg';
 
 // --------------------------------------------------------------------------
 // Connection pool — reused across requests in the same Node.js process.
@@ -6,15 +6,15 @@ import { Pool } from 'pg'
 // credentials are hard-coded in source.
 // --------------------------------------------------------------------------
 
-let poolInstance: Pool | null = null
+let poolInstance: Pool | null = null;
 
 export function getPool(): Pool {
   if (poolInstance) {
-    return poolInstance
+    return poolInstance;
   }
 
   if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL environment variable is not set.')
+    throw new Error('DATABASE_URL environment variable is not set.');
   }
 
   poolInstance = new Pool({
@@ -23,9 +23,9 @@ export function getPool(): Pool {
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
     ssl: { rejectUnauthorized: false },
-  })
+  });
 
-  return poolInstance
+  return poolInstance;
 }
 
 // --------------------------------------------------------------------------
@@ -35,30 +35,31 @@ export function getPool(): Pool {
 // Promise-based singleton: multiple concurrent requests all await the same
 // promise instead of each racing through the schema check.
 // Reset to null on failure so the next request can retry.
-let initPromise: Promise<void> | null = null
+let initPromise: Promise<void> | null = null;
 
 export function initDb(): Promise<void> {
   if (!initPromise) {
-    initPromise = _runInit().catch((err) => {
+    initPromise = _runInit().catch(err => {
       // Allow retry on next request if initialisation failed
-      initPromise = null
-      return Promise.reject(err)
-    })
+      initPromise = null;
+      return Promise.reject(err);
+    });
   }
-  return initPromise
+  return initPromise;
 }
 
 async function _runInit(): Promise<void> {
-  const pool = getPool()
-  const client = await pool.connect()
+  const pool = getPool();
+  const client = await pool.connect();
 
   try {
-    await client.query('BEGIN')
+    await client.query('BEGIN');
 
     // ── Projects table ──────────────────────────────────────────────────────
     await client.query(`
       CREATE TABLE IF NOT EXISTS projects (
         id            TEXT        PRIMARY KEY,
+        slug          TEXT        NOT NULL UNIQUE,
         title         TEXT        NOT NULL,
         badge         TEXT        NOT NULL,
         category      TEXT        NOT NULL,
@@ -73,7 +74,25 @@ async function _runInit(): Promise<void> {
         "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updatedAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-    `)
+    `);
+
+    // Migration helper: ensure slug column exists and is populated for projects
+    await client.query(`
+      ALTER TABLE projects ADD COLUMN IF NOT EXISTS slug TEXT;
+      UPDATE projects SET slug = id WHERE slug IS NULL;
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'projects_slug_unique'
+        ) THEN
+          BEGIN
+            ALTER TABLE projects ADD CONSTRAINT projects_slug_unique UNIQUE (slug);
+          EXCEPTION
+            WHEN others THEN NULL;
+          END;
+        END IF;
+      END $$;
+    `);
 
     // ── Articles table ──────────────────────────────────────────────────────
     await client.query(`
@@ -92,7 +111,7 @@ async function _runInit(): Promise<void> {
         "createdAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updatedAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-    `)
+    `);
 
     // Ensure content column exists if table was created previously with sections
     await client.query(`
@@ -106,13 +125,13 @@ async function _runInit(): Promise<void> {
           ALTER TABLE articles ALTER COLUMN sections DROP NOT NULL;
         END IF;
       END $$;
-    `)
+    `);
 
-    await client.query('COMMIT')
+    await client.query('COMMIT');
   } catch (err) {
-    await client.query('ROLLBACK')
-    throw err
+    await client.query('ROLLBACK');
+    throw err;
   } finally {
-    client.release()
+    client.release();
   }
 }

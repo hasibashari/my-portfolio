@@ -41,7 +41,10 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
 
   const handleCopyLink = async () => {
     try {
-      const url = typeof window !== 'undefined' ? `${window.location.origin}/projects?project=${project.id}` : ''
+      const url =
+        typeof window !== 'undefined'
+          ? `${window.location.origin}/projects?project=${project.slug || project.id}`
+          : ''
       if (url) {
         await navigator.clipboard.writeText(url)
         setCopiedLink(true)

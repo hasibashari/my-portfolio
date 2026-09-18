@@ -1,23 +1,23 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
 
 export const claudeTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#cc785c',        // fallback + token var(--color-primary)
-      dark: '#a9583e',        // var(--color-primary-active)
-      light: '#e8a55a',       // var(--color-accent-amber)
+      main: '#cc785c', // fallback + token var(--color-primary)
+      dark: '#a9583e', // var(--color-primary-active)
+      light: '#e8a55a', // var(--color-accent-amber)
       contrastText: '#ffffff',
     },
     background: {
-      default: '#faf9f5',     // var(--color-canvas)
-      paper: '#efe9de',       // var(--color-surface-card)
+      default: '#faf9f5', // var(--color-canvas)
+      paper: '#efe9de', // var(--color-surface-card)
     },
     text: {
-      primary: '#141413',     // var(--color-ink)
-      secondary: '#6c6a64',   // var(--color-muted)
+      primary: '#141413', // var(--color-ink)
+      secondary: '#6c6a64', // var(--color-muted)
     },
-    divider: '#e6dfd8',       // var(--color-hairline)
+    divider: '#e6dfd8', // var(--color-hairline)
   },
   typography: {
     fontFamily: 'var(--font-sans), Inter, sans-serif',
@@ -53,8 +53,8 @@ export const claudeTheme = createTheme({
   shape: {
     borderRadius: 8,
   },
-})
+});
 
 // Maintaining lightTheme and darkTheme exports for compatibility
-export const lightTheme = claudeTheme
-export const darkTheme = claudeTheme
+export const lightTheme = claudeTheme;
+export const darkTheme = claudeTheme;

@@ -1,52 +1,48 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import NextLink from 'next/link'
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Snackbar,
-  Alert,
-} from '@mui/material'
-import { Plus } from 'lucide-react'
-import AdminNav from '../components/AdminNav'
-import ArticleTable from '../components/ArticleTable'
-import { BlogPost } from '@/shared/types/blog'
+import { useState } from 'react';
+import NextLink from 'next/link';
+import { Box, Container, Typography, Button, Snackbar, Alert } from '@mui/material';
+import { Plus } from 'lucide-react';
+import AdminNav from '../components/AdminNav';
+import ArticleTable from '../components/ArticleTable';
+import { BlogPost } from '@/shared/types/blog';
 
 interface AdminArticlesViewProps {
-  initialArticles: BlogPost[]
+  initialArticles: BlogPost[];
 }
 
 export default function AdminArticlesView({ initialArticles }: AdminArticlesViewProps) {
-  const [articles, setArticles] = useState<BlogPost[]>(initialArticles)
-  const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' } | null>(null)
+  const [articles, setArticles] = useState<BlogPost[]>(initialArticles);
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error';
+  } | null>(null);
 
   const handleDeleteArticle = async (id: number) => {
     try {
       const res = await fetch(`/api/admin/articles/${id}`, {
         method: 'DELETE',
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to delete article')
+        throw new Error(data.error || 'Failed to delete article');
       }
 
-      setArticles((prev) => prev.filter((a) => a.id !== id))
-      setNotification({ message: 'Article deleted successfully.', severity: 'success' })
+      setArticles(prev => prev.filter(a => a.id !== id));
+      setNotification({ message: 'Article deleted successfully.', severity: 'success' });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to delete article.'
-      setNotification({ message, severity: 'error' })
+      const message = err instanceof Error ? err.message : 'Failed to delete article.';
+      setNotification({ message, severity: 'error' });
     }
-  }
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'var(--color-canvas)', pb: 10 }}>
       <AdminNav />
 
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
+      <Container maxWidth='lg' sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
         {/* Header */}
         <Box
           sx={{
@@ -60,20 +56,20 @@ export default function AdminArticlesView({ initialArticles }: AdminArticlesView
         >
           <Box>
             <Typography
-              variant="h4"
-              className="font-serif-display"
+              variant='h4'
+              className='font-serif-display'
               sx={{ color: 'var(--color-ink)', fontWeight: 700, mb: 0.5 }}
             >
               Engineering Articles Management
             </Typography>
-            <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
+            <Typography variant='body2' sx={{ color: 'var(--color-muted)' }}>
               Manage technical essays, performance guides, and architecture insights.
             </Typography>
           </Box>
 
-          <NextLink href="/admin/articles/new" style={{ textDecoration: 'none' }}>
+          <NextLink href='/admin/articles/new' style={{ textDecoration: 'none' }}>
             <Button
-              variant="contained"
+              variant='contained'
               startIcon={<Plus size={18} />}
               sx={{
                 bgcolor: 'var(--color-primary)',
@@ -113,5 +109,5 @@ export default function AdminArticlesView({ initialArticles }: AdminArticlesView
         </Snackbar>
       </Container>
     </Box>
-  )
+  );
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Box, Container, Typography } from '@mui/material'
 import AdminNav from '../components/AdminNav'
 import ProjectForm from '../components/ProjectForm'
-import { ProjectItem } from '@/shared/types/projects'
+import { ProjectItem, ProjectFormData } from '@/shared/types/projects'
 
 interface AdminProjectFormViewProps {
   project?: ProjectItem
@@ -16,7 +16,7 @@ export default function AdminProjectFormView({ project, isEdit = false }: AdminP
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (payload: ProjectItem) => {
+  const handleSubmit = async (payload: ProjectFormData) => {
     setLoading(true)
     try {
       const url = isEdit ? `/api/admin/projects/${project?.id}` : '/api/admin/projects'

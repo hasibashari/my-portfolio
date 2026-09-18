@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     const {
-      id,
+      slug,
       title,
       badge,
       category,
@@ -36,25 +36,32 @@ export async function POST(request: NextRequest) {
       featured,
     } = body
 
-    if (!id || typeof id !== 'string' || id.trim() === '') {
+    if (!title || typeof title !== 'string' || title.trim() === '') {
       return NextResponse.json(
-        { success: false, error: 'Project ID (slug) is required and must be a non-empty string' },
+        { success: false, error: 'Project title is required' },
         { status: 400 }
       )
+    }
+
+    // Determine slug: either provided or derived from title
+    let finalSlug = slug && typeof slug === 'string' ? slug.trim() : ''
+    if (!finalSlug) {
+      finalSlug = title
+        .toString()
+        .toLowerCase()
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '')
     }
 
     // Slug format check
     const slugRegex = /^[a-z0-9-]+$/
-    if (!slugRegex.test(id.trim())) {
+    if (!slugRegex.test(finalSlug)) {
       return NextResponse.json(
-        { success: false, error: 'Project ID must only contain lowercase letters, numbers, and hyphens' },
-        { status: 400 }
-      )
-    }
-
-    if (!title || typeof title !== 'string' || title.trim() === '') {
-      return NextResponse.json(
-        { success: false, error: 'Project title is required' },
+        { success: false, error: 'Project URL slug must only contain lowercase letters, numbers, and hyphens' },
         { status: 400 }
       )
     }
@@ -87,17 +94,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check duplicate ID
-    const existing = await getProjectById(id.trim())
+    // Check duplicate Slug
+    const existing = await getProjectById(finalSlug)
     if (existing) {
       return NextResponse.json(
-        { success: false, error: `A project with ID "${id.trim()}" already exists` },
+        { success: false, error: `A project with URL slug "${finalSlug}" already exists` },
         { status: 409 }
       )
     }
 
+    // Generate automatic UUID for project internal ID
+    const newId = crypto.randomUUID()
+
     const newProject: ProjectItem = {
-      id: id.trim(),
+      id: newId,
+      slug: finalSlug,
       title: title.trim(),
       badge: (badge && typeof badge === 'string') ? badge.trim() : category.toUpperCase(),
       category: category as ProjectItem['category'],

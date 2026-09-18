@@ -23,13 +23,13 @@ import {
   Sparkles,
   RefreshCw,
 } from 'lucide-react'
-import { ProjectItem, ProjectCategory, PROJECT_CATEGORIES } from '@/shared/types/projects'
+import { ProjectItem, ProjectFormData, ProjectCategory, PROJECT_CATEGORIES } from '@/shared/types/projects'
 import MarkdownEditor from './MarkdownEditor'
 
 interface ProjectFormProps {
   initialData?: ProjectItem
   isEdit?: boolean
-  onSubmit: (data: ProjectItem) => Promise<void>
+  onSubmit: (data: ProjectFormData) => Promise<void>
   loading?: boolean
 }
 
@@ -85,7 +85,7 @@ export default function ProjectForm({
   const router = useRouter()
 
   const [formData, setFormData] = useState({
-    id: initialData?.id || '',
+    slug: initialData?.slug || initialData?.id || '',
     title: initialData?.title || '',
     category: (initialData?.category || 'AI & Backend') as ProjectItem['category'],
     badgeColor: initialData?.badgeColor || '#cc785c',
@@ -99,28 +99,28 @@ export default function ProjectForm({
   })
 
   const [newTagInput, setNewTagInput] = useState('')
-  const [isIdManuallyEdited, setIsIdManuallyEdited] = useState(Boolean(isEdit))
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(Boolean(isEdit))
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [serverError, setServerError] = useState<string | null>(null)
 
-  // Auto-generate slug ID from title
+  // Auto-generate slug from title
   const handleTitleChange = (newTitle: string) => {
-    if (!isIdManuallyEdited && !isEdit) {
-      const generatedId = slugify(newTitle)
+    if (!isSlugManuallyEdited && !isEdit) {
+      const generatedSlug = slugify(newTitle)
       setFormData((prev) => ({
         ...prev,
         title: newTitle,
-        id: generatedId,
+        slug: generatedSlug,
       }))
     } else {
       setFormData((prev) => ({ ...prev, title: newTitle }))
     }
   }
 
-  const handleRegenerateId = () => {
-    const generatedId = slugify(formData.title)
-    setFormData((prev) => ({ ...prev, id: generatedId }))
-    setIsIdManuallyEdited(false)
+  const handleRegenerateSlug = () => {
+    const generatedSlug = slugify(formData.title)
+    setFormData((prev) => ({ ...prev, slug: generatedSlug }))
+    setIsSlugManuallyEdited(false)
   }
 
   // Tag chip handlers
@@ -153,14 +153,14 @@ export default function ProjectForm({
   const validate = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.id.trim()) {
-      newErrors.id = 'Project ID (slug) is required'
-    } else if (!/^[a-z0-9-]+$/.test(formData.id.trim())) {
-      newErrors.id = 'ID must only contain lowercase alphanumeric characters and hyphens'
-    }
-
     if (!formData.title.trim()) {
       newErrors.title = 'Project title is required'
+    }
+
+    if (!formData.slug.trim()) {
+      newErrors.slug = 'URL Slug is required'
+    } else if (!/^[a-z0-9-]+$/.test(formData.slug.trim())) {
+      newErrors.slug = 'Slug must only contain lowercase alphanumeric characters and hyphens'
     }
 
     if (!formData.description.trim()) {
@@ -190,8 +190,9 @@ export default function ProjectForm({
     if (!validate()) return
 
     try {
-      const payload: ProjectItem = {
-        id: formData.id.trim(),
+      const payload: ProjectFormData = {
+        ...(initialData?.id ? { id: initialData.id } : {}),
+        slug: formData.slug.trim(),
         title: formData.title.trim(),
         badge: formData.category.toUpperCase(), // Auto-derived from category
         category: formData.category,
@@ -316,42 +317,40 @@ export default function ProjectForm({
           />
         </Box>
 
-        {/* Project ID / Slug */}
+        {/* URL Slug */}
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
             <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600 }}>
-              Project ID (Slug) *
+              URL Slug *
             </Typography>
-            {!isEdit && (
-              <Button
-                size="small"
-                variant="text"
-                onClick={handleRegenerateId}
-                startIcon={<RefreshCw size={12} />}
-                sx={{
-                  textTransform: 'none',
-                  fontSize: '0.75rem',
-                  p: 0,
-                  color: 'var(--color-primary)',
-                  '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
-                }}
-              >
-                Auto-generate from Title
-              </Button>
-            )}
+            <Button
+              size="small"
+              variant="text"
+              onClick={handleRegenerateSlug}
+              startIcon={<RefreshCw size={12} />}
+              sx={{
+                textTransform: 'none',
+                fontSize: '0.75rem',
+                p: 0,
+                color: 'var(--color-primary)',
+                '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
+              }}
+            >
+              Auto-generate from Title
+            </Button>
           </Box>
           <TextField
             fullWidth
             size="small"
             placeholder="e.g. ai-agent-engine"
-            value={formData.id}
+            value={formData.slug}
             onChange={(e) => {
-              setFormData({ ...formData, id: e.target.value })
-              setIsIdManuallyEdited(true)
+              setFormData({ ...formData, slug: e.target.value })
+              setIsSlugManuallyEdited(true)
             }}
-            disabled={isEdit || loading}
-            error={Boolean(errors.id)}
-            helperText={errors.id || (isEdit ? 'Unique identifier cannot be changed once created.' : 'Used in share link: /projects?project=[id]')}
+            disabled={loading}
+            error={Boolean(errors.slug)}
+            helperText={errors.slug || 'Unique slug used in share link: /projects?project=[slug]'}
             slotProps={{
               input: {
                 sx: {

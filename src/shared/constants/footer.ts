@@ -13,11 +13,12 @@ export const footerColumns = {
   ],
   contact: [
     { name: 'Get in Touch', href: '#contact' },
-    { name: 'hasib.ashari@example.com', href: 'mailto:hasib.ashari@example.com' },
+    { name: 'hasibashari@gmail.com', href: 'mailto:hasibashari@gmail.com' },
+    { name: '+62 815-1386-9744', href: 'tel:+6281513869744' },
     { name: 'Indonesia (Remote / UTC+7)', href: '#contact' },
   ],
   socials: [
-    { name: 'Email', href: 'mailto:hasib.ashari@example.com', icon: 'Mail' },
+    { name: 'Email', href: 'mailto:hasibashari@gmail.com', icon: 'Mail' },
     { name: 'GitHub', href: 'https://github.com', icon: 'Github' },
     { name: 'LinkedIn', href: 'https://linkedin.com', icon: 'Linkedin' },
     { name: 'Portfolio', href: '#hero', icon: 'Globe' },

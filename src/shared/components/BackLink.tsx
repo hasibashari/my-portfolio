@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { Box, Button, SxProps, Theme } from '@mui/material'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import ScrollReveal from './ScrollReveal'
+import { Box, Button, SxProps, Theme } from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import ScrollReveal from './ScrollReveal';
 
 export interface BackLinkProps {
-  href?: string
-  label?: string
-  variant?: 'link' | 'button'
-  withReveal?: boolean
-  sx?: SxProps<Theme>
+  href?: string;
+  label?: string;
+  variant?: 'link' | 'button';
+  withReveal?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 export default function BackLink({
@@ -87,17 +87,15 @@ export default function BackLink({
         />
         <span>{label}</span>
       </Box>
-    )
+    );
 
   if (!withReveal) {
-    return content
+    return content;
   }
 
   return (
-    <ScrollReveal variant="fade-up">
-      <Box sx={{ mb: { xs: 3, md: 4 } }}>
-        {content}
-      </Box>
+    <ScrollReveal variant='fade-up'>
+      <Box sx={{ mb: { xs: 3, md: 4 } }}>{content}</Box>
     </ScrollReveal>
-  )
+  );
 }

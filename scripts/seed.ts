@@ -2,6 +2,7 @@ import { Pool } from 'pg'
 
 interface ProjectSeedItem {
   id: string
+  slug: string
   title: string
   badge: string
   category: 'AI & Backend' | 'Cloud & Data' | 'Microservices' | 'Fullstack'
@@ -35,7 +36,8 @@ interface ArticleSeedItem {
 
 const defaultProjects: ProjectSeedItem[] = [
   {
-    id: 'ai-agent-automation',
+    id: 'f3a4e9b1-7c8d-4e2a-9f1b-3c4d5e6f7a8b',
+    slug: 'ai-agent-automation',
     title: 'AI Agent Automation',
     badge: 'AI & BACKEND',
     category: 'AI & Backend',
@@ -66,7 +68,8 @@ export async function executeAgentPlan(plan: ExecutionPlan): Promise<ExecutionRe
     featured: true,
   },
   {
-    id: 'cloud-data-pipeline',
+    id: 'b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e',
+    slug: 'cloud-data-pipeline',
     title: 'Cloud Data Pipeline',
     badge: 'CLOUD & DATA',
     category: 'Cloud & Data',
@@ -87,7 +90,8 @@ Designed to ingest, transform, and aggregate high-throughput telemetry data with
     featured: true,
   },
   {
-    id: 'resilient-microservices',
+    id: 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f',
+    slug: 'resilient-microservices',
     title: 'Resilient Microservices Engine',
     badge: 'MICROSERVICES',
     category: 'Microservices',
@@ -107,7 +111,8 @@ Modular backend architecture built for enterprise stability and high-concurrency
     featured: true,
   },
   {
-    id: 'fullstack-saas-core',
+    id: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
+    slug: 'fullstack-saas-core',
     title: 'Fullstack SaaS Infrastructure',
     badge: 'FULLSTACK',
     category: 'Fullstack',
@@ -121,7 +126,8 @@ Modular backend architecture built for enterprise stability and high-concurrency
     featured: false,
   },
   {
-    id: 'distributed-cache-layer',
+    id: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
+    slug: 'distributed-cache-layer',
     title: 'Distributed In-Memory Cache',
     badge: 'CLOUD & DATA',
     category: 'Cloud & Data',
@@ -135,7 +141,8 @@ Modular backend architecture built for enterprise stability and high-concurrency
     featured: false,
   },
   {
-    id: 'enterprise-api-gateway',
+    id: 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c',
+    slug: 'enterprise-api-gateway',
     title: 'Enterprise API Gateway',
     badge: 'MICROSERVICES',
     category: 'Microservices',
@@ -352,6 +359,7 @@ async function seedDatabase() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS projects (
         id            TEXT        PRIMARY KEY,
+        slug          TEXT        NOT NULL UNIQUE,
         title         TEXT        NOT NULL,
         badge         TEXT        NOT NULL,
         category      TEXT        NOT NULL,
@@ -366,6 +374,24 @@ async function seedDatabase() {
         "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updatedAt"   TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+    `)
+
+    // Migration helper: ensure slug column exists and is populated for projects
+    await client.query(`
+      ALTER TABLE projects ADD COLUMN IF NOT EXISTS slug TEXT;
+      UPDATE projects SET slug = id WHERE slug IS NULL;
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'projects_slug_unique'
+        ) THEN
+          BEGIN
+            ALTER TABLE projects ADD CONSTRAINT projects_slug_unique UNIQUE (slug);
+          EXCEPTION
+            WHEN others THEN NULL;
+          END;
+        END IF;
+      END $$;
     `)
 
     await client.query(`
@@ -407,13 +433,25 @@ async function seedDatabase() {
     for (const item of defaultProjects) {
       const { rowCount } = await client.query(
         `INSERT INTO projects (
-           id, title, badge, category, "badgeColor", description,
+           id, slug, title, badge, category, "badgeColor", description,
            "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
            featured
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-         ON CONFLICT (id) DO NOTHING`,
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+         ON CONFLICT (slug) DO UPDATE SET
+           title = EXCLUDED.title,
+           badge = EXCLUDED.badge,
+           category = EXCLUDED.category,
+           "badgeColor" = EXCLUDED."badgeColor",
+           description = EXCLUDED.description,
+           "longDescription" = EXCLUDED."longDescription",
+           "techStack" = EXCLUDED."techStack",
+           "demoUrl" = EXCLUDED."demoUrl",
+           "githubUrl" = EXCLUDED."githubUrl",
+           "imageUrl" = EXCLUDED."imageUrl",
+           featured = EXCLUDED.featured`,
         [
           item.id,
+          item.slug,
           item.title,
           item.badge,
           item.category,
@@ -429,7 +467,7 @@ async function seedDatabase() {
       )
       if ((rowCount ?? 0) > 0) insertedProjects++
     }
-    console.log(`✅ Projects seeded (${insertedProjects} new records inserted, others already existed).`)
+    console.log(`✅ Projects seeded (${insertedProjects} new/updated records).`)
 
     // ── 3. Seed articles ────────────────────────────────────────────────────
     const { rows: aRows } = await client.query('SELECT COUNT(*)::int AS count FROM articles')

@@ -1,48 +1,56 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Box, Container, Typography, Button, Chip } from '@mui/material'
-import { ArrowRight, ExternalLink } from 'lucide-react'
-import { FaGithub } from 'react-icons/fa'
-import { motion, AnimatePresence } from 'motion/react'
-import Link from 'next/link'
-import ScrollReveal from '@/shared/components/ScrollReveal'
-import { ProjectItem } from '@/shared/types/projects'
+import { useState } from 'react';
+import { Box, Container, Typography, Button, Chip } from '@mui/material';
+import { ArrowRight, ExternalLink } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'motion/react';
+import Link from 'next/link';
+import ScrollReveal from '@/shared/components/ScrollReveal';
+import { ProjectItem } from '@/shared/types/projects';
 
 interface ProjectsProps {
-  projects: ProjectItem[]
+  projects: ProjectItem[];
 }
 
 export default function Projects({ projects }: ProjectsProps) {
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(0);
 
-  const featuredProjects = projects.filter((p) => p.featured)
-  const showcaseProjects = featuredProjects.length > 0 ? featuredProjects.slice(0, 3) : projects.slice(0, 3)
-  const current = showcaseProjects[activeTab] || showcaseProjects[0]
+  const featuredProjects = projects.filter(p => p.featured);
+  const showcaseProjects =
+    featuredProjects.length > 0 ? featuredProjects.slice(0, 3) : projects.slice(0, 3);
+  const current = showcaseProjects[activeTab] || showcaseProjects[0];
 
   return (
     <Box
-      id="projects"
+      id='projects'
       sx={{
         bgcolor: 'var(--color-canvas)',
         py: { xs: 8, sm: 10, md: 12 },
         borderTop: '1px solid var(--color-hairline)',
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth='lg' sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* Centered Section Header with Blur-Reveal */}
-        <ScrollReveal variant="blur-reveal">
+        <ScrollReveal variant='blur-reveal'>
           <Box sx={{ maxWidth: '720px', mb: { xs: 4.5, md: 6 }, mx: 'auto', textAlign: 'center' }}>
             <Typography
-              variant="overline"
-              className="font-serif-display"
-              sx={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.1em', display: 'block', mb: 1.5 }}
+              variant='overline'
+              className='font-serif-display'
+              sx={{
+                color: 'var(--color-primary)',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                letterSpacing: '0.1em',
+                display: 'block',
+                mb: 1.5,
+              }}
             >
               PORTFOLIO SHOWCASE
             </Typography>
             <Typography
-              variant="h2"
-              className="font-serif-display"
+              variant='h2'
+              className='font-serif-display'
               sx={{
                 fontSize: { xs: '2rem', sm: '2.75rem', md: '3.25rem' },
                 fontWeight: 400,
@@ -54,22 +62,33 @@ export default function Projects({ projects }: ProjectsProps) {
             >
               Featured Engineering Projects.
             </Typography>
-            <Typography variant="body1" sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}>
+            <Typography
+              variant='body1'
+              sx={{ fontSize: '1.125rem', color: 'var(--color-body)', lineHeight: 1.6 }}
+            >
               Explore selected web applications, API services, and user interfaces I&apos;ve built.
             </Typography>
           </Box>
         </ScrollReveal>
 
         {/* Centered Project Selector Tabs */}
-        <ScrollReveal variant="fade-up" delay={0.1}>
-          <Box sx={{ display: 'flex', gap: 1.5, mb: { xs: 3, md: 4 }, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <ScrollReveal variant='fade-up' delay={0.1}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 1.5,
+              mb: { xs: 3, md: 4 },
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
             {showcaseProjects.map((item, idx) => {
-              const isActive = activeTab === idx
+              const isActive = activeTab === idx;
               return (
                 <Button
                   key={item.id}
                   onClick={() => setActiveTab(idx)}
-                  variant="text"
+                  variant='text'
                   sx={{
                     bgcolor: isActive ? 'var(--color-surface-card)' : 'transparent',
                     color: isActive ? 'var(--color-ink)' : 'var(--color-muted)',
@@ -92,14 +111,14 @@ export default function Projects({ projects }: ProjectsProps) {
                 >
                   {item.title}
                 </Button>
-              )
+              );
             })}
           </Box>
         </ScrollReveal>
 
         {/* Dark Navy Product Showcase Card - Atomic Unified Layout */}
-        <ScrollReveal variant="fade-up" delay={0.15}>
-          <AnimatePresence mode="wait">
+        <ScrollReveal variant='fade-up' delay={0.15}>
+          <AnimatePresence mode='wait'>
             <motion.div
               key={current.id}
               initial={{ opacity: 0, y: 10 }}
@@ -135,7 +154,15 @@ export default function Projects({ projects }: ProjectsProps) {
                     zIndex: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 1.75 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      flexWrap: 'wrap',
+                      mb: 1.75,
+                    }}
+                  >
                     <Chip
                       label={current.badge}
                       sx={{
@@ -147,21 +174,37 @@ export default function Projects({ projects }: ProjectsProps) {
                         borderRadius: '9999px',
                       }}
                     />
-                    <Typography variant="h5" className="font-serif-display" sx={{ color: 'var(--color-on-dark)', fontSize: { xs: '1.25rem', sm: '1.375rem' }, fontWeight: 500 }}>
+                    <Typography
+                      variant='h5'
+                      className='font-serif-display'
+                      sx={{
+                        color: 'var(--color-on-dark)',
+                        fontSize: { xs: '1.25rem', sm: '1.375rem' },
+                        fontWeight: 500,
+                      }}
+                    >
                       {current.title}
                     </Typography>
                   </Box>
 
-                  <Typography variant="body1" sx={{ color: 'var(--color-on-dark-soft)', mb: 2.5, fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                  <Typography
+                    variant='body1'
+                    sx={{
+                      color: 'var(--color-on-dark-soft)',
+                      mb: 2.5,
+                      fontSize: '0.9375rem',
+                      lineHeight: 1.6,
+                    }}
+                  >
                     {current.description}
                   </Typography>
 
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                    {current.techStack.map((tech) => (
+                    {current.techStack.map(tech => (
                       <Chip
                         key={tech}
                         label={tech}
-                        size="small"
+                        size='small'
                         sx={{
                           bgcolor: 'rgba(250, 249, 245, 0.08)',
                           color: 'var(--color-on-dark)',
@@ -176,12 +219,12 @@ export default function Projects({ projects }: ProjectsProps) {
                   {/* Dual CTA: Live Demo + GitHub Source Code */}
                   <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
                     <Button
-                      component="a"
+                      component='a'
                       href={current.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="contained"
-                      size="small"
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      variant='contained'
+                      size='small'
                       disableElevation
                       endIcon={<ExternalLink size={14} />}
                       sx={{
@@ -195,7 +238,10 @@ export default function Projects({ projects }: ProjectsProps) {
                         py: 0.75,
                         boxShadow: 'none',
                         transition: 'all 0.2s ease-in-out',
-                        '&:hover': { bgcolor: 'var(--color-primary-active)', transform: 'translateY(-1px)' },
+                        '&:hover': {
+                          bgcolor: 'var(--color-primary-active)',
+                          transform: 'translateY(-1px)',
+                        },
                       }}
                     >
                       Live Demo
@@ -203,12 +249,12 @@ export default function Projects({ projects }: ProjectsProps) {
 
                     {current.githubUrl && (
                       <Button
-                        component="a"
+                        component='a'
                         href={current.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variant="outlined"
-                        size="small"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        variant='outlined'
+                        size='small'
                         startIcon={<FaGithub size={14} />}
                         sx={{
                           color: 'var(--color-on-dark)',
@@ -244,7 +290,7 @@ export default function Projects({ projects }: ProjectsProps) {
                   }}
                 >
                   <Box
-                    component="img"
+                    component='img'
                     src={current.imageUrl}
                     alt={current.title}
                     sx={{
@@ -279,12 +325,12 @@ export default function Projects({ projects }: ProjectsProps) {
         </ScrollReveal>
 
         {/* Centered Read More / View All Projects Button */}
-        <ScrollReveal variant="fade-up" delay={0.2}>
+        <ScrollReveal variant='fade-up' delay={0.2}>
           <Box sx={{ mt: { xs: 5, md: 7 }, textAlign: 'center' }}>
             <Button
               component={Link}
-              href="/projects"
-              variant="outlined"
+              href='/projects'
+              variant='outlined'
               endIcon={<ArrowRight size={18} />}
               sx={{
                 color: 'var(--color-ink)',
@@ -311,5 +357,5 @@ export default function Projects({ projects }: ProjectsProps) {
         </ScrollReveal>
       </Container>
     </Box>
-  )
+  );
 }

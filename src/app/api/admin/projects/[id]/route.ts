@@ -40,6 +40,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     const body = await request.json()
     const {
+      slug,
       title,
       badge,
       category,
@@ -53,14 +54,36 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       featured,
     } = body
 
+    const updates: Partial<ProjectItem> = {}
+
+    if (slug !== undefined) {
+      const trimmedSlug = String(slug).trim()
+      const slugRegex = /^[a-z0-9-]+$/
+      if (!slugRegex.test(trimmedSlug)) {
+        return NextResponse.json(
+          { success: false, error: 'Project URL slug must only contain lowercase letters, numbers, and hyphens' },
+          { status: 400 }
+        )
+      }
+
+      // Check if slug is used by another project
+      const conflict = await getProjectById(trimmedSlug)
+      if (conflict && conflict.id !== existing.id) {
+        return NextResponse.json(
+          { success: false, error: `A project with URL slug "${trimmedSlug}" already exists` },
+          { status: 409 }
+        )
+      }
+
+      updates.slug = trimmedSlug
+    }
+
     if (category && (!(PROJECT_CATEGORIES as readonly string[]).includes(category) || category === 'All')) {
       return NextResponse.json(
         { success: false, error: `Invalid category. Must be one of: ${PROJECT_CATEGORIES.filter(c => c !== 'All').join(', ')}` },
         { status: 400 }
       )
     }
-
-    const updates: Partial<ProjectItem> = {}
 
     if (title !== undefined) updates.title = String(title).trim()
     if (category !== undefined) {
@@ -80,7 +103,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (imageUrl !== undefined) updates.imageUrl = String(imageUrl).trim()
     if (featured !== undefined) updates.featured = Boolean(featured)
 
-    const updated = await updateProject(id, updates)
+    const updated = await updateProject(existing.id, updates)
 
     // Invalidate SSR cache so home and projects pages reflect the update immediately
     revalidatePath('/')

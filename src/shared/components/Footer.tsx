@@ -41,7 +41,7 @@ export default function Footer() {
             </Box>
 
             <Typography variant="body2" sx={{ color: 'var(--color-on-dark-soft)', fontSize: '0.875rem', lineHeight: 1.6, maxWidth: '320px' }}>
-              Backend & Cloud Engineer specializing in scalable architectures, cloud infrastructure (AWS/GCP), and building robust API layers.
+              Cloud & Backend Engineer focused on AWS infrastructure, containerization, and modular API development.
             </Typography>
 
             {/* Status Indicator */}
@@ -201,7 +201,7 @@ export default function Footer() {
           {/* Social Media Links & Back to Top */}
           <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <Link href="mailto:hasib.ashari@example.com" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="Email">
+              <Link href="mailto:hasibashari@gmail.com" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="Email">
                 <Mail size={17} />
               </Link>
               <Link href="https://github.com" target="_blank" rel="noopener noreferrer" sx={{ color: 'var(--color-on-dark-soft)', '&:hover': { color: 'var(--color-on-dark)' }, display: 'flex', alignItems: 'center' }} aria-label="GitHub">
