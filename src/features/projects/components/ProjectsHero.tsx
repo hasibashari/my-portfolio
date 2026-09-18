@@ -2,8 +2,8 @@
 
 import { Box, Container, Typography } from '@mui/material'
 import { Sparkles } from 'lucide-react'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import BackLink from '../../../shared/components/BackLink'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import BackLink from '@/shared/components/BackLink'
 
 export default function ProjectsHero() {
   return (

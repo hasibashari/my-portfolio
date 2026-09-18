@@ -1,5 +1,5 @@
 import { getPool, initDb } from './db'
-import { BlogPost, ArticleSection } from '../../constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 
 interface ArticleRow {
   id: number
@@ -12,7 +12,8 @@ interface ArticleRow {
   description: string
   tags: string
   author: string
-  sections: string
+  content: string
+  sections?: string
   createdAt: string
   updatedAt: string
 }
@@ -20,7 +21,6 @@ interface ArticleRow {
 function mapRowToArticle(row: ArticleRow): BlogPost {
   let tags: string[] = []
   let author = { name: 'Hasib Ashari', role: 'Software Engineer', avatar: undefined as string | undefined }
-  let sections: ArticleSection[] = []
 
   try {
     tags = typeof row.tags === 'string' ? JSON.parse(row.tags) : row.tags
@@ -34,12 +34,6 @@ function mapRowToArticle(row: ArticleRow): BlogPost {
     author = { name: 'Hasib Ashari', role: 'Software Engineer', avatar: undefined }
   }
 
-  try {
-    sections = typeof row.sections === 'string' ? JSON.parse(row.sections) : row.sections
-  } catch {
-    sections = []
-  }
-
   return {
     id: row.id,
     slug: row.slug,
@@ -51,7 +45,7 @@ function mapRowToArticle(row: ArticleRow): BlogPost {
     description: row.description,
     tags,
     author,
-    sections,
+    content: row.content || '',
   }
 }
 
@@ -117,7 +111,7 @@ export async function createArticle(
   const { rows } = await pool.query<ArticleRow>(
     `INSERT INTO articles (
        slug, title, date, category, "isCoralBadge", "readingTime",
-       description, tags, author, sections, "createdAt", "updatedAt"
+       description, tags, author, content, "createdAt", "updatedAt"
      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
      RETURNING *`,
     [
@@ -130,7 +124,7 @@ export async function createArticle(
       data.description,
       JSON.stringify(data.tags ?? []),
       JSON.stringify(data.author ?? { name: 'Hasib Ashari', role: 'Software Engineer' }),
-      JSON.stringify(data.sections ?? []),
+      data.content ?? '',
     ],
   )
 
@@ -146,7 +140,6 @@ export async function updateArticle(
   const pool = getPool()
 
   // Build a dynamic SET clause from only the fields provided in `updates`.
-  // This avoids a preceding SELECT and saves a full round-trip to the DB.
   const setClauses: string[] = []
   const values: unknown[] = []
   let p = 1
@@ -160,7 +153,7 @@ export async function updateArticle(
   if (updates.description !== undefined) { setClauses.push(`description    = $${p++}`); values.push(updates.description) }
   if (updates.tags        !== undefined) { setClauses.push(`tags           = $${p++}`); values.push(JSON.stringify(updates.tags)) }
   if (updates.author      !== undefined) { setClauses.push(`author         = $${p++}`); values.push(JSON.stringify(updates.author)) }
-  if (updates.sections    !== undefined) { setClauses.push(`sections       = $${p++}`); values.push(JSON.stringify(updates.sections)) }
+  if (updates.content     !== undefined) { setClauses.push(`content        = $${p++}`); values.push(updates.content) }
 
   // Nothing to update — just return the existing record
   if (setClauses.length === 0) return getArticleById(id)

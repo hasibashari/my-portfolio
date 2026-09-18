@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Typography } from '@mui/material'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 import BlogCard from './BlogCard'
 
 interface RelatedArticlesProps {

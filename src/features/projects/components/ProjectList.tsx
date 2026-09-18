@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Box, Container, Typography, Button } from '@mui/material'
 import { AnimatePresence, motion } from 'motion/react'
 import { FolderGit2 } from 'lucide-react'
@@ -8,13 +9,12 @@ import ProjectsHero from './ProjectsHero'
 import ProjectsFilter from './ProjectsFilter'
 import ProjectCard from './ProjectCard'
 import ProjectModal from './ProjectModal'
-import Pagination from '../../../shared/components/Pagination'
+import Pagination from '@/shared/components/Pagination'
 import {
-  projects as defaultProjects,
   ProjectItem,
   ProjectCategory,
   PROJECT_CATEGORIES,
-} from '../../../shared/constants/projects'
+} from '@/shared/types/projects'
 
 const ITEMS_PER_PAGE = 6
 
@@ -22,14 +22,47 @@ interface ProjectListProps {
   initialProjects?: ProjectItem[]
 }
 
-export default function ProjectList({ initialProjects }: ProjectListProps) {
-  const allProjects = initialProjects || defaultProjects
+export default function ProjectList({ initialProjects = [] }: ProjectListProps) {
+  const searchParams = useSearchParams()
+  const allProjects = initialProjects
+
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('All')
+  const [searchQuery, setSearchQuery] = useState('')
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
 
+  // Auto-open modal if URL query param `?project=<id>` is present
+  useEffect(() => {
+    const projectIdFromUrl = searchParams.get('project')
+    if (projectIdFromUrl) {
+      const match = allProjects.find((p) => p.id === projectIdFromUrl)
+      if (match) {
+        setActiveModalProject(match)
+      }
+    }
+  }, [searchParams, allProjects])
+
+  const handleOpenModal = (project: ProjectItem) => {
+    setActiveModalProject(project)
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', `/projects?project=${project.id}`)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setActiveModalProject(null)
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', '/projects')
+    }
+  }
+
   const handleCategoryChange = (category: ProjectCategory) => {
     setSelectedCategory(category)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
     setCurrentPage(1)
   }
 
@@ -52,19 +85,34 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
     return counts
   }, [allProjects])
 
-  // Filter projects strictly by category, featured first
+  // Filter projects strictly by category AND search query, featured first
   const filteredProjects = useMemo(() => {
-    const list =
-      selectedCategory === 'All'
-        ? allProjects
-        : allProjects.filter((project) => project.category === selectedCategory)
-    // Featured projects always appear at the top
-    return [...list].sort((a, b) => {
-      if (a.featured && !b.featured) return -1
-      if (!a.featured && b.featured) return 1
-      return 0
-    })
-  }, [allProjects, selectedCategory])
+    const query = searchQuery.trim().toLowerCase()
+
+    return allProjects
+      .filter((project) => {
+        // Category filter
+        if (selectedCategory !== 'All' && project.category !== selectedCategory) {
+          return false
+        }
+        // Search query filter (matches title, description, badge, or tech stack)
+        if (query) {
+          const matchTitle = project.title.toLowerCase().includes(query)
+          const matchDesc = project.description.toLowerCase().includes(query)
+          const matchBadge = project.badge.toLowerCase().includes(query)
+          const matchTech = project.techStack.some((tech) => tech.toLowerCase().includes(query))
+          if (!matchTitle && !matchDesc && !matchBadge && !matchTech) {
+            return false
+          }
+        }
+        return true
+      })
+      .sort((a, b) => {
+        if (a.featured && !b.featured) return -1
+        if (!a.featured && b.featured) return 1
+        return 0
+      })
+  }, [allProjects, selectedCategory, searchQuery])
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE)
@@ -78,11 +126,13 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
       {/* Editorial Hero Header */}
       <ProjectsHero />
 
-      {/* Modular Category Filter Component */}
+      {/* Modular Category Filter & Search Component */}
       <ProjectsFilter
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
         categoryCounts={categoryCounts}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
       />
 
       <Container id="projects-content-list" maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 3, sm: 4 } }}>
@@ -102,14 +152,16 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
             </Box>{' '}
             {filteredProjects.length === 1 ? 'project' : 'projects'}
             {selectedCategory !== 'All' && ` in "${selectedCategory}"`}
+            {searchQuery && ` matching "${searchQuery}"`}
             {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
           </Typography>
 
-          {selectedCategory !== 'All' && (
+          {(selectedCategory !== 'All' || searchQuery) && (
             <Button
               size="small"
               onClick={() => {
                 setSelectedCategory('All')
+                setSearchQuery('')
                 setCurrentPage(1)
               }}
               sx={{
@@ -121,7 +173,7 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
                 '&:hover': { bgcolor: 'transparent', color: 'var(--color-primary-active)' },
               }}
             >
-              Show all
+              Reset filters
             </Button>
           )}
         </Box>
@@ -145,7 +197,7 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
                 <ProjectCard
                   key={project.id}
                   project={project}
-                  onOpenModal={(proj) => setActiveModalProject(proj)}
+                  onOpenModal={handleOpenModal}
                 />
               ))}
             </AnimatePresence>
@@ -178,15 +230,16 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
                 <FolderGit2 size={32} />
               </Box>
               <Typography variant="h6" className="font-serif-display" sx={{ color: 'var(--color-ink)', mb: 1 }}>
-                No projects in this category yet
+                No projects matched your criteria
               </Typography>
               <Typography variant="body2" sx={{ color: 'var(--color-muted)', mb: 3 }}>
-                Check back soon or explore projects in other engineering categories.
+                Try adjusting your search keyword or switching category tabs.
               </Typography>
               <Button
                 variant="outlined"
                 onClick={() => {
                   setSelectedCategory('All')
+                  setSearchQuery('')
                   setCurrentPage(1)
                 }}
                 sx={{
@@ -203,7 +256,7 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
                   },
                 }}
               >
-                View all projects
+                Clear all filters
               </Button>
             </Box>
           </motion.div>
@@ -218,11 +271,11 @@ export default function ProjectList({ initialProjects }: ProjectListProps) {
         />
       </Container>
 
-      {/* Project Details Modal */}
+      {/* Project Details Modal with Deep Link & Markdown */}
       <ProjectModal
         project={activeModalProject}
         open={Boolean(activeModalProject)}
-        onClose={() => setActiveModalProject(null)}
+        onClose={handleCloseModal}
       />
     </Box>
   )

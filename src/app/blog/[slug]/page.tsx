@@ -1,13 +1,13 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { BlogPostDetailView } from '../../../features/blog'
+import { BlogPostDetailView } from '@/features/blog'
 import {
   getAllBlogSlugs,
   getBlogPostBySlug,
   getRelatedBlogPosts,
-} from '../../../shared/lib/db'
-import Navbar from '../../../shared/components/Navbar'
-import Footer from '../../../shared/components/Footer'
+} from '@/shared/lib/db/articlesService'
+import Navbar from '@/shared/components/Navbar'
+import Footer from '@/shared/components/Footer'
 
 interface PageProps {
   params: Promise<{ slug: string }>

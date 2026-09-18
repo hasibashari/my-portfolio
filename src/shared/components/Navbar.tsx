@@ -20,7 +20,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Logo from './Logo'
-import { nav } from '../constants/nav'
+import { nav } from '@/shared/constants/nav'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)

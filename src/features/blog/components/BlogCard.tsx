@@ -3,7 +3,7 @@
 import { Box, Card, CardContent, Chip, Typography } from '@mui/material'
 import { ArrowRight, Clock, Calendar } from 'lucide-react'
 import Link from 'next/link'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 
 interface BlogCardProps {
   post: BlogPost

@@ -1,17 +1,18 @@
-import { HomeView } from '../features/home'
-import { getProjects } from '../shared/lib/db'
-import Navbar from '../shared/components/Navbar'
-import Footer from '../shared/components/Footer'
+import { HomeView } from '@/features/home'
+import { getProjects } from '@/shared/lib/db/projectsService'
+import { getArticles } from '@/shared/lib/db/articlesService'
+import Navbar from '@/shared/components/Navbar'
+import Footer from '@/shared/components/Footer'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const projects = await getProjects()
+  const [projects, articles] = await Promise.all([getProjects(), getArticles()])
 
   return (
     <main style={{ backgroundColor: 'var(--color-canvas)', minHeight: '100vh' }}>
       <Navbar />
-      <HomeView projects={projects} />
+      <HomeView projects={projects} articles={articles} />
       <Footer />
     </main>
   )

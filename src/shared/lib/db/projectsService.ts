@@ -1,5 +1,5 @@
 import { getPool, initDb } from './db'
-import { ProjectItem } from '../../constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectRow {
   id: string

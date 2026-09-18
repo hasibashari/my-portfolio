@@ -7,13 +7,12 @@ import { BookOpen } from 'lucide-react'
 import BlogHero from './BlogHero'
 import BlogFilter from './BlogFilter'
 import BlogCard from './BlogCard'
-import Pagination from '../../../shared/components/Pagination'
+import Pagination from '@/shared/components/Pagination'
 import {
-  blog as defaultBlog,
   BlogPost,
   BlogCategory,
   BLOG_CATEGORIES,
-} from '../../../shared/constants/blog'
+} from '@/shared/types/blog'
 
 const ITEMS_PER_PAGE = 4
 
@@ -21,8 +20,8 @@ interface BlogListProps {
   initialPosts?: BlogPost[]
 }
 
-export default function BlogList({ initialPosts }: BlogListProps) {
-  const allBlogPosts = initialPosts || defaultBlog
+export default function BlogList({ initialPosts = [] }: BlogListProps) {
+  const allBlogPosts = initialPosts
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)

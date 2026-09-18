@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material'
 import { CheckCircle2, Sparkles, Send, Mail, MapPin } from 'lucide-react'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
+import ScrollReveal from '@/shared/components/ScrollReveal'
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })

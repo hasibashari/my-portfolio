@@ -1,10 +1,15 @@
+import { Suspense } from 'react'
 import ProjectList from '../components/ProjectList'
-import { ProjectItem } from '../../../shared/constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectsViewProps {
   initialProjects?: ProjectItem[]
 }
 
 export default function ProjectsView({ initialProjects }: ProjectsViewProps) {
-  return <ProjectList initialProjects={initialProjects} />
+  return (
+    <Suspense fallback={<div style={{ minHeight: '80vh', backgroundColor: 'var(--color-canvas)' }} />}>
+      <ProjectList initialProjects={initialProjects} />
+    </Suspense>
+  )
 }

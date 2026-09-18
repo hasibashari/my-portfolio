@@ -14,7 +14,7 @@ import {
 import { Plus } from 'lucide-react'
 import AdminNav from '../components/AdminNav'
 import ProjectTable from '../components/ProjectTable'
-import { ProjectItem } from '../../../shared/constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface AdminProjectsViewProps {
   initialProjects: ProjectItem[]

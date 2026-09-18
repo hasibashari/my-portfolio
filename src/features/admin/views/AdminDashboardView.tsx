@@ -4,8 +4,8 @@ import NextLink from 'next/link'
 import { Box, Container, Typography, Button, Paper } from '@mui/material'
 import { FolderGit2, BookOpen, Plus, ArrowRight, Database, Server } from 'lucide-react'
 import AdminNav from '../components/AdminNav'
-import { ProjectItem } from '../../../shared/constants/projects'
-import { BlogPost } from '../../../shared/constants/blog'
+import { ProjectItem } from '@/shared/types/projects'
+import { BlogPost } from '@/shared/types/blog'
 
 interface AdminDashboardViewProps {
   projects: ProjectItem[]

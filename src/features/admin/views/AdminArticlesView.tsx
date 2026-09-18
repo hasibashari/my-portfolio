@@ -13,7 +13,7 @@ import {
 import { Plus } from 'lucide-react'
 import AdminNav from '../components/AdminNav'
 import ArticleTable from '../components/ArticleTable'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 
 interface AdminArticlesViewProps {
   initialArticles: BlogPost[]

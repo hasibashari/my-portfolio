@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
-import { AdminArticlesView } from '../../../features/admin'
-import { getArticles } from '../../../shared/lib/db'
+import { AdminArticlesView } from '@/features/admin'
+import { getArticles } from '@/shared/lib/db/articlesService'
 
 export const metadata: Metadata = {
   title: 'Manage Articles | Admin Portfolio',

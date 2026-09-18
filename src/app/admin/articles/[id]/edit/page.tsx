@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { AdminArticleFormView } from '../../../../../features/admin'
-import { getArticleById } from '../../../../../shared/lib/db'
+import { AdminArticleFormView } from '@/features/admin'
+import { getArticleById } from '@/shared/lib/db/articlesService'
 
 interface PageProps {
   params: Promise<{ id: string }>

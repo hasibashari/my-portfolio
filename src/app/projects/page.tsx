@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
-import { ProjectsView } from '../../features/projects'
-import { getProjects } from '../../shared/lib/db'
-import Navbar from '../../shared/components/Navbar'
-import Footer from '../../shared/components/Footer'
+import { ProjectsView } from '@/features/projects'
+import { getProjects } from '@/shared/lib/db/projectsService'
+import Navbar from '@/shared/components/Navbar'
+import Footer from '@/shared/components/Footer'
 
 export const dynamic = 'force-dynamic'
 

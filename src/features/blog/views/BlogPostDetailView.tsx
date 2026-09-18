@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Container } from '@mui/material'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 import ArticleHeader from '../components/ArticleHeader'
 import ArticleContent from '../components/ArticleContent'
 import ArticleShare from '../components/ArticleShare'
@@ -28,7 +28,7 @@ export default function BlogPostDetailView({ post, relatedPosts }: BlogPostDetai
         <ArticleHeader post={post} />
 
         {/* Long-form Article Body */}
-        <ArticleContent sections={post.sections} />
+        <ArticleContent content={post.content} />
 
         {/* Social Share & Copy Link */}
         <ArticleShare post={post} />

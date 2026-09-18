@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getArticleById, updateArticle, deleteArticle, getArticleBySlug } from '../../../../../shared/lib/db'
-import { BlogPost } from '../../../../../shared/constants/blog'
+import { getArticleById, updateArticle, deleteArticle, getArticleBySlug } from '@/shared/lib/db/articlesService'
+import { BlogPost } from '@/shared/types/blog'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       description,
       tags,
       author,
-      sections,
+      content,
     } = body
 
     if (slug !== undefined) {
@@ -105,8 +105,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         avatar: author.avatar ? String(author.avatar).trim() : undefined,
       }
     }
-    if (sections !== undefined && Array.isArray(sections)) {
-      updates.sections = sections
+    if (content !== undefined) {
+      updates.content = String(content)
     }
 
     const updated = await updateArticle(articleId, updates)

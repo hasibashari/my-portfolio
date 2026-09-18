@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
-import { AdminDashboardView } from '../../features/admin'
-import { getProjects, getArticles } from '../../shared/lib/db'
+import { AdminDashboardView } from '@/features/admin'
+import { getProjects } from '@/shared/lib/db/projectsService'
+import { getArticles } from '@/shared/lib/db/articlesService'
 
 export const metadata: Metadata = {
   title: 'Portfolio Administration | Hasib Ashari',

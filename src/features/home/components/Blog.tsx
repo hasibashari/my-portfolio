@@ -3,12 +3,20 @@
 import { Box, Container, Typography, Card, CardContent, Chip, Button } from '@mui/material'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { blog } from '../../../shared/constants/blog'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import { BlogPost } from '@/shared/types/blog'
 
-export default function Blog() {
-  const featuredPost = blog[0]
-  const recentPosts = blog.slice(1)
+interface BlogProps {
+  articles?: BlogPost[]
+}
+
+export default function Blog({ articles = [] }: BlogProps) {
+  if (articles.length === 0) {
+    return null
+  }
+
+  const featuredPost = articles[0]
+  const recentPosts = articles.slice(1, 3)
 
   return (
     <Box

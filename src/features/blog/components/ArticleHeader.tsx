@@ -2,8 +2,8 @@
 
 import { Box, Chip, Typography } from '@mui/material'
 import { Calendar, Clock } from 'lucide-react'
-import BackLink from '../../../shared/components/BackLink'
-import { BlogPost } from '../../../shared/constants/blog'
+import BackLink from '@/shared/components/BackLink'
+import { BlogPost } from '@/shared/types/blog'
 
 interface ArticleHeaderProps {
   post: BlogPost

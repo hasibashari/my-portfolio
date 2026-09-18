@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { AdminArticleFormView } from '../../../../features/admin'
+import { AdminArticleFormView } from '@/features/admin'
 
 export const metadata: Metadata = {
   title: 'Create Article | Admin Portfolio',

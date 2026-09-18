@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import {
@@ -14,9 +14,17 @@ import {
   CircularProgress,
   Typography,
   Paper,
+  Chip,
+  Tooltip,
 } from '@mui/material'
-import { ArrowLeft, Save } from 'lucide-react'
-import { ProjectItem, ProjectCategory, PROJECT_CATEGORIES } from '../../../shared/constants/projects'
+import {
+  ArrowLeft,
+  Save,
+  Sparkles,
+  RefreshCw,
+} from 'lucide-react'
+import { ProjectItem, ProjectCategory, PROJECT_CATEGORIES } from '@/shared/types/projects'
+import MarkdownEditor from './MarkdownEditor'
 
 interface ProjectFormProps {
   initialData?: ProjectItem
@@ -24,6 +32,49 @@ interface ProjectFormProps {
   onSubmit: (data: ProjectItem) => Promise<void>
   loading?: boolean
 }
+
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+const CATEGORY_COLOR_MAP: Record<ProjectItem['category'], string> = {
+  'AI & Backend': '#cc785c',
+  'Cloud & Data': '#788c5d',
+  'Microservices': '#6a9b9b',
+  'Fullstack': '#8b7a9f',
+}
+
+const PRESET_BADGE_COLORS = [
+  { name: 'Coral Terracotta (AI & Backend)', hex: '#cc785c' },
+  { name: 'Sage Olive (Cloud & Data)', hex: '#788c5d' },
+  { name: 'Ocean Teal (Microservices)', hex: '#6a9b9b' },
+  { name: 'Lavender Violet (Fullstack)', hex: '#8b7a9f' },
+  { name: 'Warm Amber', hex: '#d97706' },
+  { name: 'Slate Gray', hex: '#64748b' },
+]
+
+const POPULAR_TECH_SUGGESTIONS = [
+  'TypeScript',
+  'Next.js',
+  'Node.js',
+  'React',
+  'Docker',
+  'PostgreSQL',
+  'Redis',
+  'Python',
+  'Go',
+  'TailwindCSS',
+  'AWS',
+  'Kubernetes',
+]
 
 export default function ProjectForm({
   initialData,
@@ -37,19 +88,67 @@ export default function ProjectForm({
     id: initialData?.id || '',
     title: initialData?.title || '',
     category: (initialData?.category || 'AI & Backend') as ProjectItem['category'],
-    badge: initialData?.badge || '',
     badgeColor: initialData?.badgeColor || '#cc785c',
     description: initialData?.description || '',
     longDescription: initialData?.longDescription || '',
-    techStack: initialData?.techStack ? initialData.techStack.join(', ') : '',
+    techStack: initialData?.techStack || ['TypeScript', 'Next.js'],
     demoUrl: initialData?.demoUrl || '',
     githubUrl: initialData?.githubUrl || '',
     imageUrl: initialData?.imageUrl || '',
     featured: initialData?.featured || false,
   })
 
+  const [newTagInput, setNewTagInput] = useState('')
+  const [isIdManuallyEdited, setIsIdManuallyEdited] = useState(Boolean(isEdit))
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [serverError, setServerError] = useState<string | null>(null)
+
+  // Auto-generate slug ID from title
+  const handleTitleChange = (newTitle: string) => {
+    if (!isIdManuallyEdited && !isEdit) {
+      const generatedId = slugify(newTitle)
+      setFormData((prev) => ({
+        ...prev,
+        title: newTitle,
+        id: generatedId,
+      }))
+    } else {
+      setFormData((prev) => ({ ...prev, title: newTitle }))
+    }
+  }
+
+  const handleRegenerateId = () => {
+    const generatedId = slugify(formData.title)
+    setFormData((prev) => ({ ...prev, id: generatedId }))
+    setIsIdManuallyEdited(false)
+  }
+
+  // Tag chip handlers
+  const handleAddTag = (tagToAdd?: string) => {
+    const tag = (tagToAdd ?? newTagInput).trim()
+    if (!tag) return
+    if (!formData.techStack.includes(tag)) {
+      setFormData((prev) => ({
+        ...prev,
+        techStack: [...prev.techStack, tag],
+      }))
+    }
+    setNewTagInput('')
+  }
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      techStack: prev.techStack.filter((t) => t !== tagToRemove),
+    }))
+  }
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault()
+      handleAddTag()
+    }
+  }
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -65,7 +164,7 @@ export default function ProjectForm({
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Short description is required'
+      newErrors.description = 'Short description summary is required'
     }
 
     if (!formData.imageUrl.trim()) {
@@ -74,6 +173,10 @@ export default function ProjectForm({
 
     if (!formData.demoUrl.trim()) {
       newErrors.demoUrl = 'Demo URL is required'
+    }
+
+    if (formData.techStack.length === 0) {
+      newErrors.techStack = 'Please specify at least one technology in tech stack'
     }
 
     setErrors(newErrors)
@@ -87,20 +190,15 @@ export default function ProjectForm({
     if (!validate()) return
 
     try {
-      const techStackArray = formData.techStack
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-
       const payload: ProjectItem = {
         id: formData.id.trim(),
         title: formData.title.trim(),
-        badge: formData.badge.trim() || formData.category.toUpperCase(),
+        badge: formData.category.toUpperCase(), // Auto-derived from category
         category: formData.category,
-        badgeColor: formData.badgeColor.trim(),
+        badgeColor: formData.badgeColor.trim() || CATEGORY_COLOR_MAP[formData.category] || '#cc785c',
         description: formData.description.trim(),
         longDescription: formData.longDescription.trim() || undefined,
-        techStack: techStackArray,
+        techStack: formData.techStack,
         demoUrl: formData.demoUrl.trim(),
         githubUrl: formData.githubUrl.trim() || undefined,
         imageUrl: formData.imageUrl.trim(),
@@ -118,7 +216,9 @@ export default function ProjectForm({
     }
   }
 
-  const availableCategories = PROJECT_CATEGORIES.filter((c): c is Exclude<ProjectCategory, 'All'> => c !== 'All')
+  const availableCategories = PROJECT_CATEGORIES.filter(
+    (c): c is Exclude<ProjectCategory, 'All'> => c !== 'All'
+  )
 
   return (
     <Paper
@@ -126,7 +226,7 @@ export default function ProjectForm({
       onSubmit={handleSubmit}
       elevation={0}
       sx={{
-        p: { xs: 3, md: 4 },
+        p: { xs: 2.5, md: 4 },
         bgcolor: 'var(--color-surface-card)',
         border: '1px solid var(--color-hairline)',
         borderRadius: '16px',
@@ -138,16 +238,18 @@ export default function ProjectForm({
         </Alert>
       )}
 
-      {/* Featured Flag — placed at the top for prominence */}
+      {/* ── Featured Banner Toggle ────────────────────────────────────────── */}
       <Box
         sx={{
-          mb: 3,
+          mb: 3.5,
           p: 2,
-          bgcolor: formData.featured ? 'rgba(232, 165, 90, 0.08)' : 'var(--color-canvas)',
+          bgcolor: formData.featured ? 'rgba(204, 120, 92, 0.08)' : 'var(--color-canvas)',
           border: '1px solid',
-          borderColor: formData.featured ? 'rgba(232, 165, 90, 0.4)' : 'var(--color-hairline)',
+          borderColor: formData.featured ? 'var(--color-primary)' : 'var(--color-hairline)',
           borderRadius: '10px',
-          transition: 'all 0.2s ease',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
         <FormControlLabel
@@ -167,38 +269,33 @@ export default function ProjectForm({
             />
           }
           label={
-            <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-ink)', fontWeight: 500 }}>
-              Mark as Featured Project on Home &amp; Project list
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+              <Sparkles size={16} color="var(--color-primary)" />
+              <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-ink)', fontWeight: 600 }}>
+                Feature on Homepage Showcase & Top of Projects list
+              </Typography>
+            </Box>
           }
         />
-      </Box>
-
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 3 }}>
-        {/* Project ID */}
-        <Box>
-          <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Project ID (Slug) *
-          </Typography>
-          <TextField
-            fullWidth
+        {formData.featured && (
+          <Chip
+            label="FEATURED SHOWCASE"
             size="small"
-            placeholder="e.g. ai-studio"
-            value={formData.id}
-            onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-            disabled={isEdit || loading}
-            error={Boolean(errors.id)}
-            helperText={errors.id || (isEdit ? 'ID cannot be changed once created.' : 'Lowercase, numbers, and hyphens only.')}
-            slotProps={{
-              input: {
-                sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
-              },
+            sx={{
+              bgcolor: 'var(--color-primary)',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '0.7rem',
+              letterSpacing: '0.05em',
             }}
           />
-        </Box>
+        )}
+      </Box>
 
-        {/* Project Title */}
-        <Box>
+      {/* ── Main Form Inputs ──────────────────────────────────────────────── */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2.5, mb: 4 }}>
+        {/* Title */}
+        <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
           <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
             Project Title *
           </Typography>
@@ -207,29 +304,86 @@ export default function ProjectForm({
             size="small"
             placeholder="e.g. AI Agent Automation Engine"
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) => handleTitleChange(e.target.value)}
             disabled={loading}
             error={Boolean(errors.title)}
             helperText={errors.title}
             slotProps={{
               input: {
-                sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
+                sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)', fontWeight: 500 },
               },
             }}
           />
         </Box>
 
-        {/* Category */}
+        {/* Project ID / Slug */}
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+            <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600 }}>
+              Project ID (Slug) *
+            </Typography>
+            {!isEdit && (
+              <Button
+                size="small"
+                variant="text"
+                onClick={handleRegenerateId}
+                startIcon={<RefreshCw size={12} />}
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '0.75rem',
+                  p: 0,
+                  color: 'var(--color-primary)',
+                  '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
+                }}
+              >
+                Auto-generate from Title
+              </Button>
+            )}
+          </Box>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="e.g. ai-agent-engine"
+            value={formData.id}
+            onChange={(e) => {
+              setFormData({ ...formData, id: e.target.value })
+              setIsIdManuallyEdited(true)
+            }}
+            disabled={isEdit || loading}
+            error={Boolean(errors.id)}
+            helperText={errors.id || (isEdit ? 'Unique identifier cannot be changed once created.' : 'Used in share link: /projects?project=[id]')}
+            slotProps={{
+              input: {
+                sx: {
+                  bgcolor: 'var(--color-canvas)',
+                  borderRadius: '8px',
+                  color: 'var(--color-ink)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
+                },
+              },
+            }}
+          />
+        </Box>
+
+        {/* Category (Badge is automatically derived) */}
         <Box>
           <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Category *
+            Engineering Category * (Badge automatically reflects this)
           </Typography>
           <TextField
             select
             fullWidth
             size="small"
             value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value as ProjectItem['category'] })}
+            onChange={(e) => {
+              const cat = e.target.value as ProjectItem['category']
+              setFormData((prev) => ({
+                ...prev,
+                category: cat,
+                badgeColor: CATEGORY_COLOR_MAP[cat] || prev.badgeColor,
+              }))
+            }}
             disabled={loading}
             slotProps={{
               input: {
@@ -245,43 +399,66 @@ export default function ProjectForm({
           </TextField>
         </Box>
 
-        {/* Badge & Color */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 2 }}>
-          <Box>
-            <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-              Badge Label
-            </Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="e.g. AI & BACKEND"
-              value={formData.badge}
-              onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-              disabled={loading}
-              slotProps={{
-                input: {
-                  sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
-                },
-              }}
-            />
-          </Box>
-          <Box>
-            <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-              Badge Color
-            </Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="#cc785c"
-              value={formData.badgeColor}
-              onChange={(e) => setFormData({ ...formData, badgeColor: e.target.value })}
-              disabled={loading}
-              slotProps={{
-                input: {
-                  sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
-                },
-              }}
-            />
+        {/* Badge Color Palette & Custom Hex */}
+        <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
+          <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 1, display: 'block' }}>
+            Category Badge Accent Color
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+            {PRESET_BADGE_COLORS.map((preset) => {
+              const isSelected = formData.badgeColor.toLowerCase() === preset.hex.toLowerCase()
+              return (
+                <Tooltip key={preset.hex} title={preset.name}>
+                  <Box
+                    onClick={() => setFormData({ ...formData, badgeColor: preset.hex })}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      bgcolor: preset.hex,
+                      cursor: 'pointer',
+                      border: isSelected ? '3px solid var(--color-ink)' : '2px solid rgba(0,0,0,0.1)',
+                      boxShadow: isSelected ? '0 0 0 2px var(--color-primary)' : 'none',
+                      transition: 'transform 0.15s ease',
+                      '&:hover': { transform: 'scale(1.15)' },
+                    }}
+                  />
+                </Tooltip>
+              )
+            })}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
+              <input
+                type="color"
+                value={formData.badgeColor}
+                onChange={(e) => setFormData({ ...formData, badgeColor: e.target.value })}
+                style={{
+                  width: 30,
+                  height: 30,
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  backgroundColor: 'transparent',
+                }}
+              />
+              <TextField
+                size="small"
+                value={formData.badgeColor}
+                onChange={(e) => setFormData({ ...formData, badgeColor: e.target.value })}
+                disabled={loading}
+                sx={{ width: 100 }}
+                slotProps={{
+                  input: {
+                    sx: {
+                      bgcolor: 'var(--color-canvas)',
+                      borderRadius: '8px',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.8rem',
+                      py: 0,
+                    },
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </Box>
 
@@ -330,7 +507,7 @@ export default function ProjectForm({
         {/* Image URL */}
         <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
           <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Image URL *
+            Cover Image URL *
           </Typography>
           <TextField
             fullWidth
@@ -340,7 +517,7 @@ export default function ProjectForm({
             onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
             disabled={loading}
             error={Boolean(errors.imageUrl)}
-            helperText={errors.imageUrl}
+            helperText={errors.imageUrl || 'High resolution 16:9 banner preview'}
             slotProps={{
               input: {
                 sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
@@ -349,36 +526,102 @@ export default function ProjectForm({
           />
         </Box>
 
-        {/* Tech Stack */}
+        {/* Tech Stack Chip Input */}
         <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
           <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Tech Stack (Comma-separated)
+            Technologies & Frameworks * (Press Enter or comma to add)
           </Typography>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Node.js, Express, Docker, OpenAI API, Redis, TypeScript"
-            value={formData.techStack}
-            onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-            disabled={loading}
-            slotProps={{
-              input: {
-                sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
-              },
+          <Box
+            sx={{
+              p: 1.5,
+              bgcolor: 'var(--color-canvas)',
+              border: '1px solid var(--color-hairline)',
+              borderRadius: '8px',
+              minHeight: '48px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+              alignItems: 'center',
             }}
-          />
+          >
+            {formData.techStack.map((tech) => (
+              <Chip
+                key={tech}
+                label={tech}
+                size="small"
+                onDelete={() => handleRemoveTag(tech)}
+                sx={{
+                  bgcolor: 'var(--color-surface-soft)',
+                  color: 'var(--color-ink)',
+                  fontWeight: 500,
+                  borderRadius: '6px',
+                  border: '1px solid var(--color-hairline)',
+                }}
+              />
+            ))}
+            <TextField
+              variant="standard"
+              placeholder={formData.techStack.length === 0 ? 'Type tag and press Enter...' : 'Add more...'}
+              value={newTagInput}
+              onChange={(e) => setNewTagInput(e.target.value)}
+              onKeyDown={handleTagInputKeyDown}
+              disabled={loading}
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                  sx: { fontSize: '0.85rem', color: 'var(--color-ink)', minWidth: 120 },
+                },
+              }}
+            />
+          </Box>
+          {errors.techStack && (
+            <Typography variant="caption" sx={{ color: '#ef4444', mt: 0.5, display: 'block' }}>
+              {errors.techStack}
+            </Typography>
+          )}
+
+          {/* Popular Suggestions */}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 1.25, alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>
+              Suggestions:
+            </Typography>
+            {POPULAR_TECH_SUGGESTIONS.map((sug) => {
+              if (formData.techStack.includes(sug)) return null
+              return (
+                <Chip
+                  key={sug}
+                  label={`+ ${sug}`}
+                  size="small"
+                  onClick={() => handleAddTag(sug)}
+                  sx={{
+                    cursor: 'pointer',
+                    fontSize: '0.7rem',
+                    height: '22px',
+                    bgcolor: 'transparent',
+                    border: '1px dashed var(--color-hairline)',
+                    color: 'var(--color-muted)',
+                    '&:hover': {
+                      bgcolor: 'var(--color-surface-soft)',
+                      color: 'var(--color-ink)',
+                      borderColor: 'var(--color-primary)',
+                    },
+                  }}
+                />
+              )
+            })}
+          </Box>
         </Box>
 
-        {/* Short Description */}
+        {/* Short Summary Description */}
         <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
           <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Short Summary Description *
+            Short Summary Description * (used for project cards)
           </Typography>
           <TextField
             fullWidth
             multiline
             rows={2}
-            placeholder="Brief 1-2 sentence overview of the project"
+            placeholder="Brief 1-2 sentence overview of what was built and the core value..."
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             disabled={loading}
@@ -391,31 +634,30 @@ export default function ProjectForm({
             }}
           />
         </Box>
-
-        {/* Long Description */}
-        <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
-          <Typography variant="caption" sx={{ color: 'var(--color-ink)', fontWeight: 600, mb: 0.5, display: 'block' }}>
-            Extended Architecture Details (Optional)
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            placeholder="Detailed architecture explanation, metrics, or technical implementation notes..."
-            value={formData.longDescription}
-            onChange={(e) => setFormData({ ...formData, longDescription: e.target.value })}
-            disabled={loading}
-            slotProps={{
-              input: {
-                sx: { bgcolor: 'var(--color-canvas)', borderRadius: '8px', color: 'var(--color-ink)' },
-              },
-            }}
-          />
-        </Box>
       </Box>
 
-      {/* Action Buttons */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, pt: 2, borderTop: '1px solid var(--color-hairline)' }}>
+      {/* ── Markdown Extended Details Workspace ───────────────────────────── */}
+      <Box sx={{ mb: 4, pt: 3, borderTop: '1px solid var(--color-hairline)' }}>
+        <MarkdownEditor
+          value={formData.longDescription}
+          onChange={(val) => setFormData((prev) => ({ ...prev, longDescription: val }))}
+          disabled={loading}
+          label="Extended Architecture & Technical Implementation (Markdown)"
+          placeholder="Write deep architectural insights, system diagrams, key engineering trade-offs, and code snippets in Markdown..."
+          minHeight="380px"
+        />
+      </Box>
+
+      {/* ── Action Buttons Footer ─────────────────────────────────────────── */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          pt: 2.5,
+          borderTop: '1px solid var(--color-hairline)',
+        }}
+      >
         <NextLink href="/admin/projects" style={{ textDecoration: 'none' }}>
           <Button
             variant="outlined"
@@ -446,11 +688,12 @@ export default function ProjectForm({
             borderRadius: '8px',
             textTransform: 'none',
             fontWeight: 600,
-            px: 3,
+            px: 3.5,
+            py: 1,
             '&:hover': { bgcolor: 'var(--color-primary-active)' },
           }}
         >
-          {loading ? 'Saving...' : isEdit ? 'Update Project' : 'Create Project'}
+          {loading ? 'Saving...' : isEdit ? 'Update Project' : 'Publish Project'}
         </Button>
       </Box>
     </Paper>

@@ -6,8 +6,8 @@ import { ArrowRight, ExternalLink } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { ProjectItem } from '../../../shared/constants/projects'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectsProps {
   projects: ProjectItem[]

@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,15 @@ import {
   IconButton,
   Chip,
   Button,
+  Tooltip,
 } from '@mui/material'
-import { X, ExternalLink } from 'lucide-react'
+import { X, ExternalLink, Share2, Check } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
-import { ProjectItem } from '../../../shared/constants/projects'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/github-dark.css'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectModalProps {
   project: ProjectItem | null
@@ -19,8 +25,32 @@ interface ProjectModalProps {
   onClose: () => void
 }
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&h=800&q=80'
+
 export default function ProjectModal({ project, open, onClose }: ProjectModalProps) {
+  const [copiedLink, setCopiedLink] = useState(false)
+  const [imgSrc, setImgSrc] = useState<string>(project?.imageUrl || '')
+
+  React.useEffect(() => {
+    if (project?.imageUrl) {
+      setImgSrc(project.imageUrl)
+    }
+  }, [project])
+
   if (!project) return null
+
+  const handleCopyLink = async () => {
+    try {
+      const url = typeof window !== 'undefined' ? `${window.location.origin}/projects?project=${project.id}` : ''
+      if (url) {
+        await navigator.clipboard.writeText(url)
+        setCopiedLink(true)
+        setTimeout(() => setCopiedLink(false), 2000)
+      }
+    } catch {
+      // Fallback
+    }
+  }
 
   return (
     <Dialog
@@ -52,7 +82,7 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
         },
       }}
     >
-      {/* Header with image banner & close button */}
+      {/* Header with image banner, close button, and share link */}
       <Box
         sx={{
           position: 'relative',
@@ -65,7 +95,8 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
       >
         <Box
           component="img"
-          src={project.imageUrl}
+          src={imgSrc || FALLBACK_IMAGE}
+          onError={() => setImgSrc(FALLBACK_IMAGE)}
           alt={project.title}
           sx={{
             width: '100%',
@@ -83,27 +114,44 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
           }}
         />
 
-        {/* Close Button */}
-        <IconButton
-          onClick={onClose}
-          aria-label="Close dialog"
-          sx={{
-            position: 'absolute',
-            top: 14,
-            right: 14,
-            zIndex: 10,
-            bgcolor: 'rgba(24, 23, 21, 0.6)',
-            color: 'var(--color-on-dark)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(250, 249, 245, 0.15)',
-            '&:hover': {
-              bgcolor: 'rgba(24, 23, 21, 0.9)',
-              color: 'var(--color-primary)',
-            },
-          }}
-        >
-          <X size={18} />
-        </IconButton>
+        {/* Top Action Buttons (Share & Close) */}
+        <Box sx={{ position: 'absolute', top: 14, right: 14, zIndex: 10, display: 'flex', gap: 1 }}>
+          <Tooltip title={copiedLink ? 'Link copied!' : 'Share Project Link'}>
+            <IconButton
+              onClick={handleCopyLink}
+              aria-label="Share project link"
+              sx={{
+                bgcolor: 'rgba(24, 23, 21, 0.6)',
+                color: 'var(--color-on-dark)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(250, 249, 245, 0.15)',
+                '&:hover': {
+                  bgcolor: 'rgba(24, 23, 21, 0.9)',
+                  color: 'var(--color-primary)',
+                },
+              }}
+            >
+              {copiedLink ? <Check size={18} color="#4ade80" /> : <Share2 size={18} />}
+            </IconButton>
+          </Tooltip>
+
+          <IconButton
+            onClick={onClose}
+            aria-label="Close dialog"
+            sx={{
+              bgcolor: 'rgba(24, 23, 21, 0.6)',
+              color: 'var(--color-on-dark)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(250, 249, 245, 0.15)',
+              '&:hover': {
+                bgcolor: 'rgba(24, 23, 21, 0.9)',
+                color: 'var(--color-primary)',
+              },
+            }}
+          >
+            <X size={18} />
+          </IconButton>
+        </Box>
 
         {/* Floating Badge */}
         <Box
@@ -166,23 +214,82 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
           {project.title}
         </Typography>
 
-        {/* Deep Description / Architecture Overview */}
-        <Box sx={{ mb: 3.5 }}>
-          <Typography
-            variant="body1"
+        {/* Short Summary Description */}
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'var(--color-on-dark-soft)',
+            fontSize: { xs: '0.95rem', sm: '1.025rem' },
+            lineHeight: 1.7,
+            mb: 3,
+          }}
+        >
+          {project.description}
+        </Typography>
+
+        {/* Extended Architecture & Markdown Breakdown */}
+        {project.longDescription && (
+          <Box
             sx={{
-              color: 'var(--color-on-dark-soft)',
-              fontSize: { xs: '0.9375rem', sm: '1rem' },
-              lineHeight: 1.75,
-              whiteSpace: 'pre-line',
+              mb: 3.5,
+              pt: 2.5,
+              borderTop: '1px solid rgba(250, 249, 245, 0.1)',
+              '& h3': {
+                fontSize: '1.15rem',
+                fontWeight: 600,
+                color: 'var(--color-on-dark)',
+                mt: 2,
+                mb: 1,
+              },
+              '& h4': {
+                fontSize: '0.975rem',
+                fontWeight: 600,
+                color: 'var(--color-primary)',
+                mt: 2,
+                mb: 0.75,
+              },
+              '& p': {
+                color: 'var(--color-on-dark-soft)',
+                fontSize: '0.9375rem',
+                lineHeight: 1.7,
+                mb: 2,
+              },
+              '& ul, & ol': {
+                color: 'var(--color-on-dark-soft)',
+                fontSize: '0.9375rem',
+                lineHeight: 1.7,
+                pl: 2.5,
+                mb: 2,
+                '& li': { mb: 0.75 },
+              },
+              '& strong': {
+                color: 'var(--color-on-dark)',
+              },
+              '& pre': {
+                p: 2,
+                borderRadius: '8px',
+                bgcolor: '#121211',
+                border: '1px solid rgba(250, 249, 245, 0.12)',
+                overflowX: 'auto',
+                fontSize: '0.85rem',
+                fontFamily: 'var(--font-mono)',
+                color: '#e6e4df',
+                my: 2,
+              },
+              '& code': {
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.875em',
+              },
             }}
           >
-            {project.longDescription || project.description}
-          </Typography>
-        </Box>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+              {project.longDescription}
+            </ReactMarkdown>
+          </Box>
+        )}
 
         {/* Tech Stack Breakdown */}
-        <Box sx={{ mb: 1 }}>
+        <Box sx={{ mb: 1, pt: project.longDescription ? 0 : 2 }}>
           <Typography
             variant="caption"
             sx={{

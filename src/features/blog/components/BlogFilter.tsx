@@ -2,7 +2,7 @@
 
 import { Box, Container, Chip, TextField, InputAdornment } from '@mui/material'
 import { Search } from 'lucide-react'
-import { BLOG_CATEGORIES, BlogCategory } from '../../../shared/constants/blog'
+import { BLOG_CATEGORIES, BlogCategory } from '@/shared/types/blog'
 
 interface BlogFilterProps {
   selectedCategory: BlogCategory

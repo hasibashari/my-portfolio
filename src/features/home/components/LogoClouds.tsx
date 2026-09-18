@@ -1,8 +1,8 @@
 'use client'
 
 import { Box, Container, Typography, Tooltip } from '@mui/material'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { logo } from '../../../shared/constants/logo'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import { logo } from '../constants/home'
 
 export default function LogoClouds() {
   return (

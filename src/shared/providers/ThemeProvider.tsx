@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useMemo, ReactNode, useSyncExternalStore } from 'react'
 import { ThemeProvider as MUIThemeProvider } from '@mui/material'
-import { lightTheme, darkTheme } from '../lib/theme'
+import { lightTheme, darkTheme } from '@/shared/lib/theme'
 
 type ThemeContextType = {
   mode: 'light' | 'dark'

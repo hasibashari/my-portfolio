@@ -1,8 +1,8 @@
 'use client'
 
 import { Box, Container, Typography } from '@mui/material'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import BackLink from '../../../shared/components/BackLink'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import BackLink from '@/shared/components/BackLink'
 
 export default function BlogHero() {
   return (

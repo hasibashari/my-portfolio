@@ -1,4 +1,5 @@
-import { ProjectItem } from '../../../shared/constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
+import { BlogPost } from '@/shared/types/blog'
 import About from '../components/About'
 import Blog from '../components/Blog'
 import Contact from '../components/Contact'
@@ -10,9 +11,10 @@ import Skills from '../components/Skills'
 
 interface HomeViewProps {
   projects: ProjectItem[]
+  articles: BlogPost[]
 }
 
-export default function HomeView({ projects }: HomeViewProps) {
+export default function HomeView({ projects, articles }: HomeViewProps) {
   return (
     <>
       <Hero />
@@ -21,7 +23,7 @@ export default function HomeView({ projects }: HomeViewProps) {
       <Skills />
       <Experience />
       <Projects projects={projects} />
-      <Blog />
+      <Blog articles={articles} />
       <Contact />
     </>
   )

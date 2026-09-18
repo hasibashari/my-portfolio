@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Box, Container, Typography } from '@mui/material'
 import AdminNav from '../components/AdminNav'
 import ArticleForm, { ArticleFormData } from '../components/ArticleForm'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 
 interface AdminArticleFormViewProps {
   article?: BlogPost
@@ -39,7 +39,7 @@ export default function AdminArticleFormView({ article, isEdit = false }: AdminA
     <Box sx={{ minHeight: '100vh', bgcolor: 'var(--color-canvas)', pb: 10 }}>
       <AdminNav />
 
-      <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
         <Box sx={{ mb: 4 }}>
           <Typography
             variant="h4"
@@ -50,8 +50,8 @@ export default function AdminArticleFormView({ article, isEdit = false }: AdminA
           </Typography>
           <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
             {isEdit
-              ? 'Update technical writeup details, code snippets, tags, or section layout.'
-              : 'Write and publish a new engineering article with structured sections.'}
+              ? 'Update technical writeup details, markdown body, code snippets, or tags.'
+              : 'Write and publish a new engineering article with live Markdown formatting and syntax preview.'}
           </Typography>
         </Box>
 

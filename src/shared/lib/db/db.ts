@@ -1,6 +1,8 @@
 import { Pool } from 'pg'
-import { projects as defaultProjects, ProjectItem } from '../../constants/projects'
-import { blog as defaultBlogPosts, BlogPost } from '../../constants/blog'
+import { projects as defaultProjects } from '@/shared/seeds/projects.seed'
+import { blog as defaultBlogPosts } from '@/shared/seeds/articles.seed'
+import { ProjectItem } from '@/shared/types/projects'
+import { BlogPost } from '@/shared/types/blog'
 
 // --------------------------------------------------------------------------
 // Connection pool — reused across requests in the same Node.js process.
@@ -90,10 +92,15 @@ async function _runInit(): Promise<void> {
         description    TEXT        NOT NULL,
         tags           TEXT        NOT NULL,
         author         TEXT        NOT NULL,
-        sections       TEXT        NOT NULL,
+        content        TEXT        NOT NULL,
         "createdAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         "updatedAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+    `)
+
+    // Ensure content column exists if table was created previously with sections
+    await client.query(`
+      ALTER TABLE articles ADD COLUMN IF NOT EXISTS content TEXT;
     `)
 
     // ── Seed projects if empty ──────────────────────────────────────────────
@@ -124,14 +131,14 @@ async function _runInit(): Promise<void> {
       }
     }
 
-    // ── Seed articles if empty ──────────────────────────────────────────────
+    // ── Seed articles if empty or migrate empty content ─────────────────────
     const { rows: aRows } = await client.query('SELECT COUNT(*)::int AS count FROM articles')
     if (aRows[0].count === 0) {
       for (const post of defaultBlogPosts as BlogPost[]) {
         await client.query(
           `INSERT INTO articles (
              id, slug, title, date, category, "isCoralBadge", "readingTime",
-             description, tags, author, sections
+             description, tags, author, content
            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
           [
             post.id,
@@ -144,8 +151,16 @@ async function _runInit(): Promise<void> {
             post.description,
             JSON.stringify(post.tags ?? []),
             JSON.stringify(post.author ?? { name: '', role: '' }),
-            JSON.stringify(post.sections ?? []),
+            post.content,
           ],
+        )
+      }
+    } else {
+      // If table exists but content column is null for existing seed articles, backfill them
+      for (const post of defaultBlogPosts as BlogPost[]) {
+        await client.query(
+          `UPDATE articles SET content = $1 WHERE slug = $2 AND (content IS NULL OR content = '')`,
+          [post.content, post.slug],
         )
       }
     }

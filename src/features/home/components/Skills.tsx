@@ -2,8 +2,8 @@
 
 import { Box, Container, Typography, Chip } from '@mui/material'
 import { Check } from 'lucide-react'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { skills } from '../../../shared/constants/skills'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import { skills } from '../constants/home'
 
 export default function Skills() {
   return (

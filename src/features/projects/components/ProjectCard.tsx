@@ -1,17 +1,26 @@
 'use client'
 
+import React, { useState } from 'react'
 import { Box, Typography, Button, Chip } from '@mui/material'
 import { ExternalLink } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
 import { motion } from 'motion/react'
-import { ProjectItem } from '../../../shared/constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectCardProps {
   project: ProjectItem
   onOpenModal: (project: ProjectItem) => void
 }
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&h=800&q=80'
+
 export default function ProjectCard({ project, onOpenModal }: ProjectCardProps) {
+  const [imgSrc, setImgSrc] = useState(project.imageUrl)
+
+  React.useEffect(() => {
+    setImgSrc(project.imageUrl)
+  }, [project.imageUrl])
+
   return (
     <motion.div
       layout
@@ -54,7 +63,8 @@ export default function ProjectCard({ project, onOpenModal }: ProjectCardProps) 
         >
           <Box
             component="img"
-            src={project.imageUrl}
+            src={imgSrc || FALLBACK_IMAGE}
+            onError={() => setImgSrc(FALLBACK_IMAGE)}
             alt={project.title}
             sx={{
               width: '100%',

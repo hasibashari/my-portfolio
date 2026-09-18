@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Box, Container, Typography } from '@mui/material'
 import AdminNav from '../components/AdminNav'
 import ProjectForm from '../components/ProjectForm'
-import { ProjectItem } from '../../../shared/constants/projects'
+import { ProjectItem } from '@/shared/types/projects'
 
 interface AdminProjectFormViewProps {
   project?: ProjectItem
@@ -44,7 +44,7 @@ export default function AdminProjectFormView({ project, isEdit = false }: AdminP
     <Box sx={{ minHeight: '100vh', bgcolor: 'var(--color-canvas)', pb: 10 }}>
       <AdminNav />
 
-      <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pt: { xs: 4, md: 6 } }}>
         <Box sx={{ mb: 4 }}>
           <Typography
             variant="h4"
@@ -55,8 +55,8 @@ export default function AdminProjectFormView({ project, isEdit = false }: AdminP
           </Typography>
           <Typography variant="body2" sx={{ color: 'var(--color-muted)' }}>
             {isEdit
-              ? 'Update project details, code snippets, or tech stack.'
-              : 'Add a new distributed system, backend architecture, or fullstack project.'}
+              ? 'Update project details, architecture notes, or tech stack.'
+              : 'Add a new distributed system, backend architecture, or fullstack showcase project.'}
           </Typography>
         </Box>
 

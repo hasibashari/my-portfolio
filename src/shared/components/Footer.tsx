@@ -4,7 +4,7 @@ import { Box, Container, Typography, Link, Divider } from '@mui/material'
 import { ArrowUp, ArrowUpRight, Mail, Globe } from 'lucide-react'
 import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import Logo from './Logo'
-import { footerColumns } from '../constants/footer'
+import { footerColumns } from '@/shared/constants/footer'
 
 export default function Footer() {
   return (

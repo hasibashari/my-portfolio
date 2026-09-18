@@ -2,8 +2,8 @@
 
 import { Box, Container, Typography } from '@mui/material'
 import { CheckCircle2 } from 'lucide-react'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
-import { experiences } from '../../../shared/constants/experiences'
+import ScrollReveal from '@/shared/components/ScrollReveal'
+import { experiences } from '../constants/home'
 
 export default function Experience() {
   return (

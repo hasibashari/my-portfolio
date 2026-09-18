@@ -2,7 +2,7 @@
 
 import { Box, Container, Typography, Card, CardContent } from '@mui/material'
 import { Code2, Gauge, Palette } from 'lucide-react'
-import ScrollReveal from '../../../shared/components/ScrollReveal'
+import ScrollReveal from '@/shared/components/ScrollReveal'
 
 const principles = [
   {

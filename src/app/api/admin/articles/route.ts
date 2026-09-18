@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getArticles, createArticle, getArticleBySlug } from '../../../../shared/lib/db'
+import { getArticles, createArticle, getArticleBySlug } from '@/shared/lib/db/articlesService'
 
 export async function GET() {
   try {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       description,
       tags,
       author,
-      sections,
+      content,
     } = body
 
     if (!slug || typeof slug !== 'string' || slug.trim() === '') {
@@ -95,12 +95,9 @@ export async function POST(request: NextRequest) {
           role: 'Software Engineer',
         }
 
-    const parsedSections = Array.isArray(sections) ? sections : [
-      {
-        heading: 'Introduction',
-        paragraphs: [description.trim()],
-      }
-    ]
+    const markdownContent = typeof content === 'string' && content.trim() !== ''
+      ? content
+      : `## Introduction\n\n${description.trim()}\n`
 
     const newArticle = {
       slug: slug.trim(),
@@ -112,7 +109,7 @@ export async function POST(request: NextRequest) {
       description: description.trim(),
       tags: Array.isArray(tags) ? tags.map(t => String(t).trim()).filter(Boolean) : [],
       author: authorObj,
-      sections: parsedSections,
+      content: markdownContent,
     }
 
     const created = await createArticle(newArticle)

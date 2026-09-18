@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Box, Typography, Button, Snackbar, Alert } from '@mui/material'
 import { Link2, Check } from 'lucide-react'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
-import { BlogPost } from '../../../shared/constants/blog'
+import { BlogPost } from '@/shared/types/blog'
 
 interface ArticleShareProps {
   post: BlogPost

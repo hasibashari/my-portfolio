@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { getProjectById, updateProject, deleteProject } from '../../../../../shared/lib/db'
-import { ProjectItem, PROJECT_CATEGORIES } from '../../../../../shared/constants/projects'
+import { getProjectById, updateProject, deleteProject } from '@/shared/lib/db/projectsService'
+import { ProjectItem, PROJECT_CATEGORIES } from '@/shared/types/projects'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -63,8 +63,12 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     const updates: Partial<ProjectItem> = {}
 
     if (title !== undefined) updates.title = String(title).trim()
-    if (badge !== undefined) updates.badge = String(badge).trim()
-    if (category !== undefined) updates.category = category as ProjectItem['category']
+    if (category !== undefined) {
+      updates.category = category as ProjectItem['category']
+      updates.badge = badge ? String(badge).trim() : category.toUpperCase()
+    } else if (badge !== undefined) {
+      updates.badge = String(badge).trim()
+    }
     if (badgeColor !== undefined) updates.badgeColor = String(badgeColor).trim()
     if (description !== undefined) updates.description = String(description).trim()
     if (longDescription !== undefined) updates.longDescription = String(longDescription).trim()
