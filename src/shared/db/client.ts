@@ -1,8 +1,4 @@
 import { Pool } from 'pg'
-import { projects as defaultProjects } from '@/shared/seeds/projects.seed'
-import { blog as defaultBlogPosts } from '@/shared/seeds/articles.seed'
-import { ProjectItem } from '@/shared/types/projects'
-import { BlogPost } from '@/shared/types/blog'
 
 // --------------------------------------------------------------------------
 // Connection pool — reused across requests in the same Node.js process.
@@ -33,11 +29,11 @@ export function getPool(): Pool {
 }
 
 // --------------------------------------------------------------------------
-// Schema initialisation + seed — call once per process startup.
+// Schema initialisation — call once per process startup.
 // --------------------------------------------------------------------------
 
 // Promise-based singleton: multiple concurrent requests all await the same
-// promise instead of each racing through the full schema + seed logic.
+// promise instead of each racing through the schema check.
 // Reset to null on failure so the next request can retry.
 let initPromise: Promise<void> | null = null
 
@@ -101,69 +97,16 @@ async function _runInit(): Promise<void> {
     // Ensure content column exists if table was created previously with sections
     await client.query(`
       ALTER TABLE articles ADD COLUMN IF NOT EXISTS content TEXT;
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'articles' AND column_name = 'sections'
+        ) THEN
+          ALTER TABLE articles ALTER COLUMN sections DROP NOT NULL;
+        END IF;
+      END $$;
     `)
-
-    // ── Seed projects if empty ──────────────────────────────────────────────
-    const { rows: pRows } = await client.query('SELECT COUNT(*)::int AS count FROM projects')
-    if (pRows[0].count === 0) {
-      for (const item of defaultProjects as ProjectItem[]) {
-        await client.query(
-          `INSERT INTO projects (
-             id, title, badge, category, "badgeColor", description,
-             "longDescription", "techStack", "demoUrl", "githubUrl", "imageUrl",
-             featured
-           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
-          [
-            item.id,
-            item.title,
-            item.badge,
-            item.category,
-            item.badgeColor,
-            item.description,
-            item.longDescription ?? null,
-            JSON.stringify(item.techStack ?? []),
-            item.demoUrl,
-            item.githubUrl ?? null,
-            item.imageUrl,
-            item.featured ?? false,
-          ],
-        )
-      }
-    }
-
-    // ── Seed articles if empty or migrate empty content ─────────────────────
-    const { rows: aRows } = await client.query('SELECT COUNT(*)::int AS count FROM articles')
-    if (aRows[0].count === 0) {
-      for (const post of defaultBlogPosts as BlogPost[]) {
-        await client.query(
-          `INSERT INTO articles (
-             id, slug, title, date, category, "isCoralBadge", "readingTime",
-             description, tags, author, content
-           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-          [
-            post.id,
-            post.slug,
-            post.title,
-            post.date,
-            post.category,
-            post.isCoralBadge ?? false,
-            post.readingTime,
-            post.description,
-            JSON.stringify(post.tags ?? []),
-            JSON.stringify(post.author ?? { name: '', role: '' }),
-            post.content,
-          ],
-        )
-      }
-    } else {
-      // If table exists but content column is null for existing seed articles, backfill them
-      for (const post of defaultBlogPosts as BlogPost[]) {
-        await client.query(
-          `UPDATE articles SET content = $1 WHERE slug = $2 AND (content IS NULL OR content = '')`,
-          [post.content, post.slug],
-        )
-      }
-    }
 
     await client.query('COMMIT')
   } catch (err) {

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { AdminProjectsView } from '@/features/admin'
-import { getProjects } from '@/shared/lib/db/projectsService'
+import { getProjects } from '@/shared/db/projects.service'
 
 export const dynamic = 'force-dynamic'
 

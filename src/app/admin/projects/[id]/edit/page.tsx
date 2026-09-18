@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AdminProjectFormView } from '@/features/admin'
-import { getProjectById } from '@/shared/lib/db/projectsService'
+import { getProjectById } from '@/shared/db/projects.service'
 
 interface PageProps {
   params: Promise<{ id: string }>

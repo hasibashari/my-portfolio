@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { BlogView } from '@/features/blog'
-import { getArticles } from '@/shared/lib/db/articlesService'
+import { getArticles } from '@/shared/db/articles.service'
 import Navbar from '@/shared/components/Navbar'
 import Footer from '@/shared/components/Footer'
 

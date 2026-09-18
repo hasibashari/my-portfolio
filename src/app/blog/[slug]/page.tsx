@@ -5,7 +5,7 @@ import {
   getAllBlogSlugs,
   getBlogPostBySlug,
   getRelatedBlogPosts,
-} from '@/shared/lib/db/articlesService'
+} from '@/shared/db/articles.service'
 import Navbar from '@/shared/components/Navbar'
 import Footer from '@/shared/components/Footer'
 

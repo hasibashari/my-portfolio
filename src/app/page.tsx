@@ -1,6 +1,6 @@
 import { HomeView } from '@/features/home'
-import { getProjects } from '@/shared/lib/db/projectsService'
-import { getArticles } from '@/shared/lib/db/articlesService'
+import { getProjects } from '@/shared/db/projects.service'
+import { getArticles } from '@/shared/db/articles.service'
 import Navbar from '@/shared/components/Navbar'
 import Footer from '@/shared/components/Footer'
 

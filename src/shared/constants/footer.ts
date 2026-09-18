@@ -22,6 +22,6 @@ export const footerColumns = {
     { name: 'LinkedIn', href: 'https://linkedin.com', icon: 'Linkedin' },
     { name: 'Portfolio', href: '#hero', icon: 'Globe' },
   ],
-}
+};
 
-export const footer = footerColumns.navigation
+export const footer = footerColumns.navigation;

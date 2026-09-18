@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getArticleById, updateArticle, deleteArticle, getArticleBySlug } from '@/shared/lib/db/articlesService'
+import { getArticleById, updateArticle, deleteArticle, getArticleBySlug } from '@/shared/db/articles.service'
 import { BlogPost } from '@/shared/types/blog'
 
 interface RouteContext {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { getProjectById, updateProject, deleteProject } from '@/shared/lib/db/projectsService'
+import { getProjectById, updateProject, deleteProject } from '@/shared/db/projects.service'
 import { ProjectItem, PROJECT_CATEGORIES } from '@/shared/types/projects'
 
 interface RouteContext {

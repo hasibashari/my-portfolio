@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { ProjectsView } from '@/features/projects'
-import { getProjects } from '@/shared/lib/db/projectsService'
+import { getProjects } from '@/shared/db/projects.service'
 import Navbar from '@/shared/components/Navbar'
 import Footer from '@/shared/components/Footer'
 

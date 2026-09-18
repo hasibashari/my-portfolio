@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { getProjects, createProject, getProjectById } from '@/shared/lib/db/projectsService'
+import { getProjects, createProject, getProjectById } from '@/shared/db/projects.service'
 import { ProjectItem, PROJECT_CATEGORIES } from '@/shared/types/projects'
 
 export async function GET() {

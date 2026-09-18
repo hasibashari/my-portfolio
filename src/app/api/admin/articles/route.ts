@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getArticles, createArticle, getArticleBySlug } from '@/shared/lib/db/articlesService'
+import { getArticles, createArticle, getArticleBySlug } from '@/shared/db/articles.service'
 
 export async function GET() {
   try {

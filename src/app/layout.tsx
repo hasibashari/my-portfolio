@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import ThemeProvider from "@/shared/providers/ThemeProvider";
+import ThemeProvider from "@/shared/theme/ThemeProvider";
 
 const cormorantSerif = Cormorant_Garamond({
   variable: "--font-serif",

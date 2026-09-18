@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { AdminArticlesView } from '@/features/admin'
-import { getArticles } from '@/shared/lib/db/articlesService'
+import { getArticles } from '@/shared/db/articles.service'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Manage Articles | Admin Portfolio',
