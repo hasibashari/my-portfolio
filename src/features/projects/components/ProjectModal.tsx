@@ -13,10 +13,6 @@ import {
 } from '@mui/material'
 import { X, ExternalLink, Share2, Check } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypeHighlight from 'rehype-highlight'
-import 'highlight.js/styles/github-dark.css'
 import { ProjectItem } from '@/shared/types/projects'
 
 interface ProjectModalProps {
@@ -230,69 +226,8 @@ export default function ProjectModal({ project, open, onClose }: ProjectModalPro
           {project.description}
         </Typography>
 
-        {/* Extended Architecture & Markdown Breakdown */}
-        {project.longDescription && (
-          <Box
-            sx={{
-              mb: 3.5,
-              pt: 2.5,
-              borderTop: '1px solid rgba(250, 249, 245, 0.1)',
-              '& h3': {
-                fontSize: '1.15rem',
-                fontWeight: 600,
-                color: 'var(--color-on-dark)',
-                mt: 2,
-                mb: 1,
-              },
-              '& h4': {
-                fontSize: '0.975rem',
-                fontWeight: 600,
-                color: 'var(--color-primary)',
-                mt: 2,
-                mb: 0.75,
-              },
-              '& p': {
-                color: 'var(--color-on-dark-soft)',
-                fontSize: '0.9375rem',
-                lineHeight: 1.7,
-                mb: 2,
-              },
-              '& ul, & ol': {
-                color: 'var(--color-on-dark-soft)',
-                fontSize: '0.9375rem',
-                lineHeight: 1.7,
-                pl: 2.5,
-                mb: 2,
-                '& li': { mb: 0.75 },
-              },
-              '& strong': {
-                color: 'var(--color-on-dark)',
-              },
-              '& pre': {
-                p: 2,
-                borderRadius: '8px',
-                bgcolor: '#121211',
-                border: '1px solid rgba(250, 249, 245, 0.12)',
-                overflowX: 'auto',
-                fontSize: '0.85rem',
-                fontFamily: 'var(--font-mono)',
-                color: '#e6e4df',
-                my: 2,
-              },
-              '& code': {
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.875em',
-              },
-            }}
-          >
-            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
-              {project.longDescription}
-            </ReactMarkdown>
-          </Box>
-        )}
-
         {/* Tech Stack Breakdown */}
-        <Box sx={{ mb: 1, pt: project.longDescription ? 0 : 2 }}>
+        <Box sx={{ mb: 1, pt: 1 }}>
           <Typography
             variant="caption"
             sx={{

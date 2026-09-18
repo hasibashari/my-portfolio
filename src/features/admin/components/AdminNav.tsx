@@ -1,12 +1,16 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import NextLink from 'next/link'
-import { Box, Container, Typography, Button, Chip } from '@mui/material'
-import { LayoutDashboard, FolderGit2, BookOpen, ArrowLeft } from 'lucide-react'
+import { Box, Container, Typography, Button, Chip, CircularProgress } from '@mui/material'
+import { LayoutDashboard, FolderGit2, BookOpen, ArrowLeft, LogOut } from 'lucide-react'
+import { logoutAdmin } from '@/features/auth'
 
 export default function AdminNav() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
@@ -17,6 +21,19 @@ export default function AdminNav() {
   const isActive = (href: string, exact: boolean) => {
     if (exact) return pathname === href
     return pathname.startsWith(href)
+  }
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await logoutAdmin()
+      router.push('/admin/login')
+      router.refresh()
+    } catch {
+      router.push('/admin/login')
+    } finally {
+      setLoggingOut(false)
+    }
   }
 
   return (
@@ -130,6 +147,31 @@ export default function AdminNav() {
                 Back to Site
               </Button>
             </NextLink>
+
+            {/* Logout Button */}
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              startIcon={loggingOut ? <CircularProgress size={14} color="inherit" /> : <LogOut size={15} />}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 500,
+                color: '#ef4444',
+                borderColor: 'rgba(239, 68, 68, 0.25)',
+                bgcolor: 'rgba(239, 68, 68, 0.04)',
+                borderRadius: '8px',
+                px: 1.5,
+                py: 0.75,
+                '&:hover': {
+                  borderColor: '#ef4444',
+                  bgcolor: 'rgba(239, 68, 68, 0.1)',
+                },
+              }}
+            >
+              Logout
+            </Button>
           </Box>
         </Box>
       </Container>

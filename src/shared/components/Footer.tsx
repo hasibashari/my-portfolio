@@ -193,10 +193,26 @@ export default function Footer() {
             gap: 2.5,
           }}
         >
-          {/* Copyright */}
-          <Typography variant="body2" sx={{ color: 'var(--color-muted-soft)', fontSize: '0.8125rem' }}>
-            &copy; {new Date().getFullYear()} Hasib Ashari. Built with Claude Editorial Design System.
-          </Typography>
+          {/* Copyright with discreet admin portal access */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <Typography variant="body2" sx={{ color: 'var(--color-muted-soft)', fontSize: '0.8125rem' }}>
+              &copy; {new Date().getFullYear()} Hasib Ashari. Built with Claude Editorial Design System.
+            </Typography>
+            <Link
+              href="/admin"
+              sx={{
+                color: 'var(--color-muted-soft)',
+                opacity: 0.2,
+                textDecoration: 'none',
+                fontSize: '0.75rem',
+                transition: 'opacity 0.2s ease',
+                '&:hover': { opacity: 0.8 },
+              }}
+              aria-label="Admin Workspace"
+            >
+              •
+            </Link>
+          </Box>
 
           {/* Social Media Links & Back to Top */}
           <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>

@@ -24,7 +24,6 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { ProjectItem, ProjectFormData, ProjectCategory, PROJECT_CATEGORIES } from '@/shared/types/projects'
-import MarkdownEditor from './MarkdownEditor'
 
 interface ProjectFormProps {
   initialData?: ProjectItem
@@ -90,7 +89,6 @@ export default function ProjectForm({
     category: (initialData?.category || 'AI & Backend') as ProjectItem['category'],
     badgeColor: initialData?.badgeColor || '#cc785c',
     description: initialData?.description || '',
-    longDescription: initialData?.longDescription || '',
     techStack: initialData?.techStack || ['TypeScript', 'Next.js'],
     demoUrl: initialData?.demoUrl || '',
     githubUrl: initialData?.githubUrl || '',
@@ -198,7 +196,6 @@ export default function ProjectForm({
         category: formData.category,
         badgeColor: formData.badgeColor.trim() || CATEGORY_COLOR_MAP[formData.category] || '#cc785c',
         description: formData.description.trim(),
-        longDescription: formData.longDescription.trim() || undefined,
         techStack: formData.techStack,
         demoUrl: formData.demoUrl.trim(),
         githubUrl: formData.githubUrl.trim() || undefined,
@@ -633,18 +630,6 @@ export default function ProjectForm({
             }}
           />
         </Box>
-      </Box>
-
-      {/* ── Markdown Extended Details Workspace ───────────────────────────── */}
-      <Box sx={{ mb: 4, pt: 3, borderTop: '1px solid var(--color-hairline)' }}>
-        <MarkdownEditor
-          value={formData.longDescription}
-          onChange={(val) => setFormData((prev) => ({ ...prev, longDescription: val }))}
-          disabled={loading}
-          label="Extended Architecture & Technical Implementation (Markdown)"
-          placeholder="Write deep architectural insights, system diagrams, key engineering trade-offs, and code snippets in Markdown..."
-          minHeight="380px"
-        />
       </Box>
 
       {/* ── Action Buttons Footer ─────────────────────────────────────────── */}
